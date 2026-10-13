@@ -866,7 +866,7 @@ function renderSquad(){
 const AXES=[['OBV','Impact (OBV)'],['Non Penalty xG','Menace (npxG)'],['Open Play xG Assisted','Création (xA)'],['Deep Progressions','Progression'],['Touches Inside Box','Présence surface'],['Dribble & Carry OBV','Conduite'],['Pressures','Pressing'],['Tackles & Interceptions','Récupération']];
 const PROFILE_KEYS=['OBV','Non Penalty xG','Open Play xG Assisted','Shots','Non Penalty xG/Shot','Deep Progressions','Touches Inside Box','Dribble & Carry OBV','Pass OBV','Shot OBV','Defensive Action OBV','Pressures','Tackles & Interceptions','Fouls Won','Turnovers','Dribbled Past','Aerial Win%'];
 const INV=new Set(['Turnovers','Dribbled Past','Fouls']);
-function renderPlayer(){
+function renderPlayer(){S.cmp='';
   const p=SQUAD.find(q=>q.Player===S.player)||SQUAD[0];const c=POSC[p.Pos];
   const o=S.cmp?SQUAD.find(q=>q.Player===S.cmp):null;
   const gk=p.Pos==='GB';
@@ -877,8 +877,7 @@ function renderPlayer(){
   const sorted=[...prof].sort((a,b)=>b.pc-a.pc);
   const strengths=sorted.slice(0,3),weak=sorted.slice(-3).reverse();
   $('#v-player').innerHTML=`
-  <div class="ctl"><label>Joueur <select onchange="S.player=this.value;S.cmp=S.cmp===this.value?'':S.cmp;renderPlayer()">${[...SQUAD].sort((a,b)=>a.Player.localeCompare(b.Player)).map(q=>`<option ${q.Player===S.player?'selected':''}>${q.Player}</option>`).join('')}</select></label>
-  <label>Comparer à <select onchange="S.cmp=this.value;renderPlayer()"><option value="">—</option>${[...SQUAD].filter(q=>q.Pos!=='GB'&&q.Player!==S.player).sort((a,b)=>a.Player.localeCompare(b.Player)).map(q=>`<option ${q.Player===S.cmp?'selected':''}>${q.Player}</option>`).join('')}</select></label></div>
+  <div class="ctl"><label>Joueur <select onchange="S.player=this.value;S.cmp=S.cmp===this.value?'':S.cmp;renderPlayer()">${[...SQUAD].sort((a,b)=>a.Player.localeCompare(b.Player)).map(q=>`<option ${q.Player===S.player?'selected':''}>${q.Player}</option>`).join('')}</select></label></div>
   <div class="card" style="--c:${c}"><div class="phead"><div class="ava">${initials(p.Player)}</div><div><span class="pp ${p.Pos}">${POSN[p.Pos].toUpperCase()}</span><h1>${p.Player}</h1>
     <div class="facts"><div><b class="mono">${p.Age}</b>ans</div><div><b class="mono">${p.Height}</b>cm</div><div><b class="mono">${p.Minutes.toFixed(0)}</b>minutes</div><div><b class="mono">${(p.Minutes/90).toFixed(1)}</b>matchs équiv.</div>
     <div><b class="mono" style="color:${p.OBV>=0?'var(--gold)':'var(--red)'}">${sgn(p.OBV,2)}</b>OBV /90</div><div><b class="mono">${fmt(p['Non Penalty xG'],2)}</b>npxG /90</div><div><b class="mono">${fmt(p['Open Play xG Assisted'],2)}</b>xA /90</div></div>
