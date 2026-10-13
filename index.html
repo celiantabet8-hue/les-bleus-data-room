@@ -375,7 +375,7 @@ input[type=range]{accent-color:var(--blue)}
 .pill .ph{display:flex;align-items:center}.pill .more{margin-left:auto;font-size:11px;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;opacity:.55;transition:.3s}.pill:hover .more{opacity:1;color:#fff;transform:translateX(3px)}
 .pill:hover{border-color:rgba(255,255,255,.35);transform:translateY(-3px)}
 .pr .d{line-height:1.5}.pr .d b{color:#fff;font-family:'JetBrains Mono',monospace;font-weight:600}.pr .d em{font-style:normal;margin-left:6px;font-weight:700;font-family:'JetBrains Mono',monospace}
-.zoomable{cursor:pointer}.zoomhint{position:absolute;right:14px;top:12px;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:#fff;font-size:15px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:2}.zoomable:hover .zoomhint{opacity:1;transform:scale(1.06)}
+.zoomable{cursor:pointer}.zoomhint{position:absolute;right:14px;top:12px;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:#fff;font-size:15px;opacity:0;transition:opacity .3s,transform .3s,background .25s;z-index:3;cursor:pointer;border:0}.zoomable:hover .zoomhint,.ztable:hover .zoomhint,.zoomhint:focus-visible{opacity:1}.zoomhint:hover{background:rgba(255,255,255,.24);transform:scale(1.08)}.zoomhint:active{scale:.94}
 .ico{vertical-align:-2px}.icoleg{display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
 .modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:rgba(1,10,69,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);animation:mfade .3s ease}
 .modal.out{opacity:0;transition:opacity .22s}
@@ -409,7 +409,7 @@ input[type=range]{accent-color:var(--blue)}
 .modal-snap[data-busy]{opacity:.6;pointer-events:none}
 
 .cardsnap{position:absolute;right:52px;top:12px;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:#fff;opacity:0;transition:opacity .3s,background .25s,transform .25s var(--ease);z-index:3;cursor:pointer}
-.zoomable:hover .cardsnap,.cardsnap:focus-visible{opacity:1}.cardsnap:hover{background:rgba(255,255,255,.24);transform:scale(1.08)}.cardsnap:active{scale:.94}.cardsnap[data-busy]{opacity:1;animation:pulse 1s infinite}
+.zoomable:hover .cardsnap,.ztable:hover .cardsnap,.cardsnap:focus-visible{opacity:1}.cardsnap:hover{background:rgba(255,255,255,.24);transform:scale(1.08)}.cardsnap:active{scale:.94}.cardsnap[data-busy]{opacity:1;animation:pulse 1s infinite}
 @media(hover:none){.cardsnap,.zoomhint{opacity:.75}}
 
 .lgd{display:inline-flex;gap:7px;align-items:center;font-size:12.5px;color:var(--mu)}.lgd i{width:11px;height:11px;border-radius:50%;display:inline-block;box-shadow:0 0 10px currentColor}
@@ -419,6 +419,7 @@ input[type=range]{accent-color:var(--blue)}
 .mq{display:flex;gap:8px;padding:4px 6px 10px;border-bottom:1px solid var(--line);margin-bottom:6px}.mq button{font-size:12px;color:var(--mu);padding:5px 12px;border-radius:999px;border:1px solid var(--line2);transition:.25s}.mq button:hover{color:#fff;background:rgba(255,255,255,.08)}
 .mopt{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;cursor:pointer;font-size:13.5px;transition:background .2s}.mopt:hover{background:rgba(255,255,255,.08)}
 .mopt input{accent-color:var(--blue);width:16px;height:16px;flex:none}.mopt i{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 10px currentColor}
+.modal-box.zoom.tbl{width:min(1480px,100%)}.modal-box.zoom.tbl .plist-wrap,.modal-box.zoom.tbl .bscroll{overflow-x:auto}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
@@ -530,7 +531,7 @@ function xgChart(){
   for(let i=0;i<=4;i++){const v=mx*i/4;s+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(255,255,255,.07)"/><text x="${p.l-8}" y="${y(v)+4}" text-anchor="end" fill="#7d8bd0" font-size="11">${v.toFixed(1)}</text>`}
   MS.forEach((m,i)=>{const cx=p.l+bw*i+bw/2,w=Math.min(46,bw*.3),on=S.match==='all'||S.match==i;
     const xg=m['Cumulative xG'],g=m['Goals & Penalty Goals'];const op=on?1:.3;
-    s+=`<g opacity="${op}" style="cursor:pointer" onclick="setMatch(${i})" data-tip="<b>${m.Match}</b>xG ${xg.toFixed(2)} · Buts ${g}<br>Écart ${sgn(g-xg,2)}">
+    s+=`<g opacity="${op}" data-tip="<b>${m.Match}</b>xG ${xg.toFixed(2)} · Buts ${g}<br>Écart ${sgn(g-xg,2)}">
     <rect x="${cx-w-3}" y="${y(xg)}" width="${w}" height="${y(0)-y(xg)}" rx="6" fill="url(#gx)"/>
     <rect x="${cx+3}" y="${y(g)}" width="${w}" height="${y(0)-y(g)}" rx="6" fill="url(#gg)"/>
     <text x="${cx-w/2-3}" y="${y(xg)-7}" text-anchor="middle" fill="#a9bcff" font-size="12" font-weight="700">${xg.toFixed(2)}</text>
@@ -751,7 +752,7 @@ function renderTeam(){
 
   ${MS.length>=2?profilesCard():''}
   <div class="grid g12 mt">
-    <div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">Qualité des occasions face à la réalité du score — cliquez un match pour filtrer</div>${xgChart()}</div>
+    <div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">Qualité des occasions face à la réalité du score</div>${xgChart()}</div>
     <div class="card"><h3>Notes de l'analyste</h3><div class="sub">Constats générés automatiquement à partir des données</div>${insights().map(([i,t])=>`<div class="ins"><i>${i}</i><div>${t}</div></div>`).join('')}</div>
   </div>
 
@@ -1497,10 +1498,12 @@ function openPillar(i,origin){const g=PILLARS[i],first=MS[0],last=MS[MS.length-1
     <ul class="facts2"><li><span>Plus haut</span><b>${vals[hi].toFixed(dg)}</b> contre ${lbl(MS[hi])}</li><li><span>Plus bas</span><b>${vals[lo].toFixed(dg)}</b> contre ${lbl(MS[lo])}</li><li><span>Étendue</span><b>${(vals[hi]-vals[lo]).toFixed(dg)}</b> entre le match le plus bas et le plus haut</li><li><span>Évolution</span>du 1er match (${first.opp}) <b>${first[k].toFixed(dg)}</b> au dernier (${last.opp}) <b>${last[k].toFixed(dg)}</b> : <b class="${cls}">${sgn(ch,dg)}${pc!=null?' ('+sgn(pc,0)+' %)':''}</b></li></ul></div>`}).join('');
   openModal(`<div class="mhead"><span class="dotc" style="background:${g.c}"></span><div><h2>${g.t}</h2><p>Les barres montrent la valeur de chaque match, les pointillés la moyenne. « Évolution » compare le premier et le dernier match du rassemblement ; « étendue » est l'écart entre le match le plus bas et le plus haut.</p></div></div><div class="mgr">${cards}</div>`,'wide',origin)}
 /* graphiques : un clic les agrandit */
-function enableZoom(root){(root||document).querySelectorAll('.card').forEach(c=>{if(c.classList.contains('zoomable')||c.classList.contains('pill')||c.classList.contains('key')||c.closest('.modal'))return;
-  const sv=[...c.querySelectorAll('svg[viewBox]')].find(x=>x.getAttribute('width')==='100%');if(!sv)return;c.classList.add('zoomable');c.insertAdjacentHTML('beforeend','<button class="cardsnap" type="button" aria-label="Enregistrer en image" title="Enregistrer en image">'+CAM+'</button><span class="zoomhint" aria-hidden="true">⤢</span>')})}
-document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest('.zoomable');if(!c||c.closest('.modal')||e.target.closest('select,button,a,input,label'))return;
-  const cl=c.cloneNode(true);cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));cl.querySelectorAll('.zoomhint,.cardsnap').forEach(x=>x.remove());cl.classList.remove('zoomable','mt');openModal(cl.outerHTML,'zoom',c)});
+function enableZoom(root){(root||document).querySelectorAll('.card').forEach(c=>{if(c.classList.contains('zoomable')||c.classList.contains('ztable')||c.classList.contains('pill')||c.classList.contains('key')||c.closest('.modal'))return;
+  const sv=[...c.querySelectorAll('svg[viewBox]')].find(x=>x.getAttribute('width')==='100%'),tb=!!c.querySelector('.plist,.mrow,.srow,.bscroll,table.rt');if(!sv&&!tb)return;
+  c.classList.add(sv?'zoomable':'ztable');c.insertAdjacentHTML('beforeend','<button class="cardsnap" type="button" aria-label="Enregistrer en image" title="Enregistrer en image">'+CAM+'</button><button class="zoomhint" type="button" aria-label="Agrandir" title="Agrandir">⤢</button>')})}
+function zoomCard(c){const cl=c.cloneNode(true);cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));cl.querySelectorAll('.zoomhint,.cardsnap').forEach(x=>x.remove());const tb=c.classList.contains('ztable');cl.classList.remove('zoomable','ztable','mt');openModal(cl.outerHTML,'zoom'+(tb?' tbl':''),c)}
+document.addEventListener('click',e=>{const zb=e.target.closest&&e.target.closest('.zoomhint');if(zb){const c=zb.closest('.card');if(c&&!c.closest('.modal')){e.stopPropagation();zoomCard(c)}return}
+  const c=e.target.closest&&e.target.closest('.zoomable');if(!c||c.closest('.modal')||e.target.closest('select,button,a,input,label'))return;zoomCard(c)});
 (function(){let t;const m=document.querySelector('main');if(!m||!window.MutationObserver)return;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(()=>enableZoom(m),80)}).observe(m,{childList:true,subtree:true})})();
 
 
@@ -1508,15 +1511,15 @@ document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest
 async function snapNode(node,btn){
   if(!node||(btn&&btn.dataset.busy))return;const lab=btn&&btn.querySelector('span'),old=lab&&lab.textContent;if(btn){btn.dataset.busy=1;if(lab)lab.textContent='…'}
   try{
-    await loadLib('h2c');const modal=node.classList.contains('modal-box'),width=Math.min(node.clientWidth||900,1180);
+    await loadLib('h2c');const modal=node.classList.contains('modal-box'),inner=node.querySelector('.plist,.bscroll>div'),width=Math.min(Math.max(node.clientWidth||900,inner?inner.scrollWidth+70:0),1700);
     const w=document.createElement('div');w.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;padding:${modal?'30px 32px 22px':'26px 28px 20px'};background:linear-gradient(145deg,#0b2ba3,#010a45);color:#fdfdfe;font-family:Inter,system-ui,sans-serif`;
     const cl=node.cloneNode(true);cl.style.cssText='position:static;width:100%;max-height:none;overflow:visible;padding:0;background:none;border:0;box-shadow:none;animation:none;transform:none;margin:0;backdrop-filter:none';cl.classList.remove('zoomable','mt','rise');
-    cl.querySelectorAll('.modal-tools,.zoomhint,.cardsnap').forEach(x=>x.remove());cl.querySelectorAll('.mrise,.rise').forEach(x=>x.classList.remove('mrise','rise'));cl.querySelectorAll('*').forEach(x=>{x.style.animation='none'});
+    cl.querySelectorAll('.modal-tools,.zoomhint,.cardsnap').forEach(x=>x.remove());cl.querySelectorAll('.plist-wrap,.bscroll,.tw').forEach(x=>{x.style.overflow='visible'});cl.classList.remove('ztable');cl.querySelectorAll('.mrise,.rise').forEach(x=>x.classList.remove('mrise','rise'));cl.querySelectorAll('*').forEach(x=>{x.style.animation='none'});
     cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));
     const title=((cl.querySelector('h3,h2,.mt1')||{}).textContent||'graphique').trim();
     const foot=document.createElement('div');foot.style.cssText='margin-top:16px;padding-top:11px;border-top:1px solid rgba(255,255,255,.18);display:flex;justify-content:space-between;font-size:12px;color:#aebcf2';foot.innerHTML=`<span>${TEAM==='France'?'Équipe de France':TEAM} · Data Room</span><span>${todayFR()}</span>`;
     w.appendChild(cl);w.appendChild(foot);document.body.appendChild(w);try{await document.fonts.ready}catch(e){}
-    const canvas=await html2canvas(w,{scale:width<520?4:3,backgroundColor:'#010a45',logging:false,useCORS:true});w.remove();
+    const canvas=await html2canvas(w,{scale:width>1250?2:(width<520?4:3),backgroundColor:'#010a45',logging:false,useCORS:true});w.remove();
     const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
     await saveFile(`${slug(title)}-${todayISO()}.png`,blob,'image/png');
   }catch(e){toast('Image impossible : '+((e&&e.message)||'erreur'))}
