@@ -426,6 +426,10 @@ input[type=range]{accent-color:var(--blue)}
 .profmap .presets{row-gap:10px}
 .profmap .ctl{margin:0 0 12px!important;gap:14px 22px;row-gap:12px}
 .profmap .axl{margin-top:2px}
+
+/* place réservée aux boutons image / agrandir en haut à droite */
+.zoomable>:first-child:not(.cardsnap):not(.zoomhint),.ztable>:first-child:not(.cardsnap):not(.zoomhint){padding-right:86px}
+@media(max-width:560px){.zoomable>:first-child:not(.cardsnap):not(.zoomhint),.ztable>:first-child:not(.cardsnap):not(.zoomhint){padding-right:80px}}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
