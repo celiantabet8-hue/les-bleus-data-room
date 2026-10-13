@@ -420,6 +420,7 @@ input[type=range]{accent-color:var(--blue)}
 .mopt{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;cursor:pointer;font-size:13.5px;transition:background .2s}.mopt:hover{background:rgba(255,255,255,.08)}
 .mopt input{accent-color:var(--blue);width:16px;height:16px;flex:none}.mopt i{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 10px currentColor}
 .modal-box.zoom.tbl{width:min(1480px,100%)}.modal-box.zoom.tbl .plist-wrap,.modal-box.zoom.tbl .bscroll{overflow-x:auto}
+.scnote{margin-top:6px;font-size:12px;color:var(--mu)}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
@@ -615,7 +616,8 @@ function renderHome(){
 
 /* ============ OFFENSIVE / DEFENSIVE TABS ============ */
 const RENDER={home:()=>renderHome(),off:()=>renderOff(),def:()=>renderDef(),team:()=>renderTeam(),squad:()=>renderSquad(),player:()=>renderPlayer(),bilan:()=>renderBilan(),data:()=>renderData()};
-function minCtl(){return `<div class="ctl"><label>Minutes minimum <input type="range" min="0" max="290" step="10" value="${S.minMin}" oninput="S.minMin=+this.value;this.nextElementSibling.textContent=this.value" onchange="RENDER[S.tab]()"><b class="mono">${S.minMin}</b></label><span style="font-size:12.5px;color:var(--mu)">Classements et tableau : joueurs de champ au-dessus de ce seuil</span></div>`}
+const hiddenTxt=list=>{if(!list.length)return '';const sh=list.slice(0,4).map(p=>`${lastName(p.Player)} (${Math.round(p.Minutes)} min)`).join(', ');return `${list.length} joueur${list.length>1?'s':''} masqué${list.length>1?'s':''} sous ce seuil : ${sh}${list.length>4?'…':''}`};
+function minCtl(){return `<div class="ctl"><label>Minutes minimum <input type="range" min="0" max="290" step="10" value="${S.minMin}" oninput="S.minMin=+this.value;this.nextElementSibling.textContent=this.value" onchange="RENDER[S.tab]()"><b class="mono">${S.minMin}</b></label><span style="font-size:12.5px;color:var(--mu)">Classements et tableau : joueurs de champ au-dessus de ce seuil${S.minMin>0&&SQUAD.some(p=>p.Pos!=='GB'&&p.Minutes<S.minMin)?' · '+hiddenTxt(SQUAD.filter(p=>p.Pos!=='GB'&&p.Minutes<S.minMin).sort((a,b)=>b.Minutes-a.Minutes)):''}</span></div>`}
 function kpiRow(items){return `<div class="kpis">${items.map(([k,l,dg,c])=>{const v=mAvg(k),ch=MS[MS.length-1][k]-MS[0][k];return `<div class="kpi" style="--c:${c}"><div class="l">${l}</div><div class="v mono">${v.toFixed(dg)}</div><div class="dl">moy. / match · ${sgn(ch,dg)} depuis le 1er match</div></div>`}).join('')}</div>`}
 function barsSVG(key,title,dg,color){
   const vals=MS.map(m=>m[key]),mx=Math.max(...vals)*1.22||1,W=300,H=156,p={l:10,r:10,t:24,b:34},iw=W-p.l-p.r,ih=H-p.t-p.b,bw=iw/vals.length,av=avg(vals),y=v=>p.t+ih-v/mx*ih;
@@ -810,19 +812,21 @@ function scatter(sx=S.sx,sy=S.sy,exGK=false){
   s+=`<line x1="${X(ax)}" x2="${X(ax)}" y1="${p.t}" y2="${p.t+ih}" stroke="#a9b5ec" stroke-dasharray="4 5" opacity=".55"/><line x1="${p.l}" x2="${W-p.r}" y1="${Y(ay)}" y2="${Y(ay)}" stroke="#a9b5ec" stroke-dasharray="4 5" opacity=".55"/>
   <text x="${W/2}" y="${H-8}" text-anchor="middle" fill="#c3ccf5" font-size="12" font-weight="600">${PMI[sx][1]}</text>
   <text transform="translate(14 ${p.t+ih/2}) rotate(-90)" text-anchor="middle" fill="#c3ccf5" font-size="12" font-weight="600">${PMI[sy][1]}</text>`;
-  const placed=[];
+  const placed=[],missed=[];
   [...data].sort((a,b)=>b.Minutes-a.Minutes).forEach(q=>{
     const cx=X(q[sx]),cy=Y(q[sy]),r=6+q.Minutes/300*9,c=POSC[q.Pos];
     s+=`<g style="cursor:pointer" onclick="openPlayer('${q.Player.replace(/'/g,"\\'")}')" data-tip="<b>${q.Player}</b>${POSN[q.Pos]} · ${q.Minutes.toFixed(0)} min<br>${PMI[sx][1]} : ${q[sx].toFixed(PMI[sx][3])}<br>${PMI[sy][1]} : ${q[sy].toFixed(PMI[sy][3])}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" fill-opacity=".28" stroke="${c}" stroke-width="1.8"/></g>`;
   });
   [...data].sort((a,b)=>b.Minutes-a.Minutes).forEach(q=>{
     const cx=X(q[sx]),cy=Y(q[sy]),r=6+q.Minutes/300*9,t=lastName(q.Player),w=t.length*6.2;
-    for(const [dx,dy,an] of [[r+4,4,'start'],[-r-4,4,'end'],[0,-r-5,'middle'],[0,r+13,'middle']]){
+    let done=false;
+    for(const [dx,dy,an] of [[r+4,4,'start'],[-r-4,4,'end'],[0,-r-5,'middle'],[0,r+13,'middle'],[r+4,-r+2,'start'],[-r-4,-r+2,'end'],[r+4,r+8,'start'],[-r-4,r+8,'end'],[0,-r-18,'middle'],[0,r+26,'middle']]){
       const bx=an==='start'?cx+dx:an==='end'?cx+dx-w:cx-w/2,by=cy+dy-10;
       if(bx<p.l-30||bx+w>W||placed.some(b=>bx<b[0]+b[2]&&bx+w>b[0]&&by<b[1]+12&&by+12>b[1]))continue;
-      placed.push([bx,by,w]);s+=`<text x="${cx+dx}" y="${cy+dy}" text-anchor="${an}" fill="#eef1fd" font-size="10.5" font-weight="600" pointer-events="none">${t}</text>`;break}
+      placed.push([bx,by,w]);s+=`<text x="${cx+dx}" y="${cy+dy}" text-anchor="${an}" fill="#eef1fd" font-size="10.5" font-weight="600" pointer-events="none">${t}</text>`;done=true;break}
+    if(!done)missed.push(q.Player);
   });
-  return s+'</svg>';
+  return s+'</svg>'+(missed.length?`<div class="scnote">Points superposés, nom non affiché : ${missed.map(lastName).join(', ')}. Survolez un point pour voir le joueur.</div>`:'');
 }
 const PRESETS=[['Finition vs création','Non Penalty xG','Open Play xG Assisted'],['Impact global','Deep Progressions','OBV'],['Surface vs dribbles','Touches Inside Box','Dribble & Carry OBV'],['Volume défensif','Pressures','Tackles & Interceptions'],['Passes vs conduites','Pass OBV','Dribble & Carry OBV']];
 function renderSquad(){
@@ -832,7 +836,7 @@ function renderSquad(){
   <div class="hello"><div><h2>Effectif</h2><h1>Qui fait quoi</h1><p>Filtrez par poste, comparez les profils et repérez les meilleurs par domaine</p></div></div>
   <div class="card filt"><div class="chips">${['ALL','ATT','MIL','DEF','GB'].map(k=>`<button class="chip ${S.pos===k?'on':''}" onclick="S.pos='${k}';flipRender(renderSquad)">${k==='ALL'?'Tous':POSN[k]+'s'}<em>${cnt(k)}</em></button>`).join('')}</div>
     <label>Minutes minimum <input type="range" min="0" max="290" step="10" value="${S.minMin}" oninput="S.minMin=+this.value;this.nextElementSibling.textContent=this.value" onchange="renderSquad()"><b class="mono">${S.minMin}</b></label>
-    <span class="cnt">${rows.length} joueur${rows.length>1?'s':''} affiché${rows.length>1?'s':''}</span></div>
+    <span class="cnt">${rows.length} joueur${rows.length>1?'s':''} affiché${rows.length>1?'s':''}${(()=>{const h=SQUAD.filter(p=>p.Minutes<S.minMin&&(S.pos==='ALL'||p.Pos===S.pos)).sort((a,b)=>b.Minutes-a.Minutes);return h.length?' · '+hiddenTxt(h):''})()}</span></div>
   <div class="grid g4 mt">
     ${leaderboard('Impact global','OBV','On-Ball Value /90, joueurs de champ (≥'+S.minMin+' min)',p=>p.Pos!=='GB')}
     ${leaderboard('Menace offensive','Non Penalty xG','xG sans penalty /90',p=>p.Pos!=='GB')}
