@@ -658,6 +658,7 @@ function barsSVG(key,title,dg,color){
   g+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(av)}" y2="${y(av)}" stroke="#a9b5ec" stroke-dasharray="4 4" opacity=".6"/></svg>`;
   return g;
 }
+const MINI_PAL=['#4d6bff','#ed1e24','#d5a450','#2fb8e6','#9b7bff','#3ec28f'];
 function miniBars(key,title,dg,color){const av=avg(MS.map(m=>m[key]));return `<div class="card mini"><div class="mt1">${title}</div><div class="ms">moyenne ${av.toFixed(dg)} (pointillés)</div>${barsSVG(key,title,dg,color)}</div>`}
 function stacked(title,sub,parts){
   const W=620,H=300,p={l:44,r:16,t:30,b:50},iw=W-p.l-p.r,ih=H-p.t-p.b,bw=iw/MS.length;
@@ -697,7 +698,7 @@ function renderOff(){
   <div class="sect"><h1>L'équipe</h1><span>Totaux par match</span></div>
   <div class="grid g2"><div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">La qualité des occasions face au score</div>${xgChart()}</div>
   ${stacked('Origine des tirs','Dans la surface ou en dehors',[{k:'ShotsIn',l:'Dans la surface',c:'#4d6bff'},{k:'Shots Outside Box',l:'Hors surface',c:'#ed1e24'}])}</div>
-  <div class="mgrid mt">${[['Passes Into Attacking Third','Passes vers le tiers offensif',0],['Key Passes','Passes clés',0],['Through Balls','Passes en profondeur',0],['Touches Inside Box','Touches dans la surface',0],['Crosses','Centres',0],['Dribbles','Dribbles',0],['Corners','Corners',0],['Free Kicks from Attacking Third','Coups francs offensifs',0],['xGs','xG par tir',3]].map(([k,t,d])=>miniBars(k,t,d,'#4d6bff')).join('')}</div>
+  <div class="mgrid mt">${[['Passes Into Attacking Third','Passes vers le tiers offensif',0],['Key Passes','Passes clés',0],['Through Balls','Passes en profondeur',0],['Touches Inside Box','Touches dans la surface',0],['Crosses','Centres',0],['Dribbles','Dribbles',0],['Corners','Corners',0],['Free Kicks from Attacking Third','Coups francs offensifs',0],['xGs','xG par tir',3]].map(([k,t,d],i)=>miniBars(k,t,d,MINI_PAL[i%MINI_PAL.length])).join('')}</div>
   <div class="sect"><h1>Les joueurs</h1><span>Valeurs par 90 minutes</span></div>
   ${minCtl()}
   <div class="grid g4">
@@ -719,7 +720,7 @@ function renderDef(){
   <div class="sect"><h1>L'équipe</h1><span>Totaux par match</span></div>
   <div class="grid g2">${stacked('Hauteur du pressing','Pressions en camp adverse et dans son propre camp',[{k:'Pressures in Attacking Half',l:'Camp adverse',c:'#d5a450'},{k:'pLow',l:'Propre camp',c:'#4d6bff'}])}
   ${stacked('Duels disputés','Duels aériens et au sol',[{k:'All Aerials',l:'Aériens',c:'#d5a450'},{k:'Non Aerial Duels',l:'Au sol',c:'#4d6bff'}])}</div>
-  <div class="mgrid mt">${[['Pressures','Pressions',0],['Counterpressures','Contre-pressings',0],['Pressured Passes in Defensive Third','Passes sous pression (tiers défensif)',0],['Ball Recoveries','Récupérations',0],['Tackles','Tacles',0],['Interceptions','Interceptions',0],['Blocked Shots','Tirs contrés',0],['Clearances','Dégagements',0],['Dribbled Past','Dribbles subis',0],['Fouls','Fautes commises',0],['Fouls Won','Fautes obtenues',0],['pHalf','Pressions en camp adverse (%)',0]].map(([k,t,d])=>miniBars(k,t,d,'#d5a450')).join('')}</div>
+  <div class="mgrid mt">${[['Pressures','Pressions',0],['Counterpressures','Contre-pressings',0],['Pressured Passes in Defensive Third','Passes sous pression (tiers défensif)',0],['Ball Recoveries','Récupérations',0],['Tackles','Tacles',0],['Interceptions','Interceptions',0],['Blocked Shots','Tirs contrés',0],['Clearances','Dégagements',0],['Dribbled Past','Dribbles subis',0],['Fouls','Fautes commises',0],['Fouls Won','Fautes obtenues',0],['pHalf','Pressions en camp adverse (%)',0]].map(([k,t,d],i)=>miniBars(k,t,d,MINI_PAL[i%MINI_PAL.length])).join('')}</div>
   <div class="sect"><h1>Les joueurs</h1><span>Valeurs par 90 minutes · gardiens exclus</span></div>
   ${minCtl()}
   <div class="grid g4">
