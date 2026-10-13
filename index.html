@@ -407,6 +407,10 @@ input[type=range]{accent-color:var(--blue)}
 .modal-snap{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:12px;background:rgba(255,255,255,.1);color:#fff;font-size:13px;font-weight:600;transition:background .25s,transform .25s var(--ease)}
 .modal-snap:hover{background:rgba(255,255,255,.2);transform:translateY(-1px)}.modal-snap:active{scale:.97}
 .modal-snap[data-busy]{opacity:.6;pointer-events:none}
+
+.cardsnap{position:absolute;right:52px;top:12px;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:#fff;opacity:0;transition:opacity .3s,background .25s,transform .25s var(--ease);z-index:3;cursor:pointer}
+.zoomable:hover .cardsnap,.cardsnap:focus-visible{opacity:1}.cardsnap:hover{background:rgba(255,255,255,.24);transform:scale(1.08)}.cardsnap:active{scale:.94}.cardsnap[data-busy]{opacity:1;animation:pulse 1s infinite}
+@media(hover:none){.cardsnap,.zoomhint{opacity:.75}}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
@@ -1465,32 +1469,33 @@ function openPillar(i,origin){const g=PILLARS[i],first=MS[0],last=MS[MS.length-1
   openModal(`<div class="mhead"><span class="dotc" style="background:${g.c}"></span><div><h2>${g.t}</h2><p>Les barres montrent la valeur de chaque match, les pointillés la moyenne. « Évolution » compare le premier et le dernier match du rassemblement ; « étendue » est l'écart entre le match le plus bas et le plus haut.</p></div></div><div class="mgr">${cards}</div>`,'wide',origin)}
 /* graphiques : un clic les agrandit */
 function enableZoom(root){(root||document).querySelectorAll('.card').forEach(c=>{if(c.classList.contains('zoomable')||c.classList.contains('pill')||c.classList.contains('key')||c.closest('.modal'))return;
-  const sv=[...c.querySelectorAll('svg[viewBox]')].find(x=>x.getAttribute('width')==='100%');if(!sv)return;c.classList.add('zoomable');c.insertAdjacentHTML('beforeend','<span class="zoomhint" aria-hidden="true">⤢</span>')})}
+  const sv=[...c.querySelectorAll('svg[viewBox]')].find(x=>x.getAttribute('width')==='100%');if(!sv)return;c.classList.add('zoomable');c.insertAdjacentHTML('beforeend','<button class="cardsnap" type="button" aria-label="Enregistrer en image" title="Enregistrer en image">'+CAM+'</button><span class="zoomhint" aria-hidden="true">⤢</span>')})}
 document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest('.zoomable');if(!c||c.closest('.modal')||e.target.closest('select,button,a,input,label'))return;
-  const cl=c.cloneNode(true);cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));cl.querySelectorAll('.zoomhint').forEach(x=>x.remove());cl.classList.remove('zoomable','mt');openModal(cl.outerHTML,'zoom',c)});
+  const cl=c.cloneNode(true);cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));cl.querySelectorAll('.zoomhint,.cardsnap').forEach(x=>x.remove());cl.classList.remove('zoomable','mt');openModal(cl.outerHTML,'zoom',c)});
 (function(){let t;const m=document.querySelector('main');if(!m||!window.MutationObserver)return;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(()=>enableZoom(m),80)}).observe(m,{childList:true,subtree:true})})();
 
 
-/* capture haute résolution du graphique agrandi */
-async function snapModal(btn){
-  const box=document.querySelector('.modal-box');if(!box||btn.dataset.busy)return;btn.dataset.busy=1;const lab=btn.querySelector('span'),old=lab.textContent;lab.textContent='…';
+/* capture haute résolution d'un graphique (carte ou fenêtre agrandie) */
+async function snapNode(node,btn){
+  if(!node||(btn&&btn.dataset.busy))return;const lab=btn&&btn.querySelector('span'),old=lab&&lab.textContent;if(btn){btn.dataset.busy=1;if(lab)lab.textContent='…'}
   try{
-    await loadLib('h2c');
-    const w=document.createElement('div');w.style.cssText=`position:fixed;left:-12000px;top:0;width:${Math.min(box.clientWidth,1180)}px;padding:30px 32px 22px;background:linear-gradient(145deg,#0b2ba3,#010a45);color:#fdfdfe;font-family:Inter,system-ui,sans-serif`;
-    const cl=box.cloneNode(true);cl.style.cssText='position:static;width:100%;max-height:none;overflow:visible;padding:0;background:none;border:0;box-shadow:none;animation:none;transform:none';
-    cl.querySelectorAll('.modal-tools').forEach(x=>x.remove());cl.querySelectorAll('.mrise,.rise,.zoomhint').forEach(x=>{x.classList.remove('mrise','rise');x.style.animation='none'});
-    cl.querySelectorAll('*').forEach(x=>{x.style.animation='none'});
-    const title=(cl.querySelector('h3,h2')||{}).textContent||'graphique';
-    const foot=document.createElement('div');foot.style.cssText='margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.18);display:flex;justify-content:space-between;font-size:12px;color:#aebcf2';foot.innerHTML=`<span>${TEAM==='France'?'Équipe de France':TEAM} · Data Room</span><span>${todayFR()}</span>`;
-    w.appendChild(cl);w.appendChild(foot);document.body.appendChild(w);
-    try{await document.fonts.ready}catch(e){}
-    const canvas=await html2canvas(w,{scale:3,backgroundColor:'#010a45',logging:false,useCORS:true});w.remove();
+    await loadLib('h2c');const modal=node.classList.contains('modal-box'),width=Math.min(node.clientWidth||900,1180);
+    const w=document.createElement('div');w.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;padding:${modal?'30px 32px 22px':'26px 28px 20px'};background:linear-gradient(145deg,#0b2ba3,#010a45);color:#fdfdfe;font-family:Inter,system-ui,sans-serif`;
+    const cl=node.cloneNode(true);cl.style.cssText='position:static;width:100%;max-height:none;overflow:visible;padding:0;background:none;border:0;box-shadow:none;animation:none;transform:none;margin:0;backdrop-filter:none';cl.classList.remove('zoomable','mt','rise');
+    cl.querySelectorAll('.modal-tools,.zoomhint,.cardsnap').forEach(x=>x.remove());cl.querySelectorAll('.mrise,.rise').forEach(x=>x.classList.remove('mrise','rise'));cl.querySelectorAll('*').forEach(x=>{x.style.animation='none'});
+    cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));
+    const title=((cl.querySelector('h3,h2,.mt1')||{}).textContent||'graphique').trim();
+    const foot=document.createElement('div');foot.style.cssText='margin-top:16px;padding-top:11px;border-top:1px solid rgba(255,255,255,.18);display:flex;justify-content:space-between;font-size:12px;color:#aebcf2';foot.innerHTML=`<span>${TEAM==='France'?'Équipe de France':TEAM} · Data Room</span><span>${todayFR()}</span>`;
+    w.appendChild(cl);w.appendChild(foot);document.body.appendChild(w);try{await document.fonts.ready}catch(e){}
+    const canvas=await html2canvas(w,{scale:width<520?4:3,backgroundColor:'#010a45',logging:false,useCORS:true});w.remove();
     const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
     await saveFile(`${slug(title)}-${todayISO()}.png`,blob,'image/png');
   }catch(e){toast('Image impossible : '+((e&&e.message)||'erreur'))}
-  finally{lab.textContent=old;delete btn.dataset.busy}
+  finally{if(btn){if(lab)lab.textContent=old;delete btn.dataset.busy}}
 }
-
+const snapModal=btn=>snapNode(document.querySelector('.modal-box'),btn);
+const CAM='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" fill="currentColor"/></svg>';
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.cardsnap');if(!b)return;e.stopPropagation();snapNode(b.closest('.card'),b)},true);
 /* ============ router ============ */
 function emptyState(){return `<div class="drop" onclick="S.tab='data';sync()"><div class="ic">📂</div><h3>Aucune donnée à afficher</h3><p>Importez d'abord un fichier des matchs et un fichier des joueurs.</p><div style="margin-top:16px"><button class="btn">Aller à l'import</button></div></div>`}
 let skT;
