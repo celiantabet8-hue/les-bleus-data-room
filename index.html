@@ -339,6 +339,10 @@ input[type=range]{accent-color:var(--blue)}
 
 .key .keyfoot{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}.key .nx{font-size:12px;color:var(--mu)}.key .nx b{color:#fff;font-size:12px}
 .key .k2{margin-top:10px}
+
+.xa{display:block;padding:6px 12px 10px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
+.xa input{display:block;width:100%;margin-top:6px;padding:9px 12px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:13px;letter-spacing:0;text-transform:none}
+.xa input:focus{outline:2px solid var(--blue);outline-offset:1px}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
@@ -359,7 +363,7 @@ input[type=range]{accent-color:var(--blue)}
     <button data-t="player">Joueur</button>
     <button data-t="data">Importer</button>
   </nav>
-  <div class="xp" id="xp" hidden><button class="btn" id="xbtn" aria-haspopup="true">Exporter ⬇</button><div class="xmenu" id="xmenu" hidden><div class="xh" id="xh"></div><button data-f="pdf">PDF<span>Rapport prêt à envoyer</span></button><button data-f="pptx">PowerPoint<span>Présentation modifiable, tableaux et graphiques inclus</span></button><button data-f="csv">Excel (CSV)<span>Tableau de données brutes</span></button></div></div>
+  <div class="xp" id="xp" hidden><button class="btn" id="xbtn" aria-haspopup="true">Exporter ⬇</button><div class="xmenu" id="xmenu" hidden><div class="xh" id="xh"></div><label class="xa">Auteur du rapport<input id="xauthor" type="text" placeholder="Votre nom (optionnel)" maxlength="60" autocomplete="name"></label><button data-f="pdf">PDF<span>Rapport prêt à envoyer</span></button><button data-f="pptx">PowerPoint<span>Présentation modifiable, tableaux et graphiques inclus</span></button><button data-f="csv">Excel (CSV)<span>Tableau de données brutes</span></button></div></div>
   <div class="hr"><b id="hrange"></b><br><span id="nm"></span> matchs · <span id="np"></span> joueurs</div>
 </div></header>
 
@@ -893,7 +897,7 @@ function topN(k,filter,asc){return SQUAD.filter(p=>p.Minutes>=S.minMin&&p[k]!=nu
 function rLead(title,k,sub,filter,asc){const dg=PMI[k]?PMI[k][3]:2;return `<div class="card lb"><h3>${title}</h3><div class="sub">${sub}</div><ol>${topN(k,filter,asc).map(p=>`<li><span>${p.Player}<em>${p.Pos}</em></span><b>${p[k].toFixed(dg)}</b></li>`).join('')}</ol></div>`}
 function pRows(cols,filter){const f=filter||(()=>true);return SQUAD.filter(p=>p.Minutes>=S.minMin&&f(p)).sort((a,b)=>(b[cols[0]]??-1e9)-(a[cols[0]]??-1e9))}
 function rPlayers(cols,filter){const rows=pRows(cols,filter);return rTable(['Joueur','Poste','Min',...cols.map(k=>PMI[k][2])],rows.map(p=>[`${p.Player}`,p.Pos,p.Minutes.toFixed(0),...cols.map(k=>{const pc=p.Pos==='GB'?null:pctOf(k,p,INV.has(k)||k==='Fouls');return `<span class="cl" style="background:${colorPct(pc)}">${p[k]==null?'–':p[k].toFixed(PMI[k][3])}</span>`})]))}
-const light=s=>toLight(s);
+let REP_DARK=false;const light=s=>REP_DARK?s:toLight(s);
 function withAll(fn){const sm=S.match;S.match='all';try{return fn()}finally{S.match=sm}}
 const xgLight=()=>light(withAll(xgChart));
 const card=(t,sub,inner)=>`<div class="card"><h3>${t}</h3><div class="sub">${sub}</div>${inner}</div>`;
@@ -949,9 +953,16 @@ table.rt{width:100%;border-collapse:collapse;font-size:12px}.rt th{background:#0
 .ins{padding:7px 0;border-bottom:1px solid #e6e9f7;font-size:13px}.note{background:#fff8ea;border:1px solid #efd9a8;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#6b5320;margin-top:12px}
 svg{max-width:100%;height:auto}footer{padding:14px 34px;color:#6a77b8;font-size:11px;border-top:1px solid #dfe4f5}
 @media print{.noprint{display:none}main{padding:6px 0 20px}.hd{padding:14px 20px}@page{margin:11mm}}`;
-function buildReport(sec){
-  const r=REP[sec]();const title=r.title||SEC_NAME[sec];const team=TEAM==='France'?"Équipe de France":TEAM;
-  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${team} · ${title}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"><style>${REP_CSS}</style></head><body><div class="hd"><img src="${LOGO}" alt=""><div><h1>${team} · ${title}</h1><p>${r.sub}</p></div><button class="pb noprint" onclick="print()">Imprimer / PDF</button></div><main>${r.body}</main><footer>Récapitulatif généré le ${todayFR()} · Les Bleus Data Room · OBV = On-Ball Value, xG = buts attendus, valeurs joueurs par 90 minutes.</footer></body></html>`;
+const REP_CSS_DARK=`:root{--mu:#a9b5ec;--mu2:#7d8bd0;--line:#1a2fa0}body{background:#010a45;color:#fdfdfe}
+h2{color:#fdfdfe;border-bottom:2px solid #d5a450}.kp div{background:#011682;border-color:#1f33a8}.kp small{color:#a9b5ec}.kp b{color:#fdfdfe}.kp span{color:#a9b5ec}
+table.rt th{background:#d5a450;color:#010a45}.rt th span{color:#4a3510}.rt td{border-bottom:1px solid #1a2fa0;color:#fdfdfe}.rt tr.grp td{background:#011682;color:#ffd98a}
+.card{background:#011682;border-color:#1f33a8}.card h3{color:#fdfdfe}.sub{color:#a9b5ec}.lb li{border-bottom-color:#1a2fa0}.lb em{color:#a9b5ec}.ins{border-bottom-color:#1a2fa0;color:#fdfdfe}.ins b{color:#ffd98a}
+.note{background:#0a1f8f;border-color:#2b3fb0;color:#ffd98a}main{padding-top:6px}`;
+function buildReport(sec,opt){
+  opt=opt||{};REP_DARK=!!opt.dark;let r;try{r=REP[sec]()}finally{REP_DARK=false}
+  const title=r.title||SEC_NAME[sec];const team=TEAM==='France'?"Équipe de France":TEAM;
+  const css=REP_CSS+(opt.dark?REP_CSS_DARK:'');
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${team} · ${title}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body>${opt.noHeader?'':`<div class="hd"><img src="${LOGO}" alt=""><div><h1>${team} · ${title}</h1><p>${r.sub}</p></div><button class="pb noprint" onclick="print()">Imprimer / PDF</button></div>`}<main>${r.body}</main>${opt.noHeader?'':`<footer>Récapitulatif généré le ${todayFR()} · Les Bleus Data Room · OBV = On-Ball Value, xG = buts attendus, valeurs joueurs par 90 minutes.</footer>`}</body></html>`;
 }
 const csvQ=v=>{if(v==null)return '';if(typeof v==='number')return String(+v.toFixed(4)).replace('.',',');v=String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
 const csvOut=rows=>'﻿'+rows.map(r=>r.map(csvQ).join(';')).join('\r\n');
@@ -976,115 +987,183 @@ async function saveFile(name,data,mime){
 const LIBS={h2c:'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',pdf:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',pptx:'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'},LIBP={};
 function loadLib(k){return LIBP[k]||(LIBP[k]=new Promise((res,rej)=>{const e=document.createElement('script');e.src=LIBS[k];e.onload=res;e.onerror=()=>{delete LIBP[k];rej(new Error('bibliothèque indisponible (connexion ?)'))};document.head.appendChild(e)}))}
 let LOGOPNG;function logoPNG(){return LOGOPNG||(LOGOPNG=new Promise(res=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');c.width=360;c.height=Math.round(360*i.naturalHeight/i.naturalWidth)||592;c.getContext('2d').drawImage(i,0,0,c.width,c.height);res(c.toDataURL('image/png'))};i.onerror=()=>res(null);i.src=LOGO}))}
-/* ---- PDF : rapport capturé bloc par bloc, sans coupure au milieu d'un tableau court ---- */
+/* ---- identité du rapport ---- */
+const REPORT_TITLE={home:"Vue d'ensemble",off:'Analyse offensive',def:'Analyse défensive',team:'Analyse match par match',squad:"Analyse de l'effectif"};
+const reportTitle=sec=>sec==='player'?'Fiche joueur · '+S.player:REPORT_TITLE[sec];
+const getAuthor=()=>{try{return (localStorage.getItem('lb-author')||'').trim()}catch(e){return ''}};
+const periodTxt=sep=>MS.length+' matchs · '+dfmt(MS[0].date)+sep+dfmt(MS[MS.length-1].date);
+const rgb=h=>[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
+const PD={bg:'010A45',card:'011682',card2:'0A1D8F',deep:'010F66',line:'1A2FA0',line2:'2B3FB0',tx:'FDFDFE',mu:'A9B5EC',mu2:'7D8BD0',blue:'4D6BFF',red:'ED1E24',gold:'D5A450',gold2:'FFD98A'};
+/* ---- PDF : couverture, sommaire, puis pages de données sombres ---- */
 async function buildPdf(sec){
-  await Promise.all([loadLib('h2c'),loadLib('pdf')]);
+  await Promise.all([loadLib('h2c'),loadLib('pdf')]);const logo=await logoPNG();
   const fr=document.createElement('iframe');fr.style.cssText='position:fixed;left:-12000px;top:0;width:1100px;height:900px;border:0';document.body.appendChild(fr);
   try{
-    await new Promise(res=>{fr.onload=res;fr.srcdoc=buildReport(sec)});
+    await new Promise(res=>{fr.onload=res;fr.srcdoc=buildReport(sec,{dark:true,noHeader:true})});
     const d=fr.contentDocument;try{await d.fonts.ready}catch(e){}await new Promise(r=>setTimeout(r,300));
-    d.querySelector('.pb')&&d.querySelector('.pb').remove();
-    const hd=d.querySelector('.hd'),main=d.querySelector('main');
-    main.querySelectorAll('table.rt').forEach(t=>{const rows=[...t.tBodies[0].rows];if(rows.length<=15)return;const th=t.tHead.outerHTML,fr2=d.createDocumentFragment();
-      for(let i=0;i<rows.length;i+=15){const nt=d.createElement('table');nt.className='rt';nt.innerHTML=th+'<tbody></tbody>';rows.slice(i,i+15).forEach(r=>nt.tBodies[0].appendChild(r));fr2.appendChild(nt)}t.parentNode.replaceChild(fr2,t)});
+    const main=d.querySelector('main');
+    main.querySelectorAll('table.rt').forEach(t=>{const rows=[...t.tBodies[0].rows];if(rows.length<=14)return;const th=t.tHead.outerHTML,fr2=d.createDocumentFragment();
+      for(let i=0;i<rows.length;i+=14){const nt=d.createElement('table');nt.className='rt';nt.innerHTML=th+'<tbody></tbody>';rows.slice(i,i+14).forEach(r=>nt.tBodies[0].appendChild(r));fr2.appendChild(nt)}t.parentNode.replaceChild(fr2,t)});
     const groups=[];let cur=null;[...main.children].forEach(el=>{if(!cur||el.tagName==='H2'||(el.matches('table.rt')&&cur.some(x=>x.matches('table.rt')))){cur=[];groups.push(cur)}cur.push(el)});
-    const wraps=groups.map(g=>{const w=d.createElement('div');w.style.cssText='background:#fff;padding:2px 0 6px';main.insertBefore(w,g[0]);g.forEach(e=>w.appendChild(e));return w});
-    const cap=el=>html2canvas(el,{scale:2,backgroundColor:'#ffffff',logging:false,useCORS:true});
-    const J=window.jspdf.jsPDF,doc=new J({orientation:'landscape',unit:'mm',format:'a4'}),W=297,H=210,M=10,CW=W-2*M,maxH=H-M-14;
-    const hc=await cap(hd);const hh=hc.height*W/hc.width;doc.addImage(hc.toDataURL('image/jpeg',.92),'JPEG',0,0,W,hh);let y=hh+4;
+    const wraps=groups.map(g=>{const w=d.createElement('div');w.style.cssText='background:#010a45;padding:2px 0 8px';const h=g.find(x=>x.tagName==='H2');w._sec=h?h.textContent:null;main.insertBefore(w,g[0]);g.forEach(e=>w.appendChild(e));return w});
+    const cap=el=>html2canvas(el,{scale:2,backgroundColor:'#010a45',logging:false,useCORS:true});
+    const J=window.jspdf.jsPDF,doc=new J({orientation:'landscape',unit:'mm',format:'a4'}),W=297,H=210,M=12,CW=W-2*M,TOP=24,BOT=H-14,maxH=BOT-TOP;
+    const fill=h=>{const c=rgb(h);doc.setFillColor(c[0],c[1],c[2])},stroke=h=>{const c=rgb(h);doc.setDrawColor(c[0],c[1],c[2])},ink=h=>{const c=rgb(h);doc.setTextColor(c[0],c[1],c[2])};
+    const bg=()=>{fill(PD.bg);doc.rect(0,0,W,H,'F')};
+    const team=TEAM==='France'?'Équipe de France':TEAM,rt=reportTitle(sec),author=getAuthor();
+    /* page 1 : couverture */
+    bg();stroke(PD.line2);doc.setLineWidth(.35);doc.circle(255,45,105,'S');doc.circle(255,45,70,'S');doc.circle(255,45,34,'S');doc.line(255,0,255,H);doc.rect(205,128,92,72,'S');doc.rect(238,162,59,38,'S');
+    fill(PD.card);doc.circle(255,45,3.2,'F');
+    if(logo)doc.addImage(logo,'PNG',24,38,40,66);
+    ink(PD.gold);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(team.toUpperCase()+'  ·  ANALYSE VIDÉO',78,56,{charSpace:1.2});
+    ink(PD.tx);doc.setFontSize(38);const tl=doc.splitTextToSize(rt,170);doc.text(tl,78,72);
+    const ty=72+tl.length*14;fill(PD.gold);doc.rect(78,ty-4,26,1.4,'F');
+    ink(PD.mu);doc.setFont('helvetica','normal');doc.setFontSize(14);doc.text(periodTxt(' au '),78,ty+9);
+    doc.setFontSize(11);doc.text('Généré le '+todayFR(),78,ty+19);if(author){ink(PD.tx);doc.text('Préparé par '+author,78,ty+26)}
+    fill(PD.gold);doc.rect(0,H-6,W,6,'F');
+    /* page 2 : sommaire (rempli à la fin) */
+    doc.addPage();bg();
+    /* pages de données */
+    let page=2;const newPage=()=>{doc.addPage();bg();page++;return TOP};let y=newPage();const toc=[];
+    const put=(c,x,yy,w,h)=>doc.addImage(c.toDataURL('image/jpeg',.92),'JPEG',x,yy,w,h);
     for(const w of wraps){
-      const c=await cap(w);const h=c.height*CW/c.width;
-      if(h<=maxH){const room=H-14-y;if(y+h>H-14){const f=room/h;if(f>=.68){doc.addImage(c.toDataURL('image/jpeg',.92),'JPEG',M+(CW-CW*f)/2,y,CW*f,room);y+=room+3;continue}doc.addPage();y=M}doc.addImage(c.toDataURL('image/jpeg',.92),'JPEG',M,y,CW,h);y+=h+3}
-      else{const sl=Math.floor(maxH*c.width/CW);for(let t=0;t<c.height;t+=sl){const sh=Math.min(sl,c.height-t),k=document.createElement('canvas');k.width=c.width;k.height=sh;const g2=k.getContext('2d');g2.fillStyle='#fff';g2.fillRect(0,0,k.width,k.height);g2.drawImage(c,0,t,c.width,sh,0,0,c.width,sh);doc.addPage();doc.addImage(k.toDataURL('image/jpeg',.92),'JPEG',M,M,CW,sh*CW/c.width);y=M+sh*CW/c.width+3}}
+      const c=await cap(w),h=c.height*CW/c.width;
+      if(w._sec&&!toc.find(t=>t.n===w._sec))toc.push({n:w._sec,p:null,tmp:true});
+      const markPage=()=>{if(w._sec){const t=toc.find(q=>q.n===w._sec);if(t&&t.p==null)t.p=page}};
+      if(h<=maxH){const room=BOT-y;
+        if(y+h>BOT){const f=room/h;if(f>=.7){markPage();put(c,M+(CW-CW*f)/2,y,CW*f,room);y+=room+3;continue}y=newPage()}
+        markPage();put(c,M,y,CW,h);y+=h+3}
+      else{const sl=Math.floor(maxH*c.width/CW);for(let t=0;t<c.height;t+=sl){const sh=Math.min(sl,c.height-t),k=document.createElement('canvas');k.width=c.width;k.height=sh;const g2=k.getContext('2d');g2.fillStyle='#010a45';g2.fillRect(0,0,k.width,k.height);g2.drawImage(c,0,t,c.width,sh,0,0,c.width,sh);y=newPage();markPage();put(k,M,TOP,CW,sh*CW/c.width);y=TOP+sh*CW/c.width+3}}
     }
-    const n=doc.getNumberOfPages();for(let i=1;i<=n;i++){doc.setPage(i);doc.setFontSize(8);doc.setTextColor(106,119,184);doc.text('Les Bleus Data Room · '+todayFR(),M,H-5);doc.text(i+' / '+n,W-M,H-5,{align:'right'})}
+    /* sommaire */
+    doc.setPage(2);ink(PD.gold);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('CONTENU DU RAPPORT',24,38,{charSpace:1.2});
+    ink(PD.tx);doc.setFontSize(34);doc.text('Sommaire',24,54);fill(PD.gold);doc.rect(24,58,22,1.2,'F');
+    toc.forEach((t,i)=>{const yy=82+i*17;ink(PD.gold);doc.setFont('helvetica','bold');doc.setFontSize(20);doc.text(String(i+1).padStart(2,'0'),24,yy);
+      ink(PD.tx);doc.setFont('helvetica','normal');doc.setFontSize(16);doc.text(t.n,46,yy);stroke(PD.line2);doc.setLineWidth(.2);doc.line(46,yy+4,W-24,yy+4);
+      ink(PD.gold);doc.setFont('helvetica','bold');doc.text(String(t.p||3),W-24,yy,{align:'right'})});
+    if(logo)doc.addImage(logo,'PNG',W-46,22,12,19.7);
+    /* en-têtes et pieds de page */
+    const n=doc.getNumberOfPages();for(let i=2;i<=n;i++){doc.setPage(i);doc.setFont('helvetica','normal');doc.setFontSize(8.5);ink(PD.mu2);doc.text(team+'  ·  '+rt,M,H-6);doc.text(i+' / '+n,W-M,H-6,{align:'right'});
+      if(i>2){fill(PD.gold);doc.rect(M,10,10,1,'F');ink(PD.mu);doc.setFontSize(9);doc.text(rt.toUpperCase(),M+14,11.6,{charSpace:.8});if(logo)doc.addImage(logo,'PNG',W-M-6,6,6,9.9)}}
     return doc.output('blob');
   }finally{fr.remove()}
 }
-/* ---- PowerPoint : tableaux et graphiques natifs, modifiables ---- */
-const PC={navy:'011682',blue:'0827A0',lblue:'4D6BFF',red:'ED1E24',gold:'D5A450',white:'FDFDFE',mu:'4A58A8',line:'E6E9F7',lt:'F3F5FD',tx:'0A1450'};
+/* ---- PowerPoint : couverture, sommaire, diapositives de données, tout modifiable ---- */
 const strip=h=>String(h).replace(/<[^>]+>/g,'');
 async function buildPptx(sec){
   await loadLib('pptx');const logo=await logoPNG();
-  const pptx=new PptxGenJS();pptx.layout='LAYOUT_WIDE';pptx.author='Les Bleus Data Room';
-  const team=TEAM==='France'?'Équipe de France':TEAM,name=sec==='player'?S.player:SEC_NAME[sec];pptx.title=team+' · '+name;
-  const F='Calibri';
-  const slide=(title,sub)=>{const s=pptx.addSlide();s.background={color:'FFFFFF'};
-    s.addShape(pptx.ShapeType.rect,{x:0,y:0,w:13.33,h:1.0,fill:{color:PC.navy},line:{color:PC.navy}});
-    s.addShape(pptx.ShapeType.rect,{x:0,y:1.0,w:13.33,h:0.06,fill:{color:PC.gold},line:{color:PC.gold}});
-    s.addText(title,{x:0.5,y:0.12,w:11,h:0.52,fontSize:26,bold:true,color:PC.white,fontFace:F});
-    if(sub)s.addText(sub,{x:0.5,y:0.6,w:11,h:0.32,fontSize:12,color:'C3CCF5',fontFace:F});
-    if(logo)s.addImage({data:logo,x:12.4,y:0.1,w:0.5,h:0.82});
-    s.addText('Les Bleus Data Room · '+todayFR(),{x:0.5,y:7.1,w:8,h:0.3,fontSize:9,color:PC.mu,fontFace:F});
-    s.slideNumber={x:12.4,y:7.1,w:0.5,h:0.3,fontSize:9,color:PC.mu,fontFace:F};return s};
-  const cell=(t,o={})=>({text:String(t),options:{fontFace:F,fontSize:10.5,color:PC.tx,...o}});
-  const tbl=(s,head,rows,o={})=>{const n=head.length,w=o.w||12.3,first=o.first||Math.min(3.4,w*.3),rest=(w-first)/(n-1);
-    const data=[head.map((h,i)=>cell(strip(h),{bold:true,color:PC.white,fill:{color:PC.navy},align:i?'right':'left',fontSize:o.fs||10.5})),...rows.map((r,ri)=>r.h?[{text:r.h,options:{colspan:n,bold:true,fontFace:F,fontSize:o.fs||10.5,color:PC.navy,fill:{color:'EEF1FC'}}}]:r.map((c,i)=>cell(strip(c),{align:i?'right':'left',fill:{color:ri%2?PC.lt:'FFFFFF'},fontSize:o.fs||10.5})))];
-    s.addTable(data,{x:o.x??0.5,y:o.y??1.35,w,colW:[first,...Array(n-1).fill(rest)],rowH:o.rowH||0.3,border:{type:'solid',pt:0.5,color:PC.line},margin:[0.03,0.08,0.03,0.08]})};
-  const chunks=(a,k)=>{const o=[];for(let i=0;i<a.length;i+=k)o.push(a.slice(i,i+k));return o};
-  const tiles=(s,items,y0=1.5)=>items.forEach(([l,v,sub],i)=>{const cols=3,x=0.5+(i%cols)*4.15,y=y0+Math.floor(i/cols)*2.55;
-    s.addShape(pptx.ShapeType.roundRect,{x,y,w:3.95,h:2.3,fill:{color:PC.lt},line:{color:PC.line,width:1},rectRadius:0.12});
-    s.addShape(pptx.ShapeType.rect,{x,y:y+0.1,w:0.07,h:2.1,fill:{color:[PC.red,PC.lblue,PC.gold][i%3]},line:{color:[PC.red,PC.lblue,PC.gold][i%3]}});
-    s.addText(String(l).toUpperCase(),{x:x+0.3,y:y+0.2,w:3.5,h:0.35,fontSize:11,color:PC.mu,bold:true,fontFace:F,charSpacing:1});
-    s.addText(String(v),{x:x+0.3,y:y+0.65,w:3.5,h:0.95,fontSize:44,bold:true,color:PC.navy,fontFace:F});
-    s.addText(String(sub||''),{x:x+0.3,y:y+1.65,w:3.5,h:0.4,fontSize:12,color:PC.mu,fontFace:F})});
+  const pptx=new PptxGenJS();pptx.layout='LAYOUT_WIDE';pptx.author=getAuthor()||'Les Bleus Data Room';
+  const team=TEAM==='France'?'Équipe de France':TEAM,rt=reportTitle(sec),author=getAuthor(),F='Calibri',FH='Calibri';pptx.title=team+' · '+rt;
+  const tot=k=>sum(MS.map(m=>m[k])),a=k=>mAvg(k),first=MS[0],last=MS[MS.length-1];
+  const slides=[],sl=(section,title,sub,draw)=>slides.push({section,title,sub,draw});
+  const chunks=(arr,k)=>{const o=[];for(let i=0;i<arr.length;i+=k)o.push(arr.slice(i,i+k));return o};
+  const cell=(t,o={})=>({text:String(t),options:{fontFace:F,fontSize:11,color:PD.tx,...o}});
+  const tbl=(s,head,rows,o={})=>{const n=head.length,w=o.w||12.3,first2=o.first||Math.min(3.4,w*.3),rest=(w-first2)/(n-1),fs=o.fs||11;
+    const data=[head.map((h,i)=>cell(strip(h),{bold:true,color:PD.bg,fill:{color:PD.gold},align:i?'right':'left',fontSize:fs})),
+      ...rows.map((r,ri)=>r.h?[{text:r.h,options:{colspan:n,bold:true,fontFace:F,fontSize:fs,color:PD.gold2,fill:{color:PD.card}}}]:r.map((c,i)=>cell(strip(c),{align:i?'right':'left',fill:{color:ri%2?PD.deep:PD.card},fontSize:fs})))];
+    s.addTable(data,{x:o.x??0.5,y:o.y??1.6,w,colW:[first2,...Array(n-1).fill(rest)],rowH:o.rowH||0.34,border:{type:'solid',pt:0.5,color:PD.line},margin:[0.03,0.1,0.03,0.1]})};
+  const tableSlides=(section,title,sub,head,rows,o={})=>{const rh=o.rowH||0.34,per=o.per||Math.floor((6.75-1.6-0.42)/rh);chunks(rows,per).forEach((c,i,all)=>sl(section,title+(all.length>1?` (${i+1}/${all.length})`:''),sub,s=>tbl(s,head,c,o)))};
+  const tiles=(s,items,y0=1.65)=>items.forEach(([l,v,sb],i)=>{const x=0.5+(i%3)*4.15,y=y0+Math.floor(i/3)*2.55,ac=[PD.red,PD.blue,PD.gold][i%3];
+    s.addShape(pptx.ShapeType.roundRect,{x,y,w:3.95,h:2.3,fill:{color:PD.card},line:{color:PD.line2,width:1},rectRadius:0.14});
+    s.addShape(pptx.ShapeType.rect,{x:x+0.28,y:y+0.28,w:0.5,h:0.05,fill:{color:ac},line:{color:ac}});
+    s.addText(String(l).toUpperCase(),{x:x+0.28,y:y+0.4,w:3.5,h:0.35,fontSize:11,color:PD.mu,bold:true,fontFace:F,charSpacing:2});
+    s.addText(String(v),{x:x+0.28,y:y+0.8,w:3.5,h:0.95,fontSize:46,bold:true,color:PD.tx,fontFace:FH});
+    s.addText(String(sb||''),{x:x+0.28,y:y+1.72,w:3.5,h:0.4,fontSize:12,color:PD.mu,fontFace:F})});
   const lab=MS.map(m=>mlab(m)+' ('+(m.home?'dom.':'ext.')+')');
-  const copt={showLegend:true,legendPos:'b',legendFontSize:11,legendColor:PC.tx,catAxisLabelFontSize:11,catAxisLabelColor:PC.tx,valAxisLabelFontSize:10,valAxisLabelColor:PC.mu,valGridLine:{color:PC.line,size:0.5},showValue:true,dataLabelFontSize:10,dataLabelColor:PC.tx,barDir:'col'};
-  const xgChartPpt=(s,x,y,w,h)=>s.addChart(pptx.charts.BAR,[{name:'xG créés',labels:lab,values:MS.map(m=>+m['Cumulative xG'].toFixed(2))},{name:'Buts marqués',labels:lab,values:MS.map(m=>m['Goals & Penalty Goals'])}],{x,y,w,h,...copt,barGrouping:'clustered',chartColors:[PC.lblue,PC.red],dataLabelFormatCode:'0.0',showTitle:true,title:'xG créés vs buts marqués',titleFontSize:13,titleColor:PC.navy});
-  const stackPpt=(s,x,y,w,h,title,parts)=>s.addChart(pptx.charts.BAR,parts.map(q=>({name:q.l,labels:lab,values:MS.map(m=>m[q.k])})),{x,y,w,h,...copt,barGrouping:'stacked',chartColors:parts.map(q=>q.c),dataLabelColor:'FFFFFF',dataLabelFormatCode:'0',showTitle:true,title,titleFontSize:13,titleColor:PC.navy});
-  const mTbl=(s,list,o={})=>{const head=['Indicateur',...MS.map(m=>mlab(m)+' '+(m.home?'dom.':'ext.')),'Moy.'];tbl(s,head,mRows(list),{fs:o.fs||10.5,rowH:o.rowH||0.3,first:3.6,...o})};
+  const copt={showLegend:true,legendPos:'b',legendFontSize:12,legendColor:PD.tx,catAxisLabelFontSize:11,catAxisLabelColor:PD.tx,valAxisLabelFontSize:10,valAxisLabelColor:PD.mu,valGridLine:{color:PD.line,size:0.5},catAxisLineShow:false,valAxisLineShow:false,showValue:true,dataLabelFontSize:11,dataLabelColor:PD.tx,barDir:'col',showTitle:true,titleFontSize:14,titleColor:PD.gold2,titleFontFace:F};
+  const xgChartPpt=(s,x,y,w,h)=>s.addChart(pptx.charts.BAR,[{name:'xG créés',labels:lab,values:MS.map(m=>+m['Cumulative xG'].toFixed(2))},{name:'Buts marqués',labels:lab,values:MS.map(m=>m['Goals & Penalty Goals'])}],{x,y,w,h,...copt,barGrouping:'clustered',chartColors:[PD.blue,PD.red],dataLabelFormatCode:'0.0',title:'xG créés vs buts marqués'});
+  const stackPpt=(s,x,y,w,h,title,parts)=>s.addChart(pptx.charts.BAR,parts.map(q=>({name:q.l,labels:lab,values:MS.map(m=>m[q.k])})),{x,y,w,h,...copt,barGrouping:'stacked',chartColors:parts.map(q=>q.c),dataLabelFormatCode:'0',title});
+  const matchHead=()=>['Indicateur',...MS.map(m=>mlab(m)+' '+(m.home?'dom.':'ext.')),'Moy.'];
+  const matchTbl=(section,title,sub,list,o={})=>tableSlides(section,title,sub,matchHead(),mRows(list),{first:3.6,...o});
   const leaders=(s,boards)=>boards.forEach(([t,k,flt,asc],i)=>{const x=0.5+i*3.12,rows=topN(k,flt,asc).map(p=>[p.Player,p[k].toFixed(PMI[k][3])]);
-    s.addText(t,{x,y:1.4,w:2.95,h:0.4,fontSize:14,bold:true,color:PC.navy,fontFace:F});
-    s.addText(PMI[k][1],{x,y:1.78,w:2.95,h:0.3,fontSize:10,color:PC.mu,fontFace:F});
-    s.addTable([...rows.map((r,ri)=>[cell(r[0],{fontSize:12,fill:{color:ri%2?PC.lt:'FFFFFF'}}),cell(r[1],{fontSize:13,bold:true,align:'right',fill:{color:ri%2?PC.lt:'FFFFFF'}})])],{x,y:2.15,w:2.95,colW:[2.0,0.95],rowH:0.46,border:{type:'solid',pt:0.5,color:PC.line}})});
-  const playersSlides=(cols,flt,title)=>{const rows=pRows(cols,flt).map(p=>[p.Player,p.Pos,p.Minutes.toFixed(0),...cols.map(k=>p[k]==null?'–':p[k].toFixed(PMI[k][3]))]);
-    chunks(rows,13).forEach((c,i,a)=>{const s=slide(title+(a.length>1?` (${i+1}/${a.length})`:''),'Valeurs par 90 minutes · joueurs ≥ '+S.minMin+' min');tbl(s,['Joueur','Poste','Min',...cols.map(k=>PMI[k][2])],c,{fs:10.5,first:2.9,rowH:0.34})})};
-  // ---- cover
-  const cv=pptx.addSlide();cv.background={color:PC.navy};
-  cv.addShape(pptx.ShapeType.rect,{x:0,y:6.4,w:13.33,h:0.08,fill:{color:PC.gold},line:{color:PC.gold}});
-  if(logo)cv.addImage({data:logo,x:0.9,y:1.3,w:2.2,h:3.62});
-  cv.addText(team,{x:3.8,y:1.7,w:9,h:0.8,fontSize:22,color:'C3CCF5',fontFace:F,charSpacing:3});
-  cv.addText(name,{x:3.8,y:2.4,w:9,h:1.3,fontSize:50,bold:true,color:PC.white,fontFace:F});
-  cv.addText(MS.length+' matchs · '+dfmt(MS[0].date)+' → '+dfmt(MS[MS.length-1].date),{x:3.8,y:3.85,w:9,h:0.5,fontSize:18,color:PC.gold,fontFace:F});
-  cv.addText('Analyse vidéo · '+todayFR(),{x:3.8,y:4.4,w:9,h:0.4,fontSize:14,color:'C3CCF5',fontFace:F});
-  const tot=k=>sum(MS.map(m=>m[k])),a=k=>mAvg(k);
+    s.addShape(pptx.ShapeType.roundRect,{x,y:1.6,w:2.95,h:4.9,fill:{color:PD.card},line:{color:PD.line2,width:1},rectRadius:0.14});
+    s.addText(t,{x:x+0.2,y:1.72,w:2.6,h:0.4,fontSize:15,bold:true,color:PD.tx,fontFace:F});
+    s.addText(PMI[k][1],{x:x+0.2,y:2.08,w:2.6,h:0.3,fontSize:10,color:PD.mu,fontFace:F});
+    s.addTable(rows.map((r,ri)=>[cell(`${ri+1}`,{fontSize:12,color:PD.gold,bold:true,fill:{color:ri%2?PD.deep:PD.card}}),cell(r[0],{fontSize:12,fill:{color:ri%2?PD.deep:PD.card}}),cell(r[1],{fontSize:14,bold:true,color:ri===0?PD.gold2:PD.tx,align:'right',fill:{color:ri%2?PD.deep:PD.card}})]),{x:x+0.12,y:2.5,w:2.71,colW:[0.35,1.62,0.74],rowH:0.62,border:{type:'none'}})});
+  const playerSlides=(section,cols,flt,title)=>{const rows=pRows(cols,flt).map(p=>[p.Player,p.Pos,p.Minutes.toFixed(0),...cols.map(k=>p[k]==null?'–':p[k].toFixed(PMI[k][3]))]);
+    tableSlides(section,title,'Valeurs par 90 minutes · joueurs ≥ '+S.minMin+' min',['Joueur','Poste','Min',...cols.map(k=>PMI[k][2])],rows,{first:2.9,rowH:0.36,fs:10.5})};
+  /* ---------- contenu par rubrique ---------- */
   if(sec==='home'){
-    const first=MS[0],last=MS[MS.length-1];
-    tiles(slide('Chiffres clés',MS.length+' matchs'),[['Buts marqués',tot('Goals & Penalty Goals'),a('Goals & Penalty Goals').toFixed(1)+' par match'],['xG créés',tot('Cumulative xG').toFixed(1),a('Cumulative xG').toFixed(2)+' par match'],['Tirs',tot('Shots'),(tot('Cumulative xG')/tot('Shots')).toFixed(3)+' xG par tir'],['Pressions',tot('Pressures'),(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)+'% en camp adverse'],['Récupérations',tot('Ball Recoveries'),a('Ball Recoveries').toFixed(0)+' par match'],['Fautes commises',tot('Fouls'),tot('Fouls Won')+' subies']]);
+    sl('Chiffres clés','Chiffres clés',periodTxt(' → '),s=>tiles(s,[['Buts marqués',tot('Goals & Penalty Goals'),a('Goals & Penalty Goals').toFixed(1)+' par match'],['xG créés',tot('Cumulative xG').toFixed(1),a('Cumulative xG').toFixed(2)+' par match'],['Tirs',tot('Shots'),(tot('Cumulative xG')/tot('Shots')).toFixed(3)+' xG par tir'],['Pressions',tot('Pressures'),(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)+'% en camp adverse'],['Récupérations',tot('Ball Recoveries'),a('Ball Recoveries').toFixed(0)+' par match'],['Fautes commises',tot('Fouls'),tot('Fouls Won')+' subies']]));
     const pil=[['Attaque',[['Cumulative xG','xG créés',2],['Shots','Tirs',1],['Key Passes','Passes clés',1]]],['Construction',[['Passes Into Attacking Third','Passes vers le tiers offensif',0],['Touches Inside Box','Touches dans la surface',0],['Passes from Defensive Third','Passes depuis le tiers défensif',0]]],['Pressing',[['Pressures','Pressions',0],['pHalf','Part en camp adverse (%)',0],['Counterpressures','Contre-pressings',0]]],['Défense',[['Ball Recoveries','Récupérations',0],['TI','Tacles + interceptions',1],['Blocked Shots','Tirs contrés',1]]]];
-    tbl(slide('Les quatre piliers du jeu','Moyenne par match et évolution du premier au dernier match'),['Pilier','Indicateur','Moyenne / match','1er match','Dernier match','Évolution'],pil.flatMap(([g,rows])=>rows.map(([k,l,d],i)=>[i?'':g,l,fv(a(k),d),fv(first[k],d),fv(last[k],d),sgn(last[k]-first[k],d)])),{first:2.2,rowH:0.42,fs:12});
-    const s3=slide('xG créés et buts marqués','Qualité des occasions face au score');xgChartPpt(s3,0.5,1.3,7.4,5.6);
-    s3.addText(insights().slice(0,3).map(([i,t])=>({text:strip(t),options:{bullet:true,breakLine:true,fontSize:13,color:PC.tx,fontFace:F,paraSpaceAfter:10}})),{x:8.2,y:1.4,w:4.7,h:5.4,valign:'top'});
-    const s4=slide('Ce qu\'il faut retenir','Constats générés à partir des données');s4.addText(insights().map(([i,t])=>({text:strip(t),options:{bullet:true,breakLine:true,fontSize:15,color:PC.tx,fontFace:F,paraSpaceAfter:14}})),{x:0.6,y:1.4,w:12,h:5.4,valign:'top'});
+    sl('Les quatre piliers','Les quatre piliers du jeu','Moyenne par match et évolution du premier au dernier match',s=>tbl(s,['Pilier','Indicateur','Moyenne / match','1er match','Dernier match','Évolution'],pil.flatMap(([g,rows])=>rows.map(([k,l,d],i)=>[i?'':g,l,fv(a(k),d),fv(first[k],d),fv(last[k],d),sgn(last[k]-first[k],d)])),{first:2.2,rowH:0.44,fs:13}));
+    sl('Résultat offensif','xG créés et buts marqués','Qualité des occasions face au score',s=>{xgChartPpt(s,0.5,1.55,7.6,5.2);s.addText(insights().slice(0,3).map(([i,t])=>({text:strip(t),options:{bullet:true,breakLine:true,fontSize:13,color:PD.tx,fontFace:F,paraSpaceAfter:10}})),{x:8.4,y:1.65,w:4.5,h:5,valign:'top'})});
+    sl('Constats','Ce qu\'il faut retenir','Constats générés à partir des données',s=>s.addText(insights().map(([i,t])=>({text:strip(t),options:{bullet:true,breakLine:true,fontSize:15,color:PD.tx,fontFace:F,paraSpaceAfter:14}})),{x:0.6,y:1.65,w:12,h:5.1,valign:'top'}));
     const pl=SQUAD.filter(p=>p.Pos!=='GB'&&p.Minutes>=90),dm=SQUAD.filter(p=>(p.Pos==='DEF'||p.Pos==='MIL')&&p.Minutes>=90),top=(k,f)=>[...f].filter(p=>p[k]!=null).sort((x,y)=>y[k]-x[k])[0];
     const kr=[['Plus grand impact global','OBV',pl,'OBV /90'],['Meilleur finisseur','Non Penalty xG',pl,'npxG /90'],['Meilleur créateur','Open Play xG Assisted',pl,'xG assisté /90'],['Meilleure valeur défensive','Defensive Action OBV',dm,'OBV défensif /90'],['Plus gros presseur','Pressures',pl,'pressions /90'],['Meilleur récupérateur','Tackles & Interceptions',pl,'tacles + interceptions /90']].map(([t,k,f,u])=>{const p=top(k,f);return p?[t,p.Player,p.Pos,fv(p[k],PMI[k][3]),u]:null}).filter(Boolean);
-    tbl(slide('Joueurs qui ressortent','≥ 90 minutes · joueurs de champ'),['Rubrique','Joueur','Poste','Valeur','Unité'],kr,{first:3.6,rowH:0.5,fs:13});
+    sl('Joueurs qui ressortent','Joueurs qui ressortent','≥ 90 minutes · joueurs de champ',s=>tbl(s,['Rubrique','Joueur','Poste','Valeur','Unité'],kr,{first:3.6,rowH:0.55,fs:14}));
   }else if(sec==='off'){
-    tiles(slide('Chiffres clés','Moyennes par match'),[['xG créés',fv(a('Cumulative xG'),2),'par match'],['Buts',fv(a('Goals & Penalty Goals'),1),'par match'],['Tirs',fv(a('Shots'),1),'par match'],['xG par tir',fv(a('xGs'),3),''],['Passes clés',fv(a('Key Passes'),1),'par match'],['Touches dans la surface',fv(a('Touches Inside Box'),0),'par match']]);
-    const s2=slide('L\'équipe, match par match','Qualité des occasions et origine des tirs');xgChartPpt(s2,0.4,1.3,6.3,5.6);stackPpt(s2,6.8,1.3,6.2,5.6,'Origine des tirs',[{k:'ShotsIn',l:'Dans la surface',c:PC.lblue},{k:'Shots Outside Box',l:'Hors surface',c:PC.red}]);
-    mTbl(slide('Détail par match','Indicateurs offensifs'),OFF_ROWS,{rowH:0.36});
-    leaders(slide('Les joueurs offensifs','Par 90 minutes · ≥ '+S.minMin+' min'),[['Finition','Non Penalty xG',notGK],['Création','Open Play xG Assisted',notGK],['Conduite','Dribble & Carry OBV',notGK],['Progression','Deep Progressions',notGK]]);
-    playersSlides(OFF_COLS,notGK,'Joueurs offensifs');
+    sl('Chiffres clés','Chiffres clés','Moyennes par match',s=>tiles(s,[['xG créés',fv(a('Cumulative xG'),2),'par match'],['Buts',fv(a('Goals & Penalty Goals'),1),'par match'],['Tirs',fv(a('Shots'),1),'par match'],['xG par tir',fv(a('xGs'),3),'qualité moyenne d\'un tir'],['Passes clés',fv(a('Key Passes'),1),'par match'],['Touches dans la surface',fv(a('Touches Inside Box'),0),'par match']]));
+    sl('Équipe','L\'équipe, match par match','Qualité des occasions et origine des tirs',s=>{xgChartPpt(s,0.4,1.55,6.3,5.2);stackPpt(s,6.8,1.55,6.2,5.2,'Origine des tirs',[{k:'ShotsIn',l:'Dans la surface',c:PD.blue},{k:'Shots Outside Box',l:'Hors surface',c:PD.red}])});
+    matchTbl('Détail par match','Détail par match','Indicateurs offensifs',OFF_ROWS,{rowH:0.36});
+    sl('Joueurs offensifs','Les joueurs offensifs','Par 90 minutes · ≥ '+S.minMin+' min',s=>leaders(s,[['Finition','Non Penalty xG',notGK],['Création','Open Play xG Assisted',notGK],['Conduite','Dribble & Carry OBV',notGK],['Progression','Deep Progressions',notGK]]));
+    playerSlides('Joueurs offensifs',OFF_COLS,notGK,'Tableau offensif');
   }else if(sec==='def'){
-    tiles(slide('Chiffres clés','Moyennes par match'),[['Récupérations',fv(a('Ball Recoveries'),0),'par match'],['Tacles + interceptions',fv(a('TI'),1),'par match'],['Tirs contrés',fv(a('Blocked Shots'),1),'par match'],['Dégagements',fv(a('Clearances'),0),'par match'],['Fautes commises',fv(a('Fouls'),1),'par match'],['Dribbles subis',fv(a('Dribbled Past'),1),'par match']]);
-    const s2=slide('Pressing et duels','Ces données comptent les actions défensives, pas leur résultat (pas de buts encaissés).');stackPpt(s2,0.4,1.3,6.3,5.6,'Hauteur du pressing',[{k:'Pressures in Attacking Half',l:'Camp adverse',c:PC.gold},{k:'pLow',l:'Propre camp',c:PC.lblue}]);stackPpt(s2,6.8,1.3,6.2,5.6,'Duels disputés',[{k:'All Aerials',l:'Aériens',c:PC.gold},{k:'Non Aerial Duels',l:'Au sol',c:PC.lblue}]);
-    mTbl(slide('Détail par match','Indicateurs défensifs'),DEF_ROWS,{rowH:0.33,fs:10});
-    leaders(slide('Les joueurs défensifs','Par 90 minutes · ≥ '+S.minMin+' min'),[['Valeur défensive','Defensive Action OBV',notGK],['Récupérateurs','Tackles & Interceptions',notGK],['Presseurs','Pressures',notGK],['Difficiles à dribbler','Dribbled Past',notGK,true]]);
-    playersSlides(DEF_COLS,notGK,'Joueurs défensifs');
+    sl('Chiffres clés','Chiffres clés','Moyennes par match',s=>tiles(s,[['Récupérations',fv(a('Ball Recoveries'),0),'par match'],['Tacles + interceptions',fv(a('TI'),1),'par match'],['Tirs contrés',fv(a('Blocked Shots'),1),'par match'],['Dégagements',fv(a('Clearances'),0),'par match'],['Fautes commises',fv(a('Fouls'),1),'par match'],['Dribbles subis',fv(a('Dribbled Past'),1),'par match']]));
+    sl('Pressing et duels','Pressing et duels','Ces données comptent les actions défensives, pas leur résultat (pas de buts encaissés)',s=>{stackPpt(s,0.4,1.55,6.3,5.2,'Hauteur du pressing',[{k:'Pressures in Attacking Half',l:'Camp adverse',c:PD.gold},{k:'pLow',l:'Propre camp',c:PD.blue}]);stackPpt(s,6.8,1.55,6.2,5.2,'Duels disputés',[{k:'All Aerials',l:'Aériens',c:PD.gold},{k:'Non Aerial Duels',l:'Au sol',c:PD.blue}])});
+    matchTbl('Détail par match','Détail par match','Indicateurs défensifs',DEF_ROWS,{rowH:0.33,fs:10.5});
+    sl('Joueurs défensifs','Les joueurs défensifs','Par 90 minutes · ≥ '+S.minMin+' min',s=>leaders(s,[['Valeur défensive','Defensive Action OBV',notGK],['Récupérateurs','Tackles & Interceptions',notGK],['Presseurs','Pressures',notGK],['Difficiles à dribbler','Dribbled Past',notGK,true]]));
+    playerSlides('Joueurs défensifs',DEF_COLS,notGK,'Tableau défensif');
   }else if(sec==='team'){
-    const s2=slide('xG créés et buts marqués','Match par match');xgChartPpt(s2,1.2,1.3,10.9,5.6);
-    GROUPS.forEach(g=>mTbl(slide(g.t,'Totaux par match'),g.rows.map(([k,n,d])=>[k,n.trim(),d]),{rowH:0.38,fs:11.5}));
+    sl('Résultat offensif','xG créés et buts marqués','Match par match',s=>xgChartPpt(s,1.2,1.55,10.9,5.2));
+    GROUPS.forEach(g=>matchTbl(g.t,g.t,'Totaux par match',g.rows.map(([k,n,d])=>[k,n.trim(),d]),{rowH:0.4,fs:12}));
   }else if(sec==='squad'){
-    leaders(slide('Les meilleurs par domaine','Par 90 minutes · ≥ '+S.minMin+' min'),[['Impact global','OBV',notGK],['Menace offensive','Non Penalty xG',notGK],['Créateurs','Open Play xG Assisted',notGK],['Récupérateurs','Tackles & Interceptions',notGK]]);
-    playersSlides(SQ_COLS,null,'Tableau de l\'effectif');
+    sl('Les meilleurs','Les meilleurs par domaine','Par 90 minutes · ≥ '+S.minMin+' min',s=>leaders(s,[['Impact global','OBV',notGK],['Menace offensive','Non Penalty xG',notGK],['Créateurs','Open Play xG Assisted',notGK],['Récupérateurs','Tackles & Interceptions',notGK]]));
+    playerSlides('Les joueurs',SQ_COLS,null,'Tableau de l\'effectif');
   }else{
     const p=SQUAD.find(q=>q.Player===S.player)||SQUAD[0],o=S.cmp?SQUAD.find(q=>q.Player===S.cmp):null,gk=p.Pos==='GB';
-    tiles(slide(p.Player,POSN[p.Pos]+' · '+p.Age+' ans · '+p.Height+' cm · '+p.Minutes.toFixed(0)+' minutes'),[['OBV /90',sgn(p.OBV,2),'On-Ball Value'],['npxG /90',fv(p['Non Penalty xG'],2),'xG sans penalty'],['xG assisté /90',fv(p['Open Play xG Assisted'],2),'création'],['Progressions /90',fv(p['Deep Progressions'],1),''],['Tacles + interceptions',fv(p['Tackles & Interceptions'],1),'par 90 min'],['Pressions /90',fv(p.Pressures,1),'']]);
-    if(!gk){const s2=slide('Profil de performance','Percentiles dans l\'effectif (joueurs de champ ≥ 60 min)'+(o?' · comparé à '+o.Player:''));
-      const ser=[{name:p.Player,labels:AXES.map(x=>x[1]),values:AXES.map(([k])=>Math.round(pctOf(k,p)??0))}];if(o)ser.push({name:o.Player,labels:AXES.map(x=>x[1]),values:AXES.map(([k])=>Math.round(pctOf(k,o)??0))});
-      s2.addChart(pptx.charts.RADAR,ser,{x:2.4,y:1.3,w:8.5,h:5.7,radarStyle:'standard',chartColors:[PC.lblue,PC.red],showLegend:true,legendPos:'b',legendFontSize:12,catAxisLabelFontSize:12,valAxisMaxVal:100,valAxisMinVal:0,valAxisMajorUnit:25,valAxisLabelFontSize:9})}
-    const prof=playerProf(p);tbl(slide('Tous les indicateurs',p.Player),['Indicateur','Valeur /90','Percentile'],prof.map(x=>[PMI[x.k][1],x.v.toFixed(PMI[x.k][3]),x.pc==null?'–':String(Math.round(x.pc))]),{w:8,x:2.6,first:4.2,rowH:0.3,fs:11});
+    sl('En bref',p.Player,POSN[p.Pos]+' · '+p.Age+' ans · '+p.Height+' cm · '+p.Minutes.toFixed(0)+' minutes',s=>tiles(s,[['OBV /90',sgn(p.OBV,2),'On-Ball Value'],['npxG /90',fv(p['Non Penalty xG'],2),'xG sans penalty'],['xG assisté /90',fv(p['Open Play xG Assisted'],2),'création'],['Progressions /90',fv(p['Deep Progressions'],1),'vers la zone dangereuse'],['Tacles + interceptions',fv(p['Tackles & Interceptions'],1),'par 90 min'],['Pressions /90',fv(p.Pressures,1),'']]));
+    if(!gk){
+      sl('Classement','Classement dans l\'effectif','Rang parmi les joueurs de champ (anneau plein = 1er)',s=>[['OBV','OBV'],['Non Penalty xG','npxG'],['Open Play xG Assisted','xG assisté'],['Deep Progressions','Progressions']].forEach(([k,l],i)=>{const pc=Math.round(pctOf(k,p)??0),rk=rankOf(k,p),x=0.9+i*3.1;
+        s.addChart(pptx.charts.DOUGHNUT,[{name:l,labels:['Rang','Reste'],values:[Math.max(pc,2),100-Math.max(pc,2)]}],{x,y:1.9,w:2.7,h:2.7,holeSize:74,chartColors:[pc>=66?PD.gold:pc>=33?PD.blue:PD.red,PD.line],showLegend:false,showLabel:false,showValue:false,showPercent:false,dataBorder:{pt:0,color:PD.bg},showTitle:false});
+        s.addText(rk?(rk.r===1?'1er':rk.r+'e'):'–',{x,y:2.9,w:2.7,h:0.7,align:'center',fontSize:30,bold:true,color:PD.tx,fontFace:FH});
+        s.addText(l,{x,y:4.7,w:2.7,h:0.4,align:'center',fontSize:15,bold:true,color:PD.gold2,fontFace:F});
+        s.addText(rk?'sur '+rk.n+' joueurs de champ':'',{x,y:5.1,w:2.7,h:0.35,align:'center',fontSize:11,color:PD.mu,fontFace:F})}));
+      sl('Profil','Profil de performance','Plus la zone est grande, meilleur est le joueur'+(o?' · comparé à '+o.Player:''),s=>{
+        const ser=[{name:p.Player,labels:AXES.map(x=>x[1]),values:AXES.map(([k])=>Math.round(pctOf(k,p)??0))}];if(o)ser.push({name:o.Player,labels:AXES.map(x=>x[1]),values:AXES.map(([k])=>Math.round(pctOf(k,o)??0))});
+        s.addChart(pptx.charts.RADAR,ser,{x:2.4,y:1.5,w:8.5,h:5.3,radarStyle:'standard',chartColors:[PD.gold,PD.blue],showLegend:true,legendPos:'b',legendFontSize:12,legendColor:PD.tx,catAxisLabelFontSize:12,catAxisLabelColor:PD.tx,valAxisMaxVal:100,valAxisMinVal:0,valAxisMajorUnit:25,valAxisLabelFontSize:9,valAxisLabelColor:PD.mu2,valGridLine:{color:PD.line,size:0.5}})})}
+    const prof=playerProf(p);tableSlides('Indicateurs','Tous les indicateurs',p.Player,['Indicateur','Valeur /90','Classement'],prof.map(x=>{const rk=gk?null:rankOf(x.k,p,INV.has(x.k));return [PMI[x.k][1],x.v.toFixed(PMI[x.k][3]),rk?rankLab(rk.r)+' / '+rk.n:'–']}),{w:9,x:2.15,first:5,rowH:0.34,fs:12});
   }
+  /* ---------- couverture ---------- */
+  const cv=pptx.addSlide();cv.background={color:PD.bg};
+  [[8.2,-1.6,9.6],[9.6,-0.2,6.8],[11,1.2,4]].forEach(([x,y,d],i)=>cv.addShape(pptx.ShapeType.ellipse,{x,y,w:d,h:d,fill:{color:PD.card2,transparency:i?92:96},line:{color:PD.line2,width:i?1:1.25}}));
+  cv.addShape(pptx.ShapeType.line,{x:13,y:0,w:0,h:7.5,line:{color:PD.line2,width:1}});
+  cv.addShape(pptx.ShapeType.rect,{x:9.3,y:5.1,w:4.03,h:2.4,fill:{type:'none'},line:{color:PD.line2,width:1}});
+  cv.addShape(pptx.ShapeType.rect,{x:11.2,y:6.1,w:2.13,h:1.4,fill:{type:'none'},line:{color:PD.line2,width:1}});
+  cv.addShape(pptx.ShapeType.rect,{x:0,y:7.3,w:13.33,h:0.2,fill:{color:PD.gold},line:{color:PD.gold}});
+  if(logo)cv.addImage({data:logo,x:0.9,y:1.5,w:2.2,h:3.62});
+  cv.addText((team+'  ·  ANALYSE VIDÉO').toUpperCase(),{x:3.8,y:1.85,w:8,h:0.4,fontSize:14,bold:true,color:PD.gold,fontFace:F,charSpacing:3});
+  cv.addText(rt,{x:3.8,y:2.3,w:8.2,h:1.9,fontSize:46,bold:true,color:PD.tx,fontFace:FH,valign:'top',fit:'shrink'});
+  cv.addShape(pptx.ShapeType.rect,{x:3.85,y:4.3,w:1.2,h:0.07,fill:{color:PD.gold},line:{color:PD.gold}});
+  cv.addText(periodTxt(' → '),{x:3.8,y:4.6,w:8,h:0.45,fontSize:18,color:PD.mu,fontFace:F});
+  cv.addText('Généré le '+todayFR()+(author?'   ·   Préparé par '+author:''),{x:3.8,y:5.1,w:8,h:0.4,fontSize:14,color:PD.mu2,fontFace:F});
+  /* ---------- sommaire ---------- */
+  const secs=[];slides.forEach((x,i)=>{if(!secs.find(q=>q.n===x.section))secs.push({n:x.section,p:i+3,sub:x.sub})});
+  const tc=pptx.addSlide();tc.background={color:PD.bg};
+  tc.addShape(pptx.ShapeType.ellipse,{x:9.5,y:-2.4,w:7,h:7,fill:{color:PD.card2,transparency:94},line:{color:PD.line2,width:1}});
+  tc.addText('CONTENU DU RAPPORT',{x:0.9,y:0.7,w:6,h:0.35,fontSize:12,bold:true,color:PD.gold,fontFace:F,charSpacing:3});
+  tc.addText('Sommaire',{x:0.9,y:1.05,w:8,h:0.9,fontSize:40,bold:true,color:PD.tx,fontFace:FH});
+  tc.addShape(pptx.ShapeType.rect,{x:0.95,y:1.95,w:0.9,h:0.06,fill:{color:PD.gold},line:{color:PD.gold}});
+  const rowH=Math.min(0.62,4.6/Math.max(secs.length,1));
+  secs.forEach((t,i)=>{const y=2.35+i*rowH;
+    tc.addText(String(i+1).padStart(2,'0'),{x:0.9,y,w:0.9,h:rowH-0.06,fontSize:20,bold:true,color:PD.gold,fontFace:FH,valign:'middle'});
+    tc.addText(t.n,{x:1.9,y,w:8.4,h:rowH-0.06,fontSize:19,color:PD.tx,fontFace:F,valign:'middle'});
+    tc.addText(String(t.p),{x:11.4,y,w:1.1,h:rowH-0.06,fontSize:19,bold:true,color:PD.gold,fontFace:FH,align:'right',valign:'middle'});
+    tc.addShape(pptx.ShapeType.line,{x:1.9,y:y+rowH-0.04,w:10.6,h:0,line:{color:PD.line,width:0.75}})});
+  if(logo)tc.addImage({data:logo,x:12.3,y:0.45,w:0.6,h:0.99});
+  tc.addText(team+'  ·  '+rt,{x:0.5,y:7.05,w:9,h:0.3,fontSize:9,color:PD.mu2,fontFace:F});
+  tc.addText('2',{x:12.3,y:7.05,w:0.55,h:0.3,fontSize:9,color:PD.mu2,fontFace:F,align:'right'});
+  /* ---------- diapositives de données ---------- */
+  slides.forEach((x,i)=>{const s=pptx.addSlide();s.background={color:PD.bg};
+    s.addShape(pptx.ShapeType.rect,{x:0,y:0,w:0.14,h:7.5,fill:{color:PD.gold},line:{color:PD.gold}});
+    s.addText(String(x.section).toUpperCase(),{x:0.5,y:0.28,w:9,h:0.3,fontSize:11,bold:true,color:PD.gold,fontFace:F,charSpacing:3});
+    s.addText(x.title,{x:0.5,y:0.55,w:11.2,h:0.6,fontSize:28,bold:true,color:PD.tx,fontFace:FH});
+    if(x.sub)s.addText(x.sub,{x:0.5,y:1.08,w:11.5,h:0.35,fontSize:13,color:PD.mu,fontFace:F});
+    if(logo)s.addImage({data:logo,x:12.35,y:0.3,w:0.5,h:0.82});
+    s.addShape(pptx.ShapeType.line,{x:0.5,y:1.5,w:12.3,h:0,line:{color:PD.line,width:0.75}});
+    x.draw(s);
+    s.addText(team+'  ·  '+rt+'  ·  '+todayFR(),{x:0.5,y:7.05,w:9,h:0.3,fontSize:9,color:PD.mu2,fontFace:F});
+    s.addText(String(i+3),{x:12.3,y:7.05,w:0.55,h:0.3,fontSize:9,color:PD.mu2,fontFace:F,align:'right'})});
   return pptx.write({outputType:'blob'});
 }
 let exportBusy=false;
@@ -1099,8 +1178,10 @@ async function exportNow(fmt){
   finally{exportBusy=false}
 }
 function syncExport(){const ok=REP[S.tab]&&MS.length&&SQUAD.length;$('#xp').hidden=!ok;$('#xmenu').hidden=true;if(ok){$('#xbtn').textContent='Exporter ⬇';$('#xh').textContent='Page : '+(S.tab==='player'?S.player:SEC_NAME[S.tab])}}
+try{$('#xauthor').value=localStorage.getItem('lb-author')||''}catch(e){}
+$('#xauthor').addEventListener('input',e=>{try{localStorage.setItem('lb-author',e.target.value)}catch(x){}});
 $('#xbtn').addEventListener('click',e=>{e.stopPropagation();$('#xmenu').hidden=!$('#xmenu').hidden});
-$('#xmenu').addEventListener('click',e=>{const b=e.target.closest('button');if(b){$('#xmenu').hidden=true;exportNow(b.dataset.f)}});
+$('#xmenu').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button');if(b){$('#xmenu').hidden=true;exportNow(b.dataset.f)}});
 document.addEventListener('click',()=>{$('#xmenu').hidden=true});
 
 
