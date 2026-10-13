@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Les Bleus Data Room</title>
+<title>Équipe de France · Data Room</title>
 <meta name="description" content="Tableau de bord d'analyse vidéo : déposez vos fichiers CSV pour obtenir les statistiques de l'équipe et des joueurs.">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#010a45">
@@ -369,6 +369,30 @@ input[type=range]{accent-color:var(--blue)}
 .ce[data-f=i]{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px;text-align:center}
 .ce:focus{background:rgba(255,255,255,.1);box-shadow:0 0 0 1px rgba(100,160,255,.7)}
 .xdel{width:28px;height:28px;margin-top:5px;border-radius:9px;color:var(--mu2);font-size:18px;line-height:1;transition:.25s}.xdel:hover{background:rgba(255,68,87,.2);color:#fff}
+
+/* ===== détails, fenêtres agrandies ===== */
+.clk{cursor:pointer}.kpi.clk:focus-visible,.pill.clk:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.pill .ph{display:flex;align-items:center}.pill .more{margin-left:auto;font-size:11px;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;opacity:.55;transition:.3s}.pill:hover .more{opacity:1;color:#fff;transform:translateX(3px)}
+.pill:hover{border-color:rgba(255,255,255,.35);transform:translateY(-3px)}
+.pr .d{line-height:1.5}.pr .d b{color:#fff;font-family:'JetBrains Mono',monospace;font-weight:600}.pr .d em{font-style:normal;margin-left:6px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.zoomable{cursor:zoom-in}.zoomhint{position:absolute;right:14px;top:12px;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:#fff;font-size:15px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:2}.zoomable:hover .zoomhint{opacity:1;transform:scale(1.06)}
+.ico{vertical-align:-2px}.icoleg{display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:rgba(1,10,69,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);animation:mfade .3s ease}
+.modal.out{opacity:0;transition:opacity .22s}
+@keyframes mfade{from{opacity:0}}
+.modal-box{position:relative;width:min(1180px,100%);max-height:calc(100vh - 48px);overflow:auto;padding:30px;border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.03)),rgba(8,32,150,.62);border:1px solid var(--edge);box-shadow:0 50px 120px -30px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.14);animation:mzoom .45s var(--ease)}
+@keyframes mzoom{from{opacity:0;transform:translateY(24px) scale(.96)}}
+.modal-box.narrow{width:min(560px,100%)}.modal-box.zoom{width:min(1100px,100%)}
+.modal-box.zoom .card{background:none;border:0;box-shadow:none;padding:0;backdrop-filter:none}.modal-box.zoom .card h3{font-size:22px}.modal-box.zoom .card .sub{font-size:14px}
+.modal-x{position:sticky;float:right;top:0;margin:-10px -10px 0 12px;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.1);color:#fff;font-size:16px;z-index:5;transition:.25s}.modal-x:hover{background:rgba(255,255,255,.2);transform:rotate(90deg)}
+.mhead{display:flex;gap:16px;align-items:flex-start;margin-bottom:22px;padding-right:40px}.mhead h2{font-size:clamp(26px,3vw,36px);text-transform:none;letter-spacing:-.03em;color:#fff;font-weight:800}.mhead p{color:var(--mu);font-size:13.5px;line-height:1.6;margin-top:6px;max-width:80ch}
+.mhead .dotc{flex:none;width:14px;height:14px;border-radius:50%;margin-top:14px;box-shadow:0 0 18px currentColor}
+.mgr{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+.pmc{padding:22px}.pmc h3{font-size:17px}.pmc .def{font-size:13px;color:var(--mu);line-height:1.6;margin:8px 0 14px}
+.big2{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}.big2 b{font-size:46px;letter-spacing:-.05em;font-weight:700}.big2 span{font-size:12.5px;color:var(--mu)}
+.facts2{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:9px;font-size:13px;color:#dfe6ff;line-height:1.5}.facts2 span{display:inline-block;min-width:78px;color:var(--mu2);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}.facts2 b{font-family:'JetBrains Mono',monospace}
+.crow{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);font-size:14.5px}.crow small{display:block;color:var(--mu);font-size:12px;margin-top:3px}
+.cin{width:88px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.08);color:#fff;font:inherit;font-size:18px;font-weight:700;text-align:center;font-family:'JetBrains Mono',monospace}.cin:focus{outline:2px solid var(--blue);outline-offset:1px}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
@@ -379,7 +403,7 @@ input[type=range]{accent-color:var(--blue)}
 </head>
 <body>
 <header><div class="wrap hbar">
-  <div class="brand"><img class="logo" id="logo" alt="Fédération française de football"><div><b>Les Bleus</b><span>Analyse vidéo · Data room</span></div></div>
+  <div class="brand"><img class="logo" id="logo" alt="Fédération française de football"><div><b>Équipe de France</b></div></div>
   <nav id="nav">
     <button data-t="home" class="on">Vue d'ensemble</button>
     <button data-t="off">Offensif</button>
@@ -466,6 +490,10 @@ const mval=(m,k)=>m[k];
 const mAvg=k=>avg(MS.map(m=>m[k]));
 
 /* ============ SVG charts ============ */
+const ICO_P='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z',ICO_H='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z';
+const icoPath=(home,x,y,sz)=>`<path transform="translate(${x} ${y}) ${home?'':`rotate(90 ${sz/2} ${sz/2}) `}scale(${sz/24})" d="${home?ICO_H:ICO_P}" fill="#a9b5ec"/>`;
+const icoHTML=home=>`<svg class="ico" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path ${home?'':'transform="rotate(90 12 12)"'} d="${home?ICO_H:ICO_P}" fill="currentColor"/></svg>`;
+const icoLegend=()=>`<span class="icoleg">${icoHTML(false)} extérieur · ${icoHTML(true)} domicile</span>`;
 function xgChart(){
   const W=620,H=300,p={l:44,r:16,t:26,b:54};const iw=W-p.l-p.r,ih=H-p.t-p.b;
   const mx=Math.max(...MS.map(m=>Math.max(m['Cumulative xG'],m['Goals & Penalty Goals'])))*1.18;
@@ -479,8 +507,7 @@ function xgChart(){
     <rect x="${cx+3}" y="${y(g)}" width="${w}" height="${y(0)-y(g)}" rx="6" fill="url(#gg)"/>
     <text x="${cx-w/2-3}" y="${y(xg)-7}" text-anchor="middle" fill="#a9bcff" font-size="12" font-weight="700">${xg.toFixed(2)}</text>
     <text x="${cx+w/2+3}" y="${y(g)-7}" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">${g}</text>
-    <text x="${cx}" y="${H-30}" text-anchor="middle" fill="#e3e8fb" font-size="12.5" font-weight="600">${m.opp} (${m.home?'dom.':'ext.'})</text>
-    <text x="${cx}" y="${H-14}" text-anchor="middle" fill="#7d8bd0" font-size="11">${dfmt(m.date)}</text></g>`});
+    <text x="${cx}" y="${H-30}" text-anchor="middle" fill="#e3e8fb" font-size="12.5" font-weight="600">${m.opp}</text>${icoPath(m.home,cx-37,H-24,13)}<text x="${cx-20}" y="${H-14}" fill="#7d8bd0" font-size="11">${dfmt(m.date)}</text></g>`});
   s+=`<defs><linearGradient id="gx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d6bff"/><stop offset="1" stop-color="#0827a0" stop-opacity=".35"/></linearGradient>
   <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ed1e24"/><stop offset="1" stop-color="#ed1e24" stop-opacity=".3"/></linearGradient></defs></svg>`;
   return s;
@@ -517,32 +544,29 @@ function renderHome(){
   const tot=k=>sum(MS.map(m=>m[k])), a=k=>mAvg(k);
   const first=MS[0],last=MS[MS.length-1];
   const ti=m=>m.Tackles+m.Interceptions;MS.forEach(m=>{m.TI=ti(m)});
-  const pillars=[
-   {t:'Attaque',c:'#ed1e24',rows:[['Cumulative xG','xG créés',2],['Shots','Tirs',1],['Key Passes','Passes clés',1]]},
-   {t:'Construction',c:'#4d6bff',rows:[['Passes Into Attacking Third','Passes vers le tiers offensif',0],['Touches Inside Box','Touches dans la surface',0],['Passes from Defensive Third','Passes depuis le tiers défensif',0]]},
-   {t:'Pressing',c:'#d5a450',rows:[['Pressures','Pressions',0],['pHalf','Part en camp adverse (%)',0],['Counterpressures','Contre-pressings',0]]},
-   {t:'Défense',c:'#fdfdfe',rows:[['Ball Recoveries','Récupérations',0],['TI','Tacles + interceptions',1],['Blocked Shots','Tirs contrés',1]]}];
+  const pillars=PILLARS;
   const pl=SQUAD.filter(p=>p.Pos!=='GB'&&p.Minutes>=90);
   const top=(k,f=pl)=>[...f].filter(p=>p[k]!=null).sort((x,y)=>y[k]-x[k])[0];
   const cell=(title,p,k,txt)=>!p?'':`<div class="card key" onclick="openPlayer('${p.Player.replace(/'/g,"\\'")}')"><div class="k1">${title}</div><div class="k2">${p.Player}</div><div class="k3"><b class="mono">${p[k].toFixed(PMI[k][3])}</b> ${txt} · <span style="color:${POSC[p.Pos]}">${POSN[p.Pos]}</span></div></div>`;
   const dm=SQUAD.filter(p=>(p.Pos==='DEF'||p.Pos==='MIL')&&p.Minutes>=90);
-  const age=SQUAD.reduce((x,p)=>x+p.Age*p.Minutes,0)/sum(SQUAD.map(p=>p.Minutes));
-  const young=[...SQUAD].sort((x,y)=>x.Age-y.Age)[0], most=[...SQUAD].sort((x,y)=>y.Minutes-x.Minutes)[0];
+  const mins=SQUAD.map(p=>p.Minutes).sort((x,y)=>y-x),totMin=sum(mins),core=SQUAD.filter(p=>p.Minutes>=180).length,core3=SQUAD.filter(p=>p.Minutes>=270).length,xi=totMin?Math.round(100*sum(mins.slice(0,11))/totMin):0;
+  const most=[...SQUAD].sort((x,y)=>y.Minutes-x.Minutes)[0];
   const ratio=tot('Goals & Penalty Goals')/tot('Cumulative xG');
   const cell2=(title,p,k,txt,f)=>{if(!p)return '';const nx=[...f].filter(q=>q[k]!=null&&q.Player!==p.Player).sort((x,y)=>y[k]-x[k]).slice(0,2);return `<div class="card key b4" onclick="openPlayer('${p.Player.replace(/'/g,"\\'")}')"><div class="k1">${title}</div><div class="k2">${p.Player}</div><div class="k3"><b class="mono">${p[k].toFixed(PMI[k][3])}</b> ${txt}</div><div class="keyfoot"><span class="pbadge ${p.Pos}">${p.Pos}</span><span class="nx">${nx.map((q,i)=>`${i+2}e ${lastName(q.Player)} <b class="mono">${q[k].toFixed(PMI[k][3])}</b>`).join(' · ')}</span></div></div>`};
   $('#v-home').innerHTML=`
   <div class="bento">
-    <div class="card hero b8"><img class="crest" src="${LOGO}" alt=""><div><h2>Vue d'ensemble</h2><h1>${TEAM==='France'?"L'équipe de France":TEAM} en ${MS.length} matchs</h1><p>${dfmt(first.date)} → ${dfmt(last.date)} · moyennes par match, courbes dans l'ordre chronologique</p></div></div>
+    <div class="card hero b8"><img class="crest" src="${LOGO}" alt=""><div><h2>Vue d'ensemble</h2><h1>${TEAM==='France'?"L'équipe de France":TEAM} en ${MS.length} matchs</h1><p>Synthèse générale du rassemblement · ${MS.length} matchs analysés</p></div></div>
     <div class="card score b4"><div><div class="k1">Réalisme devant le but</div><div class="big"><span class="hn">${tot('Goals & Penalty Goals')}</span><small>buts</small></div><div class="dl">pour ${tot('Cumulative xG').toFixed(1)} xG créés</div></div>${ring(Math.min(100,ratio*50),104,'#d5a450',Math.round(ratio*100)+'%')}</div>
     <div class="kpi b2" style="--c:var(--red)"><div class="l">Buts / match</div><div class="v mono">${a('Goals & Penalty Goals').toFixed(1)}</div><div class="dl">${tot('Goals & Penalty Goals')} au total</div></div>
     <div class="kpi b2" style="--c:var(--blue)"><div class="l">xG / match</div><div class="v mono">${a('Cumulative xG').toFixed(2)}</div><div class="dl">${tot('Cumulative xG').toFixed(1)} au total</div></div>
     <div class="kpi b2" style="--c:#9db0ff"><div class="l">Tirs</div><div class="v mono">${tot('Shots')}</div><div class="dl">${(tot('Cumulative xG')/tot('Shots')).toFixed(3)} xG par tir</div></div>
     <div class="kpi b2" style="--c:var(--gold)"><div class="l">Pressions</div><div class="v mono">${tot('Pressures')}</div><div class="dl">${(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)}% en camp adverse</div></div>
     <div class="kpi b2" style="--c:var(--white)"><div class="l">Récupérations</div><div class="v mono">${tot('Ball Recoveries')}</div><div class="dl">${a('Ball Recoveries').toFixed(0)} par match</div></div>
-    <div class="kpi b2" style="--c:#7f95ff"><div class="l">Fautes commises</div><div class="v mono">${tot('Fouls')}</div><div class="dl">${tot('Fouls Won')} subies</div></div>
-    ${pillars.map(g=>`<div class="card pill b3" style="--c:${g.c}"><div class="ph"><i></i><h3>${g.t}</h3></div>
-      ${g.rows.map(([k,n,dg])=>{const v=a(k),ch=last[k]-first[k];return `<div class="pr"><div class="n">${n}<span class="d">${first[k].toFixed(dg)} → ${last[k].toFixed(dg)} (${sgn(ch,dg)})</span></div>${lineTrend(k,g.c)}<span class="v mono">${v.toFixed(dg)}</span></div>`}).join('')}</div>`).join('')}
-    <div class="card b7"><h3>Résultats offensifs match par match</h3><div class="sub">xG créés (bleu) et buts marqués (rouge)</div>${xgChart()}</div>
+    <div class="kpi b2 clk" tabindex="0" role="button" style="--c:#7f95ff" onclick="openConcModal()" onkeydown="if(event.key==='Enter')openConcModal()"><div class="l">Buts encaissés / match</div><div class="v mono">${concTotal()!=null?(concTotal()/MS.length).toFixed(1):'–'}</div><div class="dl">${concTotal()!=null?concTotal()+' au total':'Cliquer pour renseigner'}</div></div>
+    <div class="b12 sect2"><h2>Les quatre piliers du jeu</h2><span>Chiffre en grand : moyenne par match. Dessous : valeur du 1er match → du dernier match, puis l'écart entre les deux. Cliquez sur un bloc pour le détail.</span></div>
+    ${pillars.map((g,pi)=>`<div class="card pill b3 clk" tabindex="0" role="button" aria-label="Détail ${g.t}" onclick="openPillar(${pi})" onkeydown="if(event.key==='Enter')openPillar(${pi})" style="--c:${g.c}"><div class="ph"><i></i><h3>${g.t}</h3><span class="more">Détail ›</span></div>
+      ${g.rows.map(([k,n,dg,pol])=>{const v=a(k),ch=last[k]-first[k],cls=Math.abs(ch)<1e-9||pol==='nt'?'nt':(ch>0?'up':'dn');return `<div class="pr"><div class="n">${n}<span class="d">1er match <b>${first[k].toFixed(dg)}</b> → dernier <b>${last[k].toFixed(dg)}</b> <em class="${cls}">${ch>0?'↗':ch<0?'↘':'→'} ${sgn(ch,dg)}</em></span></div>${lineTrend(k,g.c)}<span class="v mono">${v.toFixed(dg)}</span></div>`}).join('')}</div>`).join('')}
+    <div class="card b7"><h3>Résultats offensifs match par match</h3><div class="sub">xG créés (bleu) et buts marqués (rouge) · ${icoLegend()}</div>${xgChart()}</div>
     <div class="card b5"><h3>Ce qu'il faut retenir</h3><div class="sub">Constats générés à partir des données</div>${insights().map(([i,t])=>`<div class="ins"><i>${i}</i><div>${t}</div></div>`).join('')}</div>
     <div class="b12 sect2"><h2>Joueurs qui ressortent</h2><span>≥ 90 minutes · joueurs de champ · le 1er de chaque rubrique, suivi des 2e et 3e</span></div>
     ${cell2('Plus grand impact global',top('OBV'),'OBV','OBV /90',pl)}
@@ -553,8 +577,8 @@ function renderHome(){
     ${cell2('Meilleur récupérateur',top('Tackles & Interceptions'),'Tackles & Interceptions','tacles + interceptions /90',pl)}
     <div class="b12 sect2"><h2>L'effectif en bref</h2></div>
     <div class="kpi b3"><div class="l">Joueurs utilisés</div><div class="v mono">${SQUAD.length}</div><div class="dl">${['GB','DEF','MIL','ATT'].map(k=>SQUAD.filter(p=>p.Pos===k).length+' '+k).join(' · ')}</div></div>
-    <div class="kpi b3"><div class="l">Âge moyen (pondéré)</div><div class="v mono">${age.toFixed(1)}</div><div class="dl">pondéré par les minutes</div></div>
-    <div class="kpi b3"><div class="l">Plus jeune</div><div class="v nm">${young.Player}</div><div class="dl">${young.Age} ans</div></div>
+    <div class="kpi b3"><div class="l">Noyau dur</div><div class="v mono">${core}</div><div class="dl">joueurs à 180 minutes ou plus, dont ${core3} à 270 ou plus</div></div>
+    <div class="kpi b3"><div class="l">Stabilité du onze</div><div class="v mono">${xi}<small style="font-size:.45em"> %</small></div><div class="dl">des minutes jouées par les 11 joueurs les plus utilisés</div></div>
     <div class="kpi b3"><div class="l">Le plus utilisé</div><div class="v nm">${most.Player}</div><div class="dl">${most.Minutes.toFixed(0)} minutes</div></div>
   </div>`;
 }
@@ -564,17 +588,18 @@ function renderHome(){
 const RENDER={home:()=>renderHome(),off:()=>renderOff(),def:()=>renderDef(),team:()=>renderTeam(),squad:()=>renderSquad(),player:()=>renderPlayer(),bilan:()=>renderBilan(),data:()=>renderData()};
 function minCtl(){return `<div class="ctl"><label>Minutes minimum <input type="range" min="0" max="290" step="10" value="${S.minMin}" oninput="S.minMin=+this.value;this.nextElementSibling.textContent=this.value" onchange="RENDER[S.tab]()"><b class="mono">${S.minMin}</b></label><span style="font-size:12.5px;color:var(--mu)">Classements et tableau : joueurs de champ au-dessus de ce seuil</span></div>`}
 function kpiRow(items){return `<div class="kpis">${items.map(([k,l,dg,c])=>{const v=mAvg(k),ch=MS[MS.length-1][k]-MS[0][k];return `<div class="kpi" style="--c:${c}"><div class="l">${l}</div><div class="v mono">${v.toFixed(dg)}</div><div class="dl">moy. / match · ${sgn(ch,dg)} depuis le 1er match</div></div>`}).join('')}</div>`}
-function miniBars(key,title,dg,color){
+function barsSVG(key,title,dg,color){
   const vals=MS.map(m=>m[key]),mx=Math.max(...vals)*1.22||1,W=300,H=156,p={l:10,r:10,t:24,b:34},iw=W-p.l-p.r,ih=H-p.t-p.b,bw=iw/vals.length,av=avg(vals),y=v=>p.t+ih-v/mx*ih;
   let g=`<svg viewBox="0 0 ${W} ${H}" width="100%"><line x1="${p.l}" x2="${W-p.r}" y1="${y(0)}" y2="${y(0)}" stroke="rgba(255,255,255,.12)"/>`;
   MS.forEach((m,i)=>{const x=p.l+bw*i+bw*.17,w=bw*.66,v=vals[i];
     g+=`<g data-tip="<b>${m.Match}</b>${title} : ${v.toFixed(dg)}"><rect x="${x}" y="${y(v)}" width="${w}" height="${Math.max(1,y(0)-y(v))}" rx="5" fill="${color}" fill-opacity="${i===MS.length-1?1:.55}"/>
     <text x="${x+w/2}" y="${y(v)-6}" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">${v.toFixed(dg)}</text>
     <text x="${x+w/2}" y="${H-18}" text-anchor="middle" fill="#c3ccf5" font-size="10.5" font-weight="600">${m.opp.slice(0,3).toUpperCase()}</text>
-    <text x="${x+w/2}" y="${H-5}" text-anchor="middle" fill="#7d8bd0" font-size="9">${m.home?'dom.':'ext.'} · ${dfmt(m.date)}</text></g>`});
+    ${icoPath(m.home,x+w/2-28,H-14,10)}<text x="${x+w/2-15}" y="${H-5}" fill="#7d8bd0" font-size="9">${dfmt(m.date)}</text></g>`});
   g+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(av)}" y2="${y(av)}" stroke="#a9b5ec" stroke-dasharray="4 4" opacity=".6"/></svg>`;
-  return `<div class="card mini"><div class="mt1">${title}</div><div class="ms">moyenne ${av.toFixed(dg)} (pointillés) · dernier match en plein</div>${g}</div>`;
+  return g;
 }
+function miniBars(key,title,dg,color){const av=avg(MS.map(m=>m[key]));return `<div class="card mini"><div class="mt1">${title}</div><div class="ms">moyenne ${av.toFixed(dg)} (pointillés) · ${icoHTML(false)} ext. ${icoHTML(true)} dom.</div>${barsSVG(key,title,dg,color)}</div>`}
 function stacked(title,sub,parts){
   const W=620,H=300,p={l:44,r:16,t:30,b:50},iw=W-p.l-p.r,ih=H-p.t-p.b,bw=iw/MS.length;
   const tot=MS.map(m=>sum(parts.map(q=>m[q.k]))),mx=Math.max(...tot)*1.15,y=v=>p.t+ih-v/mx*ih;
@@ -582,10 +607,10 @@ function stacked(title,sub,parts){
   for(let i=0;i<=4;i++){const v=mx*i/4;s+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(255,255,255,.07)"/><text x="${p.l-8}" y="${y(v)+4}" text-anchor="end" fill="#7d8bd0" font-size="11">${v.toFixed(0)}</text>`}
   MS.forEach((m,i)=>{const cx=p.l+bw*i+bw/2,w=Math.min(64,bw*.5);let acc=0;
     parts.forEach(q=>{const v=m[q.k],y1=y(acc+v),h=y(acc)-y1;s+=`<g data-tip="<b>${m.Match}</b>${q.l} : ${v}"><rect x="${cx-w/2}" y="${y1}" width="${w}" height="${Math.max(0,h-1.5)}" rx="4" fill="${q.c}"/>${h>18?`<text x="${cx}" y="${y1+h/2+4}" text-anchor="middle" fill="#fdfdfe" font-size="11.5" font-weight="700">${v}</text>`:''}</g>`;acc+=v});
-    s+=`<text x="${cx}" y="${y(acc)-8}" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">${acc}</text><text x="${cx}" y="${H-28}" text-anchor="middle" fill="#e3e8fb" font-size="12.5" font-weight="600">${m.opp} (${m.home?'dom.':'ext.'})</text><text x="${cx}" y="${H-12}" text-anchor="middle" fill="#7d8bd0" font-size="11">${dfmt(m.date)}</text>`});
+    s+=`<text x="${cx}" y="${y(acc)-8}" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">${acc}</text><text x="${cx}" y="${H-28}" text-anchor="middle" fill="#e3e8fb" font-size="12.5" font-weight="600">${m.opp}</text>${icoPath(m.home,cx-37,H-22,13)}<text x="${cx-20}" y="${H-12}" fill="#7d8bd0" font-size="11">${dfmt(m.date)}</text>`});
   s+='</svg>';
   const lg=`<div class="chips" style="margin-top:4px">${parts.map(q=>`<span style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu)"><i style="width:10px;height:10px;border-radius:3px;background:${q.c}"></i>${q.l}</span>`).join('')}</div>`;
-  return `<div class="card"><h3>${title}</h3><div class="sub">${sub}</div>${s}${lg}</div>`;
+  return `<div class="card"><h3>${title}</h3><div class="sub">${sub} · ${icoLegend()}</div>${s}${lg}</div>`;
 }
 function setPSort(sk,k){const o=S[sk];if(o.k===k)o.dir*=-1;else{o.k=k;o.dir=-1}flipRender(RENDER[S.tab])}
 S.os={k:'Non Penalty xG',dir:-1};S.ds={k:'Defensive Action OBV',dir:-1};
@@ -612,7 +637,7 @@ function renderOff(){
   ${kpiRow([['Cumulative xG','xG créés',2,'var(--blue)'],['Goals & Penalty Goals','Buts',1,'var(--red)'],['Shots','Tirs',1,'#9db0ff'],['xGs','xG par tir',3,'var(--white)'],['Key Passes','Passes clés',1,'var(--gold)'],['Touches Inside Box','Touches dans la surface',0,'#7f95ff']])}
   ${interpCard('off')}
   <div class="sect"><h1>L'équipe</h1><span>Totaux par match</span></div>
-  <div class="grid g2"><div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">La qualité des occasions face au score</div>${xgChart()}</div>
+  <div class="grid g2"><div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">La qualité des occasions face au score · ${icoLegend()}</div>${xgChart()}</div>
   ${stacked('Origine des tirs','Dans la surface ou en dehors',[{k:'ShotsIn',l:'Dans la surface',c:'#4d6bff'},{k:'Shots Outside Box',l:'Hors surface',c:'#ed1e24'}])}</div>
   <div class="mgrid mt">${[['Passes Into Attacking Third','Passes vers le tiers offensif',0],['Key Passes','Passes clés',0],['Through Balls','Passes en profondeur',0],['Touches Inside Box','Touches dans la surface',0],['Crosses','Centres',0],['Dribbles','Dribbles',0],['Corners','Corners',0],['Free Kicks from Attacking Third','Coups francs offensifs',0],['xGs','xG par tir',3]].map(([k,t,d])=>miniBars(k,t,d,'#4d6bff')).join('')}</div>
   <div class="sect"><h1>Les joueurs</h1><span>Valeurs par 90 minutes</span></div>
@@ -679,7 +704,7 @@ function renderTeam(){
   mAll.innerHTML=`
   <div class="strip">
     <button class="mc ${sel==='all'?'on':''}" onclick="setMatch('all')"><div class="d"><span>Synthèse</span></div><div class="t">${MS.length} derniers matchs</div><div class="m"><span><b>${sum(MS.map(m=>m['Goals & Penalty Goals']))}</b> buts</span><span><b>${sum(MS.map(m=>m['Cumulative xG'])).toFixed(1)}</b> xG</span></div></button>
-    ${MS.map((m,i)=>`<button class="mc ${sel===i?'on':''}" onclick="setMatch(${i})"><div class="d"><span>${dfmt(m.date)}</span><span class="tag ${m.home?'dom':'ext'}">${m.home?'DOM':'EXT'}</span></div><div class="t">${m.home?'France – '+m.opp:m.opp+' – France'}</div><div class="m"><span><b>${m['Goals & Penalty Goals']}</b> but${m['Goals & Penalty Goals']>1?'s':''}</span><span><b>${m['Cumulative xG'].toFixed(2)}</b> xG</span><span><b>${m.Shots}</b> tirs</span></div></button>`).join('')}
+    ${MS.map((m,i)=>`<button class="mc ${sel===i?'on':''}" onclick="setMatch(${i})"><div class="d"><span>${dfmt(m.date)}</span><span class="tag ${m.home?'dom':'ext'}">${m.home?'DOM':'EXT'}</span></div><div class="t">${m.home?'France – '+m.opp:m.opp+' – France'}</div><div class="m"><span><b>${m['Goals & Penalty Goals']}</b> but${m['Goals & Penalty Goals']>1?'s':''}</span>${concOf(m)!=null?`<span><b>${m['Goals & Penalty Goals']}–${concOf(m)}</b> score</span>`:''}<span><b>${m['Cumulative xG'].toFixed(2)}</b> xG</span><span><b>${m.Shots}</b> tirs</span></div></button>`).join('')}
   </div>
   <div style="margin-bottom:14px"><h2>${label}</h2></div>
   <div class="kpis">${kp.map(([k,l,dg,c,gd])=>{const v=d[k],a=mAvg(k),diff=v-a;const cls=sel==='all'?'nt':(Math.abs(diff)<.005*Math.max(1,a)?'nt':(diff>0)==(gd==='up')?'up':'dn');
@@ -687,7 +712,7 @@ function renderTeam(){
 
   ${MS.length>=2?profilesCard():''}
   <div class="grid g12 mt">
-    <div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">Qualité des occasions face à la réalité du score — cliquez un match pour filtrer</div>${xgChart()}</div>
+    <div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">Qualité des occasions face à la réalité du score — cliquez un match pour filtrer · ${icoLegend()}</div>${xgChart()}</div>
     <div class="card"><h3>Notes de l'analyste</h3><div class="sub">Constats générés automatiquement à partir des données</div>${insights().map(([i,t])=>`<div class="ins"><i>${i}</i><div>${t}</div></div>`).join('')}</div>
   </div>
 
@@ -951,6 +976,8 @@ function analyze(){
   if(sh.length){const lead=sh[0],low=sh.filter(r=>r.shots>=6).sort((a,b)=>a.xgs-b.xgs)[0];
     add('off','neutral',`${lead.name} est le joueur qui tire le plus (${lead.shots} tirs estimés, ${n2(lead.xg)} xG, soit ${n3(lead.xgs)} xG par tir).${low&&low!==lead?` ${low.name} a la qualité de tir la plus faible parmi les tireurs réguliers (${n3(low.xgs)} xG par tir pour ${low.shots} tirs).`:''} Sur peu de minutes, ces valeurs restent fragiles.`,'Répartition des tirs entre les joueurs',"Travail individuel sur le choix et la position de frappe pour les joueurs dont le xG par tir est faible.",'FINITION')}
   /* ---------- DEFENSIF ---------- */
+  {const cc=concAll();if(cc){const tc=sum(cc),av=tc/nm,cs=cc.filter(v=>v===0).length;
+    add('def',av<=.75?'good':av>=1.5?'bad':'neutral',`${tc} but${tc>1?'s':''} encaissé${tc>1?'s':''} en ${nm} matchs (${n2(av)} par match)${cs?`, avec ${cs} match${cs>1?'s':''} sans encaisser`:''}.`,av<=.75?'Solidité défensive affichée':av>=1.5?'Trop de buts encaissés':'Buts encaissés à surveiller',av>=1.5?"Revoir l'organisation défensive et l'équilibre à la perte de balle, à l'entraînement et à la vidéo.":"Conserver l'organisation défensive et analyser en vidéo les buts encaissés.",'ÉQUILIBRE')}}
   const pHs=T('Pressures')?T('Pressures in Attacking Half')/T('Pressures'):0;
   if(pHs*100>=REF.pHalf)add('def','good',`${pc0(pHs)} des pressions ont lieu dans le camp adverse (${n1(A('Pressures in Attacking Half'))} sur ${n1(A('Pressures'))} par match) : l'équipe presse haut.${tr('pHalf')?` La part évolue${tr('pHalf')}.`:''}`,'Pressing haut et intense','Conserver cette agressivité haute et la coordination collective du pressing.','RÉCUPÉRATION – PRESSING');
   else add('def','neutral',`${pc0(pHs)} des pressions seulement ont lieu dans le camp adverse : le pressing est plutôt médian ou bas.`,'Pressing plutôt médian ou bas',"Décider si le pressing doit monter d'un cran selon l'adversaire et le contexte du match.",'RÉCUPÉRATION – PRESSING');
@@ -999,7 +1026,7 @@ function profilesCard(){const P=profileData(),opt=(sel)=>`<option value="avg" ${
   <div class="grid g2">${profilesInner()}</div>`}
 /* ---------- bilan : conclusions, préconisations, items technico-tactiques (modifiable) ---------- */
 let BIL=null;const BIL_KEY='lb-bilan-v1';
-const bilanSig=()=>MS.map(m=>m.Date).join('|')+'#'+SQUAD.length;
+const bilanSig=()=>MS.map(m=>m.Date).join('|')+'#'+SQUAD.length+'#'+MS.map(m=>concOf(m)).join(',');
 function genBilan(){const F=analyze(),row=f=>({t:f.tone,c:f.concl,p:f.rec,i:f.tag});return {sig:bilanSig(),off:F.filter(f=>f.area==='off').map(row),def:F.filter(f=>f.area==='def').map(row)}}
 function getBilan(){const sig=bilanSig();if(BIL&&BIL.sig===sig)return BIL;try{const j=JSON.parse(localStorage.getItem(BIL_KEY)||'null');if(j&&j.sig===sig&&j.off&&j.def){BIL=j;return BIL}}catch(e){}BIL=genBilan();return BIL}
 function saveBilan(){try{localStorage.setItem(BIL_KEY,JSON.stringify(BIL))}catch(e){}}
@@ -1054,16 +1081,16 @@ function repHome(){
   const dm=SQUAD.filter(p=>(p.Pos==='DEF'||p.Pos==='MIL')&&p.Minutes>=90);
   const key=[['Plus grand impact global','OBV',pl,'OBV /90'],['Meilleur finisseur','Non Penalty xG',pl,'npxG /90'],['Meilleur créateur','Open Play xG Assisted',pl,'xG assisté /90'],['Meilleure valeur défensive','Defensive Action OBV',dm,'OBV défensif /90'],['Plus gros presseur','Pressures',pl,'pressions /90'],['Meilleur récupérateur','Tackles & Interceptions',pl,'tacles + interceptions /90']].map(([t,k,f,u])=>{const p=top(k,f);return p?[t,p.Player,p.Pos,fv(p[k],PMI[k][3]),u]:null}).filter(Boolean);
   return {sub:`${MS.length} matchs · ${dfmt(first.date)} → ${dfmt(last.date)}`,body:`
-  <h2>Chiffres clés</h2>${rKpi([['Buts marqués',tot('Goals & Penalty Goals'),a('Goals & Penalty Goals').toFixed(1)+' par match'],['xG créés',tot('Cumulative xG').toFixed(1),a('Cumulative xG').toFixed(2)+' par match'],['Tirs',tot('Shots'),(tot('Cumulative xG')/tot('Shots')).toFixed(3)+' xG par tir'],['Pressions',tot('Pressures'),(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)+'% en camp adverse'],['Récupérations',tot('Ball Recoveries'),a('Ball Recoveries').toFixed(0)+' par match'],['Fautes commises',tot('Fouls'),tot('Fouls Won')+' subies']])}
+  <h2>Chiffres clés</h2>${rKpi([['Buts marqués',tot('Goals & Penalty Goals'),a('Goals & Penalty Goals').toFixed(1)+' par match'],['xG créés',tot('Cumulative xG').toFixed(1),a('Cumulative xG').toFixed(2)+' par match'],['Tirs',tot('Shots'),(tot('Cumulative xG')/tot('Shots')).toFixed(3)+' xG par tir'],['Pressions',tot('Pressures'),(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)+'% en camp adverse'],['Récupérations',tot('Ball Recoveries'),a('Ball Recoveries').toFixed(0)+' par match'],concItem()])}
   <h2>Les quatre piliers du jeu</h2>${rTable(['Pilier','Indicateur','Moyenne / match','1er match','Dernier match','Évolution'],pil.flatMap(([g,rows])=>rows.map(([k,l,d],i)=>[i?'':'<b>'+g+'</b>',l,fv(a(k),d),fv(first[k],d),fv(last[k],d),sgn(last[k]-first[k],d)])))}
-  <h2>xG créés et buts marqués</h2>${card('Match par match','Qualité des occasions face au score',xgLight())}
+  <h2>xG créés et buts marqués</h2>${card('Match par match','Qualité des occasions face au score · '+icoLegend(),xgLight())}
   <h2>Ce qu'il faut retenir</h2>${insights().map(([i,t])=>`<div class="ins">${t}</div>`).join('')}
   <h2>Joueurs qui ressortent</h2>${rTable(['Rubrique','Joueur','Poste','Valeur','Unité'],key)}`};
 }
 function repOff(){return {sub:`Offensif · ${MS.length} matchs · joueurs ≥ ${S.minMin} min`,body:`
   <h2>Chiffres clés (moyennes par match)</h2>${rKpi([['xG créés',fv(mAvg('Cumulative xG'),2)],['Buts',fv(mAvg('Goals & Penalty Goals'),1)],['Tirs',fv(mAvg('Shots'),1)],['xG par tir',fv(mAvg('xGs'),3)],['Passes clés',fv(mAvg('Key Passes'),1)],['Touches dans la surface',fv(mAvg('Touches Inside Box'),0)]])}
   <h2>Interprétation</h2>${interpReport('off')}
-  <h2>L'équipe</h2><div class="g2">${card('xG créés vs buts marqués','Qualité des occasions face au score',xgLight())}${light(withAll(()=>stacked('Origine des tirs','Dans la surface ou en dehors',[{k:'ShotsIn',l:'Dans la surface',c:'#4d6bff'},{k:'Shots Outside Box',l:'Hors surface',c:'#ed1e24'}])))}</div>
+  <h2>L'équipe</h2><div class="g2">${card('xG créés vs buts marqués','Qualité des occasions face au score · '+icoLegend(),xgLight())}${light(withAll(()=>stacked('Origine des tirs','Dans la surface ou en dehors',[{k:'ShotsIn',l:'Dans la surface',c:'#4d6bff'},{k:'Shots Outside Box',l:'Hors surface',c:'#ed1e24'}])))}</div>
   <h2>Détail par match</h2>${rTable(mHead(),mRows(OFF_ROWS))}
   <h2>Les joueurs (valeurs par 90 minutes)</h2><div class="g4">${rLead('Finition','Non Penalty xG','xG sans penalty',notGK)}${rLead('Création','Open Play xG Assisted','xG assisté',notGK)}${rLead('Conduite de balle','Dribble & Carry OBV','OBV dribbles et conduites',notGK)}${rLead('Progression','Deep Progressions','Progressions profondes',notGK)}</div>
   <h2>Tirs et qualité de tir</h2>${shootersReport()}
@@ -1077,7 +1104,7 @@ function repDef(){return {sub:`Défensif · ${MS.length} matchs · joueurs ≥ $
   <h2>Les joueurs (valeurs par 90 minutes)</h2><div class="g4">${rLead('Valeur défensive','Defensive Action OBV','OBV des actions défensives',notGK)}${rLead('Récupérateurs','Tackles & Interceptions','Tacles + interceptions',notGK)}${rLead('Presseurs','Pressures','Pressions',notGK)}${rLead('Difficiles à dribbler','Dribbled Past','Dribbles subis (moins = mieux)',notGK,true)}</div>
   <h2>Tableau défensif</h2>${rPlayers(DEF_COLS,notGK)}`}}
 function groupRows(){return GROUPS.flatMap(g=>[{h:g.t},...g.rows.map(([k,n,d])=>[k,n.trim(),d])])}
-function repTeam(){return {sub:`Match par match · ${MS.length} matchs`,body:`<h2>xG créés et buts marqués</h2>${card('Match par match','Qualité des occasions face au score',xgLight())}${MS.length>=2?'<h2>Profil de match</h2><div class="g2">'+light(profilesInner())+'</div>':''}<h2>Tous les indicateurs par match</h2>${rTable(mHead(),mRows(groupRows()))}`}}
+function repTeam(){return {sub:`Match par match · ${MS.length} matchs`,body:`<h2>xG créés et buts marqués</h2>${card('Match par match','Qualité des occasions face au score · '+icoLegend(),xgLight())}${MS.length>=2?'<h2>Profil de match</h2><div class="g2">'+light(profilesInner())+'</div>':''}<h2>Tous les indicateurs par match</h2>${rTable(mHead(),mRows(groupRows()))}`}}
 function repSquad(){return {sub:`Effectif · ${SQUAD.length} joueurs · joueurs ≥ ${S.minMin} min`,body:`<h2>Les meilleurs par domaine (par 90 minutes)</h2><div class="g4">${rLead('Impact global','OBV','On-Ball Value',notGK)}${rLead('Menace offensive','Non Penalty xG','xG sans penalty',notGK)}${rLead('Créateurs','Open Play xG Assisted','xG assisté',notGK)}${rLead('Récupérateurs','Tackles & Interceptions','Tacles + interceptions',notGK)}</div><h2>Tableau de l'effectif</h2>${rPlayers(SQ_COLS)}`}}
 function playerProf(p){return PROFILE_KEYS.map(k=>({k,v:p[k],pc:p.Pos==='GB'?null:pctOf(k,p,INV.has(k))})).filter(x=>x.v!=null)}
 function repPlayer(){
@@ -1251,7 +1278,7 @@ async function buildPptx(sec){
   const profSlide=()=>{if(MS.length<2)return;sl('Profil de match','Profil de match','0 = match le plus faible de la période · 100 = le plus fort',s=>{const P=profileData();[['off',0.4],['def',6.8]].forEach(([k,x])=>s.addChart(pptx.charts.RADAR,P[k].series.map(se=>({name:se.name,labels:P[k].labels,values:se.vals.map(v=>Math.round(v))})),{x,y:1.6,w:6.1,h:5.2,radarStyle:'standard',chartColors:[PD.gold,PD.blue],showLegend:true,legendPos:'b',legendFontSize:11,legendColor:PD.tx,catAxisLabelFontSize:11,catAxisLabelColor:PD.tx,valAxisMaxVal:100,valAxisMinVal:0,valAxisMajorUnit:25,valAxisLabelFontSize:8,valAxisLabelColor:PD.mu2,valGridLine:{color:PD.line,size:0.5},showTitle:true,title:P[k].title,titleFontSize:13,titleColor:PD.gold2,titleFontFace:'Calibri'}))})};
   /* ---------- contenu par rubrique ---------- */
   if(sec==='home'){
-    sl('Chiffres clés','Chiffres clés',periodTxt(' → '),s=>tiles(s,[['Buts marqués',tot('Goals & Penalty Goals'),a('Goals & Penalty Goals').toFixed(1)+' par match'],['xG créés',tot('Cumulative xG').toFixed(1),a('Cumulative xG').toFixed(2)+' par match'],['Tirs',tot('Shots'),(tot('Cumulative xG')/tot('Shots')).toFixed(3)+' xG par tir'],['Pressions',tot('Pressures'),(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)+'% en camp adverse'],['Récupérations',tot('Ball Recoveries'),a('Ball Recoveries').toFixed(0)+' par match'],['Fautes commises',tot('Fouls'),tot('Fouls Won')+' subies']]));
+    sl('Chiffres clés','Chiffres clés',periodTxt(' → '),s=>tiles(s,[['Buts marqués',tot('Goals & Penalty Goals'),a('Goals & Penalty Goals').toFixed(1)+' par match'],['xG créés',tot('Cumulative xG').toFixed(1),a('Cumulative xG').toFixed(2)+' par match'],['Tirs',tot('Shots'),(tot('Cumulative xG')/tot('Shots')).toFixed(3)+' xG par tir'],['Pressions',tot('Pressures'),(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)+'% en camp adverse'],['Récupérations',tot('Ball Recoveries'),a('Ball Recoveries').toFixed(0)+' par match'],concItem()]));
     const pil=[['Attaque',[['Cumulative xG','xG créés',2],['Shots','Tirs',1],['Key Passes','Passes clés',1]]],['Construction',[['Passes Into Attacking Third','Passes vers le tiers offensif',0],['Touches Inside Box','Touches dans la surface',0],['Passes from Defensive Third','Passes depuis le tiers défensif',0]]],['Pressing',[['Pressures','Pressions',0],['pHalf','Part en camp adverse (%)',0],['Counterpressures','Contre-pressings',0]]],['Défense',[['Ball Recoveries','Récupérations',0],['TI','Tacles + interceptions',1],['Blocked Shots','Tirs contrés',1]]]];
     sl('Les quatre piliers','Les quatre piliers du jeu','Moyenne par match et évolution du premier au dernier match',s=>tbl(s,['Pilier','Indicateur','Moyenne / match','1er match','Dernier match','Évolution'],pil.flatMap(([g,rows])=>rows.map(([k,l,d],i)=>[i?'':g,l,fv(a(k),d),fv(first[k],d),fv(last[k],d),sgn(last[k]-first[k],d)])),{first:2.2,rowH:0.44,fs:13}));
     sl('Résultat offensif','xG créés et buts marqués','Qualité des occasions face au score',s=>{xgChartPpt(s,0.5,1.55,7.6,5.2);s.addText(insights().slice(0,3).map(([i,t])=>({text:strip(t),options:{bullet:true,breakLine:true,fontSize:13,color:PD.tx,fontFace:F,paraSpaceAfter:10}})),{x:8.4,y:1.65,w:4.5,h:5,valign:'top'})});
@@ -1378,6 +1405,53 @@ function stagger(root){if(REDUCED||!root)return;let i=0;root.querySelectorAll('.
 const MAGN='nav button,.chip,.btn,.xmenu button,.phd button';
 document.addEventListener('mousemove',e=>{if(REDUCED)return;const b=e.target.closest&&e.target.closest(MAGN);if(!b)return;const r=b.getBoundingClientRect(),dx=(e.clientX-r.left-r.width/2)/r.width,dy=(e.clientY-r.top-r.height/2)/r.height;b.style.transform=`translate(${(dx*9).toFixed(1)}px,${(dy*7).toFixed(1)}px)`});
 document.addEventListener('mouseout',e=>{const b=e.target.closest&&e.target.closest(MAGN);if(b&&!b.contains(e.relatedTarget))b.style.transform=''});
+
+
+/* ============ Détails : piliers, buts encaissés, agrandissement des graphiques ============ */
+const PILLARS=[
+ {t:'Attaque',c:'#ed1e24',rows:[['Cumulative xG','xG créés',2,'up'],['Shots','Tirs',1,'up'],['Key Passes','Passes clés',1,'up']]},
+ {t:'Construction',c:'#4d6bff',rows:[['Passes Into Attacking Third','Passes vers le tiers offensif',0,'up'],['Touches Inside Box','Touches dans la surface',0,'up'],['Passes from Defensive Third','Passes depuis le tiers défensif',0,'nt']]},
+ {t:'Pressing',c:'#d5a450',rows:[['Pressures','Pressions',0,'up'],['pHalf','Part en camp adverse (%)',0,'up'],['Counterpressures','Contre-pressings',0,'up']]},
+ {t:'Défense',c:'#fdfdfe',rows:[['Ball Recoveries','Récupérations',0,'up'],['TI','Tacles + interceptions',1,'up'],['Blocked Shots','Tirs contrés',1,'nt']]}];
+const DEFS={'Cumulative xG':"Total des occasions créées, pondérées par leur qualité : chaque tir vaut entre 0 et 1 but. Un xG de 1,3 veut dire que les occasions créées valaient 1,3 but.",
+ 'Shots':"Nombre de tirs tentés, cadrés ou non.",'Key Passes':"Passes qui permettent directement à un coéquipier de tirer.",
+ 'Passes Into Attacking Third':"Passes qui font entrer le ballon dans le dernier tiers du terrain, la zone offensive. Plus il y en a, plus l'équipe monte le ballon.",
+ 'Touches Inside Box':"Ballons touchés dans la surface de réparation adverse. Mesure la présence près du but.",
+ 'Passes from Defensive Third':"Passes jouées depuis le premier tiers du terrain (notre camp). Beaucoup de passes : on construit depuis l'arrière. Peu de passes : on joue plus direct.",
+ 'Pressures':"Nombre de fois où un joueur met la pression sur le porteur du ballon adverse.",
+ 'pHalf':"Part des pressions exercées dans le camp adverse. Plus elle est haute, plus l'équipe presse haut sur le terrain.",
+ 'Counterpressures':"Pressions exercées juste après avoir perdu le ballon, pour le reprendre tout de suite.",
+ 'Ball Recoveries':"Ballons récupérés quand personne ne le possède (balle perdue ou libre).",
+ 'TI':"Tacles réussis + passes adverses interceptées : les deux gestes principaux pour reprendre le ballon.",
+ 'Blocked Shots':"Tirs adverses bloqués par un de nos joueurs avant d'atteindre le but."};
+/* fenêtre agrandie : fond flouté, on sort en cliquant à côté */
+function closeModal(){const m=document.querySelector('.modal');if(m){m.classList.add('out');setTimeout(()=>m.remove(),220)}document.body.style.overflow=''}
+function openModal(html,cls){document.querySelectorAll('.modal').forEach(m=>m.remove());const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="modal-box ${cls||''}" role="dialog" aria-modal="true"><button class="modal-x" aria-label="Fermer">✕</button>${html}</div>`;
+  m.addEventListener('click',e=>{if(e.target===m)closeModal()});m.querySelector('.modal-x').addEventListener('click',closeModal);document.body.appendChild(m);document.body.style.overflow='hidden';return m}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function openPillar(i){const g=PILLARS[i],first=MS[0],last=MS[MS.length-1],lbl=m=>`${m.opp} ${m.home?'(dom.)':'(ext.)'}`;
+  const cards=g.rows.map(([k,n,dg,pol])=>{const vals=MS.map(m=>m[k]),av=avg(vals),hi=vals.indexOf(Math.max(...vals)),lo=vals.indexOf(Math.min(...vals)),ch=last[k]-first[k],pc=first[k]?ch/first[k]*100:null,cls=Math.abs(ch)<1e-9||pol==='nt'?'nt':(ch>0?'up':'dn');
+    return `<div class="card pmc"><h3>${n}</h3><p class="def">${DEFS[k]||''}</p><div class="big2"><b class="mono">${av.toFixed(dg)}</b><span>par match en moyenne</span></div>${barsSVG(k,n,dg,g.c)}
+    <ul class="facts2"><li><span>Plus haut</span><b>${vals[hi].toFixed(dg)}</b> contre ${lbl(MS[hi])}</li><li><span>Plus bas</span><b>${vals[lo].toFixed(dg)}</b> contre ${lbl(MS[lo])}</li><li><span>Étendue</span><b>${(vals[hi]-vals[lo]).toFixed(dg)}</b> entre le match le plus bas et le plus haut</li><li><span>Évolution</span>du 1er match (${first.opp}) <b>${first[k].toFixed(dg)}</b> au dernier (${last.opp}) <b>${last[k].toFixed(dg)}</b> : <b class="${cls}">${sgn(ch,dg)}${pc!=null?' ('+sgn(pc,0)+' %)':''}</b></li></ul></div>`}).join('');
+  openModal(`<div class="mhead"><span class="dotc" style="background:${g.c}"></span><div><h2>${g.t}</h2><p>Les barres montrent la valeur de chaque match, les pointillés la moyenne. « Évolution » compare le premier et le dernier match du rassemblement ; « étendue » est l'écart entre le match le plus bas et le plus haut.</p></div></div><div class="mgr">${cards}</div>`,'wide')}
+/* buts encaissés : saisis à la main, les fichiers ne les contiennent pas */
+const CONC_KEY='lb-conc-v1';let CONC={};try{CONC=JSON.parse(localStorage.getItem(CONC_KEY)||'{}')||{}}catch(e){CONC={}}
+const ckey=m=>m.Match+'|'+m.Date,concOf=m=>{const v=CONC[ckey(m)];return v==null||v===''||isNaN(+v)?null:+v};
+const concAll=()=>MS.length&&MS.every(m=>concOf(m)!=null)?MS.map(concOf):null,concTotal=()=>{const a=concAll();return a?sum(a):null};
+function concItem(){const t=concTotal();return ['Buts encaissés / match',t!=null?(t/MS.length).toFixed(1):'–',t!=null?t+' au total':'à renseigner']}
+function openConcModal(){
+  openModal(`<div class="mhead"><span class="dotc" style="background:#7f95ff"></span><div><h2>Buts encaissés par match</h2><p>Les fichiers ne contiennent pas les buts de l'adversaire. Saisissez-les ici : ils servent à la vue d'ensemble, au bilan défensif et aux exports. Ils restent sur cet appareil.</p></div></div>
+  <form id="concForm" class="concform">${MS.map((m,i)=>`<label class="crow"><span><b>${m.opp}</b> ${icoHTML(m.home)} <small>${dfmt(m.date)} · ${m['Goals & Penalty Goals']} but${m['Goals & Penalty Goals']>1?'s':''} marqué${m['Goals & Penalty Goals']>1?'s':''}</small></span><input class="cin" type="number" inputmode="numeric" min="0" max="20" step="1" id="conc${i}" value="${concOf(m)??''}" placeholder="–" aria-label="Buts encaissés contre ${m.opp}"></label>`).join('')}
+  <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" type="submit">Enregistrer</button><button class="btn ghost" type="button" id="concClear">Tout effacer</button></div></form>`,'narrow');
+  $('#concForm').addEventListener('submit',e=>{e.preventDefault();MS.forEach((m,i)=>{const v=$('#conc'+i).value;if(v===''||isNaN(+v))delete CONC[ckey(m)];else CONC[ckey(m)]=Math.max(0,Math.round(+v))});try{localStorage.setItem(CONC_KEY,JSON.stringify(CONC))}catch(x){}closeModal();RENDER[S.tab]&&RENDER[S.tab]();toast('Buts encaissés enregistrés')});
+  $('#concClear').addEventListener('click',()=>{MS.forEach(m=>delete CONC[ckey(m)]);try{localStorage.setItem(CONC_KEY,JSON.stringify(CONC))}catch(x){}closeModal();RENDER[S.tab]&&RENDER[S.tab]()});
+}
+/* graphiques : un clic les agrandit */
+function enableZoom(root){(root||document).querySelectorAll('.card').forEach(c=>{if(c.classList.contains('zoomable')||c.classList.contains('pill')||c.classList.contains('key')||c.closest('.modal'))return;
+  const sv=[...c.querySelectorAll('svg[viewBox]')].find(x=>x.getAttribute('width')==='100%');if(!sv)return;c.classList.add('zoomable');c.insertAdjacentHTML('beforeend','<span class="zoomhint" aria-hidden="true">⤢</span>')})}
+document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest('.zoomable');if(!c||c.closest('.modal')||e.target.closest('select,button,a,input,label'))return;
+  const cl=c.cloneNode(true);cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));cl.querySelectorAll('.zoomhint').forEach(x=>x.remove());cl.classList.remove('zoomable','mt');openModal(cl.outerHTML,'zoom')});
+(function(){let t;const m=document.querySelector('main');if(!m||!window.MutationObserver)return;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(()=>enableZoom(m),80)}).observe(m,{childList:true,subtree:true})})();
 
 /* ============ router ============ */
 function emptyState(){return `<div class="drop" onclick="S.tab='data';sync()"><div class="ic">📂</div><h3>Aucune donnée à afficher</h3><p>Importez d'abord un fichier des matchs et un fichier des joueurs.</p><div style="margin-top:16px"><button class="btn">Aller à l'import</button></div></div>`}
