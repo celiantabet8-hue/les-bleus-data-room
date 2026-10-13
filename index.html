@@ -953,11 +953,11 @@ table.rt{width:100%;border-collapse:collapse;font-size:12px}.rt th{background:#0
 .ins{padding:7px 0;border-bottom:1px solid #e6e9f7;font-size:13px}.note{background:#fff8ea;border:1px solid #efd9a8;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#6b5320;margin-top:12px}
 svg{max-width:100%;height:auto}footer{padding:14px 34px;color:#6a77b8;font-size:11px;border-top:1px solid #dfe4f5}
 @media print{.noprint{display:none}main{padding:6px 0 20px}.hd{padding:14px 20px}@page{margin:11mm}}`;
-const REP_CSS_DARK=`:root{--mu:#a9b5ec;--mu2:#7d8bd0;--line:#1a2fa0}body{background:#010a45;color:#fdfdfe}
-h2{color:#fdfdfe;border-bottom:2px solid #d5a450}.kp div{background:#011682;border-color:#1f33a8}.kp small{color:#a9b5ec}.kp b{color:#fdfdfe}.kp span{color:#a9b5ec}
-table.rt th{background:#d5a450;color:#010a45}.rt th span{color:#4a3510}.rt td{border-bottom:1px solid #1a2fa0;color:#fdfdfe}.rt tr.grp td{background:#011682;color:#ffd98a}
-.card{background:#011682;border-color:#1f33a8}.card h3{color:#fdfdfe}.sub{color:#a9b5ec}.lb li{border-bottom-color:#1a2fa0}.lb em{color:#a9b5ec}.ins{border-bottom-color:#1a2fa0;color:#fdfdfe}.ins b{color:#ffd98a}
-.note{background:#0a1f8f;border-color:#2b3fb0;color:#ffd98a}main{padding-top:6px}`;
+const REP_CSS_DARK=`:root{--mu:#d6defe;--mu2:#b4c3fa;--line:#4264e0}body{background:#0b2ba3;color:#fdfdfe}
+h2{color:#fdfdfe;border-bottom:2px solid #d5a450}.kp div{background:#1a40c4;border-color:#4a6bea}.kp small{color:#d6defe}.kp b{color:#fdfdfe}.kp span{color:#d6defe}
+table.rt th{background:#d5a450;color:#0b2ba3}.rt th span{color:#4a3510}.rt td{border-bottom:1px solid #4264e0;color:#fdfdfe}.rt tr.grp td{background:#1a40c4;color:#ffd98a}
+.card{background:#1a40c4;border-color:#4a6bea}.card h3{color:#fdfdfe}.sub{color:#d6defe}.lb li{border-bottom-color:#4264e0}.lb em{color:#d6defe}.ins{border-bottom-color:#4264e0;color:#fdfdfe}.ins b{color:#ffd98a}
+.note{background:#2250d8;border-color:#5a7af0;color:#ffd98a}main{padding-top:6px}`;
 function buildReport(sec,opt){
   opt=opt||{};REP_DARK=!!opt.dark;let r;try{r=REP[sec]()}finally{REP_DARK=false}
   const title=r.title||SEC_NAME[sec];const team=TEAM==='France'?"Équipe de France":TEAM;
@@ -993,7 +993,7 @@ const reportTitle=sec=>sec==='player'?'Fiche joueur · '+S.player:REPORT_TITLE[s
 const getAuthor=()=>{try{return (localStorage.getItem('lb-author')||'').trim()}catch(e){return ''}};
 const periodTxt=sep=>MS.length+' matchs · '+dfmt(MS[0].date)+sep+dfmt(MS[MS.length-1].date);
 const rgb=h=>[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
-const PD={bg:'010A45',card:'011682',card2:'0A1D8F',deep:'010F66',line:'1A2FA0',line2:'2B3FB0',tx:'FDFDFE',mu:'A9B5EC',mu2:'7D8BD0',blue:'4D6BFF',red:'ED1E24',gold:'D5A450',gold2:'FFD98A'};
+const PD={bg:'0B2BA3',card:'1A40C4',card2:'2250D8',deep:'1535B5',line:'4264E0',line2:'5A7AF0',tx:'FDFDFE',mu:'D6DEFE',mu2:'B4C3FA',blue:'4D6BFF',red:'ED1E24',gold:'D5A450',gold2:'FFD98A'};
 /* ---- PDF : couverture, sommaire, puis pages de données sombres ---- */
 async function buildPdf(sec){
   await Promise.all([loadLib('h2c'),loadLib('pdf')]);const logo=await logoPNG();
@@ -1005,8 +1005,8 @@ async function buildPdf(sec){
     main.querySelectorAll('table.rt').forEach(t=>{const rows=[...t.tBodies[0].rows];if(rows.length<=14)return;const th=t.tHead.outerHTML,fr2=d.createDocumentFragment();
       for(let i=0;i<rows.length;i+=14){const nt=d.createElement('table');nt.className='rt';nt.innerHTML=th+'<tbody></tbody>';rows.slice(i,i+14).forEach(r=>nt.tBodies[0].appendChild(r));fr2.appendChild(nt)}t.parentNode.replaceChild(fr2,t)});
     const groups=[];let cur=null;[...main.children].forEach(el=>{if(!cur||el.tagName==='H2'||(el.matches('table.rt')&&cur.some(x=>x.matches('table.rt')))){cur=[];groups.push(cur)}cur.push(el)});
-    const wraps=groups.map(g=>{const w=d.createElement('div');w.style.cssText='background:#010a45;padding:2px 0 8px';const h=g.find(x=>x.tagName==='H2');w._sec=h?h.textContent:null;main.insertBefore(w,g[0]);g.forEach(e=>w.appendChild(e));return w});
-    const cap=el=>html2canvas(el,{scale:2,backgroundColor:'#010a45',logging:false,useCORS:true});
+    const wraps=groups.map(g=>{const w=d.createElement('div');w.style.cssText='background:#0b2ba3;padding:2px 0 8px';const h=g.find(x=>x.tagName==='H2');w._sec=h?h.textContent:null;main.insertBefore(w,g[0]);g.forEach(e=>w.appendChild(e));return w});
+    const cap=el=>html2canvas(el,{scale:2,backgroundColor:'#0b2ba3',logging:false,useCORS:true});
     const J=window.jspdf.jsPDF,doc=new J({orientation:'landscape',unit:'mm',format:'a4'}),W=297,H=210,M=12,CW=W-2*M,TOP=24,BOT=H-14,maxH=BOT-TOP;
     const fill=h=>{const c=rgb(h);doc.setFillColor(c[0],c[1],c[2])},stroke=h=>{const c=rgb(h);doc.setDrawColor(c[0],c[1],c[2])},ink=h=>{const c=rgb(h);doc.setTextColor(c[0],c[1],c[2])};
     const bg=()=>{fill(PD.bg);doc.rect(0,0,W,H,'F')};
@@ -1033,7 +1033,7 @@ async function buildPdf(sec){
       if(h<=maxH){const room=BOT-y;
         if(y+h>BOT){const f=room/h;if(f>=.7){markPage();put(c,M+(CW-CW*f)/2,y,CW*f,room);y+=room+3;continue}y=newPage()}
         markPage();put(c,M,y,CW,h);y+=h+3}
-      else{const sl=Math.floor(maxH*c.width/CW);for(let t=0;t<c.height;t+=sl){const sh=Math.min(sl,c.height-t),k=document.createElement('canvas');k.width=c.width;k.height=sh;const g2=k.getContext('2d');g2.fillStyle='#010a45';g2.fillRect(0,0,k.width,k.height);g2.drawImage(c,0,t,c.width,sh,0,0,c.width,sh);y=newPage();markPage();put(k,M,TOP,CW,sh*CW/c.width);y=TOP+sh*CW/c.width+3}}
+      else{const sl=Math.floor(maxH*c.width/CW);for(let t=0;t<c.height;t+=sl){const sh=Math.min(sl,c.height-t),k=document.createElement('canvas');k.width=c.width;k.height=sh;const g2=k.getContext('2d');g2.fillStyle='#0b2ba3';g2.fillRect(0,0,k.width,k.height);g2.drawImage(c,0,t,c.width,sh,0,0,c.width,sh);y=newPage();markPage();put(k,M,TOP,CW,sh*CW/c.width);y=TOP+sh*CW/c.width+3}}
     }
     /* sommaire */
     doc.setPage(2);ink(PD.gold);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('CONTENU DU RAPPORT',24,38,{charSpace:1.2});
