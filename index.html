@@ -563,7 +563,7 @@ function radar(axes,series,size=380,tipFn){
   axes.forEach((a,i)=>{const [x,y]=pt(i,100),[lx,ly]=pt(i,122);s+=`<line x1="${c}" y1="${c}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.07)"/><text x="${lx}" y="${ly+4}" text-anchor="${Math.abs(lx-c)<8?'middle':lx>c?'start':'end'}" fill="#c3ccf5" font-size="11.5" font-weight="600">${a}</text>`});
   series.forEach(se=>{const pts=se.vals.map((v,i)=>pt(i,v).join(',')).join(' ');
     s+=`<polygon points="${pts}" fill="${se.color}" fill-opacity=".2" stroke="${se.color}" stroke-width="2.2" stroke-linejoin="round"/>`;
-    se.vals.forEach((v,i)=>{const [x,y]=pt(i,v);s+=`<circle cx="${x}" cy="${y}" r="4" fill="${se.color}" stroke="#010a45" stroke-width="1.5" data-tip="<b>${se.name}</b>${tipFn?tipFn(se.name,axes[i],v):axes[i]+' : meilleur que '+v.toFixed(0)+' % de l\'effectif'}"/>`})});
+    se.vals.forEach((v,i)=>{const [x,y]=pt(i,v);s+=`<circle cx="${x}" cy="${y}" r="4" fill="${se.color}" stroke="#010a45" stroke-width="1.5" data-tip="<b>${se.name}</b>${tipFn?tipFn(se.name,axes[i],v,se.raw&&se.raw[i]):axes[i]+' : meilleur que '+v.toFixed(0)+' % de l\'effectif'}"/>`})});
   return s+'</svg>';
 }
 
@@ -1055,9 +1055,9 @@ const profColor=k=>k==='avg'?'#fdfdfe':PROF_PAL[k%PROF_PAL.length];
 const profName=k=>k==='avg'?'Moyenne des matchs':`${MS[k].opp} (${MS[k].home?'dom.':'ext.'}) · ${dfmt(MS[k].date)}`;
 const profSel=()=>S.pSel!=null?S.pSel.filter(k=>k==='avg'||MS[k]):(S.match==='all'||!MS[S.match]?MS.map((_,i)=>i):[S.match]);
 function profileData(){const sel=profSel(),val=(k,ax)=>k==='avg'?mAvg(ax):MS[k][ax];
-  const mk=(title,ax)=>({title,labels:ax.map(x=>x[1]),series:sel.map(k=>({key:k,name:profName(k),color:profColor(k),vals:ax.map(([a])=>{const v=MS.map(m=>m[a]),lo=Math.min(...v),hi=Math.max(...v);return hi===lo?50:(val(k,a)-lo)/(hi-lo)*100})}))});
+  const mk=(title,ax)=>({title,labels:ax.map(x=>x[1]),series:sel.map(k=>({key:k,name:profName(k),color:profColor(k),raw:ax.map(([a])=>{const x=val(k,a);return a==='xGs'?x.toFixed(3):a==='Cumulative xG'?x.toFixed(2):Math.round(x)}),vals:ax.map(([a])=>{const hi=Math.max(...MS.map(m=>m[a]));return hi>0?val(k,a)/hi*100:0})}))});
   return {sel,off:mk('Profil offensif',AX_OFF),def:mk('Profil défensif',AX_DEF)}}
-const profTip=(n,ax,v)=>`<b>${n}</b>${ax} : ${Math.round(v)}/100`;
+const profTip=(n,ax,v,raw)=>`<b>${n}</b>${ax} : ${raw!=null?raw:''}<br>${Math.round(v)} % du meilleur match`;
 function profilesInner(){const P=profileData();if(!P.sel.length)return `<div class="card" style="grid-column:1/-1;text-align:center;color:var(--mu)">Sélectionnez au moins un match dans la liste pour afficher les profils.</div>`;
   return [P.off,P.def].map(d=>`<div class="card"><h3 style="margin-bottom:12px">${d.title}</h3><div style="display:grid;place-items:center">${radar(d.labels,d.series,360,profTip)}</div><div class="chips" style="justify-content:center;margin-top:6px">${d.series.map(se=>`<span class="lgd"><i style="background:${se.color}"></i>${se.name}</span>`).join('')}</div></div>`).join('')}
 const mselLabel=sel=>!sel.length?'Aucun match':(sel.length===MS.length&&!sel.includes('avg'))?'Tous les matchs':sel.length===1?profName(sel[0]):`${sel.length} sélections`;
