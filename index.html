@@ -831,7 +831,7 @@ function scatter(sx=S.sx,sy=S.sy,exGK=false){
 const PRESETS=[['Finition vs création','Non Penalty xG','Open Play xG Assisted'],['Impact global','Deep Progressions','OBV'],['Surface vs dribbles','Touches Inside Box','Dribble & Carry OBV'],['Volume défensif','Pressures','Tackles & Interceptions'],['Passes vs conduites','Pass OBV','Dribble & Carry OBV']];
 function renderSquad(){
   const base=SQUAD.filter(p=>p.Minutes>=S.minMin),rows=base.filter(p=>S.pos==='ALL'||p.Pos===S.pos).sort(cmpBy(S.sort,S.dir));
-  const cols=withLBP(SQ_COLS),cnt=k=>k==='ALL'?base.length:base.filter(p=>p.Pos===k).length;
+  const ptitle=(()=>{const pr=PRESETS.find(([n,x,y])=>x===S.sx&&y===S.sy);return pr?pr[0]:`${PMI[S.sx][1]} vs ${PMI[S.sy][1]}`})(),cols=withLBP(SQ_COLS),cnt=k=>k==='ALL'?base.length:base.filter(p=>p.Pos===k).length;
   $('#v-squad').innerHTML=`
   <div class="hello"><div><h2>Effectif</h2><h1>Qui fait quoi</h1><p>Filtrez par poste, comparez les profils et repérez les meilleurs par domaine</p></div></div>
   <div class="card filt"><div class="chips">${['ALL','ATT','MIL','DEF','GB'].map(k=>`<button class="chip ${S.pos===k?'on':''}" onclick="S.pos='${k}';flipRender(renderSquad)">${k==='ALL'?'Tous':POSN[k]+'s'}<em>${cnt(k)}</em></button>`).join('')}</div>
@@ -843,11 +843,11 @@ function renderSquad(){
     ${leaderboard('Créateurs','Open Play xG Assisted','xG assisté en jeu ouvert /90',p=>p.Pos!=='GB')}
     ${leaderboard('Récupérateurs','Tackles & Interceptions','Tacles + interceptions /90',p=>p.Pos!=='GB')}
   </div>
-  <div class="card mt"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:flex-start"><div><h3>Carte des profils</h3><div class="sub">Taille = minutes jouées · couleur = poste · lignes pointillées = moyenne du groupe · clic = fiche joueur</div></div>
-    <div class="chips">${PRESETS.map(([n,x,y])=>`<button class="chip ${S.sx===x&&S.sy===y?'on':''}" onclick="S.sx='${x}';S.sy='${y}';renderSquad()">${n}</button>`).join('')}</div></div>
-    <div class="ctl" style="margin-bottom:6px"><label>X <select onchange="S.sx=this.value;renderSquad()">${PM.map(m=>`<option value="${m[0]}" ${S.sx===m[0]?'selected':''}>${m[1]}</option>`).join('')}</select></label>
-    <label>Y <select onchange="S.sy=this.value;renderSquad()">${PM.map(m=>`<option value="${m[0]}" ${S.sy===m[0]?'selected':''}>${m[1]}</option>`).join('')}</select></label>
-    <div class="chips" style="margin-left:auto">${Object.keys(POSC).map(k=>`<span style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu)"><i style="width:10px;height:10px;border-radius:50%;background:${POSC[k]}"></i>${POSN[k]}</span>`).join('')}</div></div>
+  <div class="card mt profmap" data-title="${ptitle}"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:flex-start"><div><h3>Carte des profils</h3><div class="sub">Taille = minutes jouées · couleur = poste · lignes pointillées = moyenne du groupe · clic = fiche joueur</div></div>
+    <div class="chips presets">${PRESETS.map(([n,x,y])=>`<button class="chip ${S.sx===x&&S.sy===y?'on':''}" onclick="S.sx='${x}';S.sy='${y}';renderSquad()">${n}</button>`).join('')}</div></div>
+    <div class="ctl" style="margin-bottom:6px"><label class="axl">X <select onchange="S.sx=this.value;renderSquad()">${PM.map(m=>`<option value="${m[0]}" ${S.sx===m[0]?'selected':''}>${m[1]}</option>`).join('')}</select></label>
+    <label class="axl">Y <select onchange="S.sy=this.value;renderSquad()">${PM.map(m=>`<option value="${m[0]}" ${S.sy===m[0]?'selected':''}>${m[1]}</option>`).join('')}</select></label>
+    <div class="chips poslegend" style="margin-left:auto">${Object.keys(POSC).map(k=>`<span style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu)"><i style="width:10px;height:10px;border-radius:50%;background:${POSC[k]}"></i>${POSN[k]}</span>`).join('')}</div></div>
     ${scatter()}</div>
   <div class="card mt"><h3>Les joueurs</h3><div class="sub">Valeurs par 90 minutes · la barre montre le rang dans l'effectif de champ · pastille dorée = top 3 · cliquez un en-tête pour trier</div>
     ${plist(rows,cols,{sort:S.sort,dir:S.dir,call:k=>`setSort('${k}')`})}</div>`;
@@ -1505,19 +1505,24 @@ function openPillar(i,origin){const g=PILLARS[i],first=MS[0],last=MS[MS.length-1
 function enableZoom(root){(root||document).querySelectorAll('.card').forEach(c=>{if(c.classList.contains('zoomable')||c.classList.contains('ztable')||c.classList.contains('pill')||c.classList.contains('key')||c.closest('.modal'))return;
   const sv=[...c.querySelectorAll('svg[viewBox]')].find(x=>x.getAttribute('width')==='100%'),tb=!!c.querySelector('.plist,.mrow,.srow,.bscroll,table.rt');if(!sv&&!tb)return;
   c.classList.add(sv?'zoomable':'ztable');c.insertAdjacentHTML('beforeend','<button class="cardsnap" type="button" aria-label="Enregistrer en image" title="Enregistrer en image">'+CAM+'</button><button class="zoomhint" type="button" aria-label="Agrandir" title="Agrandir">⤢</button>')})}
-function zoomCard(c){const cl=c.cloneNode(true);cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));cl.querySelectorAll('.zoomhint,.cardsnap').forEach(x=>x.remove());const tb=c.classList.contains('ztable');cl.classList.remove('zoomable','ztable','mt');openModal(cl.outerHTML,'zoom'+(tb?' tbl':''),c)}
+function zoomCard(c){const cl=c.cloneNode(true);tidyCard(cl);cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));cl.querySelectorAll('.zoomhint,.cardsnap').forEach(x=>x.remove());const tb=c.classList.contains('ztable');cl.classList.remove('zoomable','ztable','mt');openModal(cl.outerHTML,'zoom'+(tb?' tbl':''),c)}
 document.addEventListener('click',e=>{const zb=e.target.closest&&e.target.closest('.zoomhint');if(zb){const c=zb.closest('.card');if(c&&!c.closest('.modal')){e.stopPropagation();zoomCard(c)}return}
   const c=e.target.closest&&e.target.closest('.zoomable');if(!c||c.closest('.modal')||e.target.closest('select,button,a,input,label'))return;zoomCard(c)});
 (function(){let t;const m=document.querySelector('main');if(!m||!window.MutationObserver)return;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(()=>enableZoom(m),80)}).observe(m,{childList:true,subtree:true})})();
 
 
+/* carte des profils : sans les commandes de sélection, la sélection devient le titre */
+function tidyCard(cl){const m=cl.classList&&cl.classList.contains('profmap')?cl:cl.querySelector&&cl.querySelector('.profmap');if(!m)return;
+  m.querySelectorAll('.presets,.axl').forEach(x=>x.remove());const h=m.querySelector('h3');if(h)h.textContent=m.dataset.title||h.textContent;
+  const sub=m.querySelector('.sub');if(sub)sub.textContent='Carte des profils · taille = minutes jouées · couleur = poste';
+  const ctl=m.querySelector('.ctl');if(ctl){ctl.style.margin='0 0 4px';const lg=ctl.querySelector('.poslegend');if(lg)lg.style.marginLeft='0'}}
 /* capture haute résolution d'un graphique (carte ou fenêtre agrandie) */
 async function snapNode(node,btn){
   if(!node||(btn&&btn.dataset.busy))return;const lab=btn&&btn.querySelector('span'),old=lab&&lab.textContent;if(btn){btn.dataset.busy=1;if(lab)lab.textContent='…'}
   try{
     await loadLib('h2c');const modal=node.classList.contains('modal-box'),inner=node.querySelector('.plist,.bscroll>div'),width=Math.min(Math.max(node.clientWidth||900,inner?inner.scrollWidth+70:0),1700);
     const w=document.createElement('div');w.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;padding:${modal?'30px 32px 22px':'26px 28px 20px'};background:linear-gradient(145deg,#0b2ba3,#010a45);color:#fdfdfe;font-family:Inter,system-ui,sans-serif`;
-    const cl=node.cloneNode(true);cl.style.cssText='position:static;width:100%;max-height:none;overflow:visible;padding:0;background:none;border:0;box-shadow:none;animation:none;transform:none;margin:0;backdrop-filter:none';cl.classList.remove('zoomable','mt','rise');
+    const cl=node.cloneNode(true);tidyCard(cl);cl.style.cssText='position:static;width:100%;max-height:none;overflow:visible;padding:0;background:none;border:0;box-shadow:none;animation:none;transform:none;margin:0;backdrop-filter:none';cl.classList.remove('zoomable','mt','rise');
     cl.querySelectorAll('.modal-tools,.zoomhint,.cardsnap').forEach(x=>x.remove());cl.querySelectorAll('.plist-wrap,.bscroll,.tw').forEach(x=>{x.style.overflow='visible'});cl.classList.remove('ztable');cl.querySelectorAll('.mrise,.rise').forEach(x=>x.classList.remove('mrise','rise'));cl.querySelectorAll('*').forEach(x=>{x.style.animation='none'});
     cl.querySelectorAll('[onclick]').forEach(x=>x.removeAttribute('onclick'));
     const title=((cl.querySelector('h3,h2,.mt1')||{}).textContent||'graphique').trim();
