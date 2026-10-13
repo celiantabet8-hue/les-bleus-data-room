@@ -447,7 +447,9 @@ const sgn=(v,d=1)=>v==null?'–':(v>0?'+':'')+v.toFixed(d);
 const POSC={GB:'#fdfdfe',DEF:'#4d6bff',MIL:'#d5a450',ATT:'#ed1e24'};
 const POSN={GB:'Gardien',DEF:'Défenseur',MIL:'Milieu',ATT:'Attaquant'};
 const DEFAULT_MATCHES=JSON.parse(JSON.stringify(MATCHES)),DEFAULT_SQUAD=JSON.parse(JSON.stringify(SQUAD));
-const POSMAP=Object.assign({},typeof POS_HINTS!=='undefined'?POS_HINTS:{},Object.fromEntries(SQUAD.map(p=>[p.Player,p.Pos])));
+const NAME_FIX={'Dayotchanculle Upamecano':'Dayot Upamecano'},fixName=n=>NAME_FIX[n]||n;
+SQUAD.forEach(p=>{p.Player=fixName(p.Player)});
+const POSMAP=Object.assign({},Object.fromEntries(Object.entries(typeof POS_HINTS!=='undefined'?POS_HINTS:{}).map(([k,v])=>[fixName(k),v])),Object.fromEntries(SQUAD.map(p=>[p.Player,p.Pos])));
 const HAS_DEFAULT=MATCHES.length>0&&SQUAD.length>0;
 let MS=[],TEAM='France',SRC=HAS_DEFAULT?{matches:'données d\'exemple',squad:'données d\'exemple'}:{matches:'aucun fichier',squad:'aucun fichier'};
 function buildMS(){
@@ -638,7 +640,6 @@ function renderOff(){
   $('#v-off').innerHTML=`
   <div class="hello"><div><h2>Offensif</h2><h1>Créer, progresser, finir</h1><p>Équipe match par match, puis les joueurs qui font vivre l'attaque</p></div></div>
   ${kpiRow([['Cumulative xG','xG créés',2,'var(--blue)'],['Goals & Penalty Goals','Buts',1,'var(--red)'],['Shots','Tirs',1,'#9db0ff'],['xGs','xG par tir',3,'var(--white)'],['Key Passes','Passes clés',1,'var(--gold)'],['Touches Inside Box','Touches dans la surface',0,'#7f95ff']])}
-  ${interpCard('off')}
   <div class="sect"><h1>L'équipe</h1><span>Totaux par match</span></div>
   <div class="grid g2"><div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">La qualité des occasions face au score</div>${xgChart()}</div>
   ${stacked('Origine des tirs','Dans la surface ou en dehors',[{k:'ShotsIn',l:'Dans la surface',c:'#4d6bff'},{k:'Shots Outside Box',l:'Hors surface',c:'#ed1e24'}])}</div>
@@ -653,14 +654,14 @@ function renderOff(){
   </div>
   <div class="card mt"><h3>Finisseurs et créateurs</h3><div class="sub">En haut à droite : menace et création. Taille = minutes · clic = fiche joueur</div>${scatter('Non Penalty xG','Open Play xG Assisted',true)}</div>
   ${shootersCard()}
-  ${ptable('os',['Non Penalty xG','Non Penalty xG/Shot','Shots','Open Play xG Assisted','Touches Inside Box','Deep Progressions','Dribble & Carry OBV','Shot OBV','Pass OBV','Fouls Won'],'Joueurs offensifs','La barre montre le rang dans l\'effectif · pastille dorée = top 3 · cliquez un en-tête pour trier')}`;
+  ${ptable('os',['Non Penalty xG','Non Penalty xG/Shot','Shots','Open Play xG Assisted','Touches Inside Box','Deep Progressions','Dribble & Carry OBV','Shot OBV','Pass OBV','Fouls Won'],'Joueurs offensifs','La barre montre le rang dans l\'effectif · pastille dorée = top 3 · cliquez un en-tête pour trier')}
+  ${interpCard('off')}`;
 }
 function renderDef(){
   $('#v-def').innerHTML=`
   <div class="hello"><div><h2>Défensif</h2><h1>Presser, récupérer, protéger</h1><p>Équipe match par match, puis les joueurs qui défendent le plus et le mieux</p></div></div>
   ${kpiRow([['Ball Recoveries','Récupérations',0,'var(--gold)'],['TI','Tacles + interceptions',1,'var(--blue)'],['Blocked Shots','Tirs contrés',1,'var(--white)'],['Clearances','Dégagements',0,'#9db0ff'],['Fouls','Fautes commises',1,'var(--red)'],['Dribbled Past','Dribbles subis',1,'#7f95ff']])}
   <div class="note"><span>ℹ️</span><div><b>Ce que ces données mesurent.</b> Elles comptent les actions défensives, pas leur résultat : il n'y a ni buts encaissés, ni tirs concédés, ni statistiques de l'adversaire. Un chiffre élevé veut dire « beaucoup d'actions », pas forcément « bonne défense ».</div></div>
-  ${interpCard('def')}
   <div class="sect"><h1>L'équipe</h1><span>Totaux par match</span></div>
   <div class="grid g2">${stacked('Hauteur du pressing','Pressions en camp adverse et dans son propre camp',[{k:'Pressures in Attacking Half',l:'Camp adverse',c:'#d5a450'},{k:'pLow',l:'Propre camp',c:'#3b5b8f'}])}
   ${stacked('Duels disputés','Duels aériens et au sol',[{k:'All Aerials',l:'Aériens',c:'#fdfdfe'},{k:'Non Aerial Duels',l:'Au sol',c:'#9db0ff'}])}</div>
@@ -674,7 +675,8 @@ function renderDef(){
     ${leaderboard('Difficiles à dribbler','Dribbled Past','Dribbles subis /90 (moins = mieux)',notGK,true)}
   </div>
   <div class="card mt"><h3>Presser et récupérer</h3><div class="sub">Pressions contre tacles + interceptions · taille = minutes · clic = fiche joueur</div>${scatter('Pressures','Tackles & Interceptions',true)}</div>
-  ${ptable('ds',['Defensive Action OBV','Tackles & Interceptions','Pressures','Dribbled Past','Aerial Wins','Aerial Win%','Fouls','Turnovers'],'Joueurs défensifs','La barre montre le rang dans l\'effectif (fautes, pertes de balle et dribbles subis inversés) · pastille dorée = top 3 · cliquez un en-tête pour trier')}`;
+  ${ptable('ds',['Defensive Action OBV','Tackles & Interceptions','Pressures','Dribbled Past','Aerial Wins','Aerial Win%','Fouls','Turnovers'],'Joueurs défensifs','La barre montre le rang dans l\'effectif (fautes, pertes de balle et dribbles subis inversés) · pastille dorée = top 3 · cliquez un en-tête pour trier')}
+  ${interpCard('def')}`;
 }
 
 /* ============ TEAM VIEW ============ */
@@ -881,7 +883,7 @@ function guessPos(p){
   return 'MIL';
 }
 function applyData(m,sq,src){
-  MATCHES=m;SQUAD=sq;SQUAD.forEach(p=>{p.Pos=POSMAP[p.Player]||(POSMAP[p.Player]=guessPos(p))});
+  MATCHES=m;SQUAD=sq;SQUAD.forEach(p=>{p.Player=fixName(p.Player)});SQUAD.forEach(p=>{p.Pos=POSMAP[p.Player]||(POSMAP[p.Player]=guessPos(p))});
   if(src)SRC={...SRC,...src};buildMS();updateHeader();
   if(SQUAD.length&&!SQUAD.some(p=>p.Player===S.player))S.player=([...SQUAD].sort((a,b)=>b.Minutes-a.Minutes).find(p=>p.Pos!=='GB')||SQUAD[0]).Player;
   S.cmp='';S.match='all';
@@ -1005,7 +1007,7 @@ function analyze(){
 }
 const toneTxt={good:'good',bad:'bad',neutral:'neutral'};
 function interpCard(area){const F=analyze().filter(f=>f.area===area);
-  return `<div class="card mt"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><h3>Interprétation</h3><div class="sub">Lecture des données comme le ferait un analyste : <b class="tg">vert</b> = point fort · <b class="tb">rouge</b> = point faible · blanc = nuance. Les repères chiffrés sont indicatifs.</div></div><button class="btn ghost" onclick="S.tab='bilan';sync()">Voir le bilan et les préconisations</button></div>
+  return `<div class="card mt"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><h3>Interprétation</h3></div><button class="btn ghost" onclick="S.tab='bilan';sync()">Voir le bilan et les préconisations</button></div>
   ${F.map((f,i)=>`<div class="it ${f.tone}"><span class="n">${i+1}</span><div>${f.text}</div></div>`).join('')}</div>`}
 function shootersCard(){const R=shootersData();if(!R.length)return '';const mx=Math.max(...R.map(r=>r.shots));
   return `<div class="card mt"><h3>Qui tire, et avec quelle qualité</h3><div class="sub">Tirs et xG estimés à partir des valeurs par 90 minutes et du temps de jeu · l'xG par tir mesure la qualité des positions de frappe</div>
