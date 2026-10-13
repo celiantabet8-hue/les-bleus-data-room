@@ -343,6 +343,32 @@ input[type=range]{accent-color:var(--blue)}
 .xa{display:block;padding:6px 12px 10px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
 .xa input{display:block;width:100%;margin-top:6px;padding:9px 12px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:13px;letter-spacing:0;text-transform:none}
 .xa input:focus{outline:2px solid var(--blue);outline-offset:1px}
+
+/* ===== Analyste : interprétation, tireurs, bilan ===== */
+.tg{color:#8ff0b5!important}.tb{color:#ff9aa5!important}
+.it{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);line-height:1.6;font-size:14px;color:#eef1ff}.it:last-child{border:0}
+.it .n{flex:none;width:28px;height:28px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:12.5px;background:rgba(255,255,255,.12);font-family:'JetBrains Mono',monospace}
+.it.good{color:#9af5bf}.it.good .n{background:rgba(74,222,128,.2);color:#9af5bf}.it.bad{color:#ffa7b0}.it.bad .n{background:rgba(255,68,87,.24);color:#ffa7b0}
+.srow{display:grid;grid-template-columns:26px minmax(160px,1.3fr) minmax(150px,1.6fr) 80px 90px;gap:14px;align-items:center;padding:12px 14px;margin:0 -14px;border-radius:16px;cursor:pointer;transition:background .35s var(--ease),transform .35s var(--ease)}
+.srow:hover{background:linear-gradient(90deg,rgba(62,123,255,.18),rgba(62,123,255,.03));transform:translateX(5px)}
+.srow .rk{color:var(--mu2);font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace}
+.srow .sn b{display:block;font-size:14.5px}.srow .sn small{display:flex;gap:8px;align-items:center;margin-top:3px;color:var(--mu);font-size:11.5px}
+.srow .sb{position:relative;display:flex;align-items:center;gap:8px}.srow .sb i{display:block;height:8px;width:var(--w);min-width:6px;border-radius:8px;background:linear-gradient(90deg,#4d6bff,#35d0ff);box-shadow:0 0 12px rgba(62,150,255,.5);transform-origin:left;animation:growx 1s var(--ease) both}.srow .sb b{font-size:15px}
+.srow small{color:var(--mu);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}.srow .sv{display:flex;flex-direction:column;align-items:flex-start}.srow .sv b{font-size:15px}
+@media(max-width:820px){.srow{grid-template-columns:22px 1fr 70px 80px}.srow .sb{display:none}}
+.bscroll{overflow-x:auto;padding-bottom:6px}
+.bhead,.brow{display:grid;grid-template-columns:30px minmax(260px,1.25fr) minmax(300px,1.6fr) minmax(150px,.6fr) 34px;gap:12px;align-items:start;min-width:860px}
+.bhead{padding:0 14px 8px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu2);font-weight:700;font-family:'JetBrains Mono',monospace}
+.brow{padding:12px 14px;margin-bottom:8px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-left:4px solid var(--tc,#fdfdfe);transition:background .3s,border-color .3s}
+.brow.bad{--tc:#ff4457}.brow.good{--tc:#4ade80}.brow.neutral{--tc:#fdfdfe}
+.brow:focus-within,.brow:hover{background:rgba(255,255,255,.07)}
+.tdot{width:18px;height:18px;margin-top:9px;border-radius:50%;background:var(--tc);box-shadow:0 0 14px var(--tc);transition:transform .25s var(--ease)}.tdot:hover{transform:scale(1.25)}
+.ce{padding:8px 10px;border-radius:12px;line-height:1.5;font-size:13.5px;min-height:38px;outline:none;transition:background .25s,box-shadow .25s}
+.brow.bad .ce:not(.tagc):first-of-type{color:#ffa7b0}
+.brow.bad .ce[data-f=c],.brow.bad .ce[data-f=i]{color:#ffa7b0}.brow.good .ce[data-f=c],.brow.good .ce[data-f=i]{color:#9af5bf}
+.ce[data-f=i]{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px;text-align:center}
+.ce:focus{background:rgba(255,255,255,.1);box-shadow:0 0 0 1px rgba(100,160,255,.7)}
+.xdel{width:28px;height:28px;margin-top:5px;border-radius:9px;color:var(--mu2);font-size:18px;line-height:1;transition:.25s}.xdel:hover{background:rgba(255,68,87,.2);color:#fff}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
@@ -361,6 +387,7 @@ input[type=range]{accent-color:var(--blue)}
     <button data-t="team">Matchs</button>
     <button data-t="squad">Effectif</button>
     <button data-t="player">Joueur</button>
+    <button data-t="bilan">Bilan</button>
     <button data-t="data">Importer</button>
   </nav>
   <div class="xp" id="xp" hidden><button class="btn" id="xbtn" aria-haspopup="true">Exporter ⬇</button><div class="xmenu" id="xmenu" hidden><div class="xh" id="xh"></div><label class="xa">Auteur du rapport<input id="xauthor" type="text" placeholder="Votre nom (optionnel)" maxlength="60" autocomplete="name"></label><button data-f="pdf">PDF<span>Rapport prêt à envoyer</span></button><button data-f="pptx">PowerPoint<span>Présentation modifiable, tableaux et graphiques inclus</span></button><button data-f="csv">Excel (CSV)<span>Tableau de données brutes</span></button></div></div>
@@ -374,6 +401,7 @@ input[type=range]{accent-color:var(--blue)}
   <section id="v-team" class="view"></section>
   <section id="v-squad" class="view"></section>
   <section id="v-player" class="view"></section>
+  <section id="v-bilan" class="view"></section>
   <section id="v-data" class="view"></section>
   <div class="foot">Statistiques équipe cumulées par match · statistiques joueurs rapportées à 90 minutes · OBV = On-Ball Value (valeur ajoutée par action).<br>Postes (GB/DEF/MIL/ATT) estimés par rôle habituel — non fournis dans le fichier. Les colonnes « Line Breaking Passes » et « Ball Receipts in Space » sont vides dans l'export.</div>
 </main>
@@ -471,7 +499,7 @@ function donut(pct,label,color='#4d6bff',size=130){
   <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c*pct/100} ${c}" transform="rotate(-90 ${size/2} ${size/2})"/>
   <text x="50%" y="49%" text-anchor="middle" fill="#fff" font-size="24" font-weight="800">${pct.toFixed(0)}%</text><text x="50%" y="63%" text-anchor="middle" fill="#a9b5ec" font-size="10.5">${label}</text></svg>`;
 }
-function radar(axes,series,size=380){
+function radar(axes,series,size=380,tipFn){
   const c=size/2,R=size/2-62,n=axes.length;const ang=i=>-Math.PI/2+i*2*Math.PI/n;
   const pt=(i,v)=>[c+Math.cos(ang(i))*R*v/100,c+Math.sin(ang(i))*R*v/100];
   let s=`<svg viewBox="0 0 ${size} ${size}" width="100%" style="max-width:${size}px">`;
@@ -479,7 +507,7 @@ function radar(axes,series,size=380){
   axes.forEach((a,i)=>{const [x,y]=pt(i,100),[lx,ly]=pt(i,122);s+=`<line x1="${c}" y1="${c}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.07)"/><text x="${lx}" y="${ly+4}" text-anchor="${Math.abs(lx-c)<8?'middle':lx>c?'start':'end'}" fill="#c3ccf5" font-size="11.5" font-weight="600">${a}</text>`});
   series.forEach(se=>{const pts=se.vals.map((v,i)=>pt(i,v).join(',')).join(' ');
     s+=`<polygon points="${pts}" fill="${se.color}" fill-opacity=".2" stroke="${se.color}" stroke-width="2.2" stroke-linejoin="round"/>`;
-    se.vals.forEach((v,i)=>{const [x,y]=pt(i,v);s+=`<circle cx="${x}" cy="${y}" r="4" fill="${se.color}" stroke="#010a45" stroke-width="1.5" data-tip="<b>${se.name}</b>${axes[i]} : meilleur que ${v.toFixed(0)} % de l'effectif"/>`})});
+    se.vals.forEach((v,i)=>{const [x,y]=pt(i,v);s+=`<circle cx="${x}" cy="${y}" r="4" fill="${se.color}" stroke="#010a45" stroke-width="1.5" data-tip="<b>${se.name}</b>${tipFn?tipFn(se.name,axes[i],v):axes[i]+' : meilleur que '+v.toFixed(0)+' % de l\'effectif'}"/>`})});
   return s+'</svg>';
 }
 
@@ -533,7 +561,7 @@ function renderHome(){
 
 
 /* ============ OFFENSIVE / DEFENSIVE TABS ============ */
-const RENDER={home:()=>renderHome(),off:()=>renderOff(),def:()=>renderDef(),team:()=>renderTeam(),squad:()=>renderSquad(),player:()=>renderPlayer(),data:()=>renderData()};
+const RENDER={home:()=>renderHome(),off:()=>renderOff(),def:()=>renderDef(),team:()=>renderTeam(),squad:()=>renderSquad(),player:()=>renderPlayer(),bilan:()=>renderBilan(),data:()=>renderData()};
 function minCtl(){return `<div class="ctl"><label>Minutes minimum <input type="range" min="0" max="290" step="10" value="${S.minMin}" oninput="S.minMin=+this.value;this.nextElementSibling.textContent=this.value" onchange="RENDER[S.tab]()"><b class="mono">${S.minMin}</b></label><span style="font-size:12.5px;color:var(--mu)">Classements et tableau : joueurs de champ au-dessus de ce seuil</span></div>`}
 function kpiRow(items){return `<div class="kpis">${items.map(([k,l,dg,c])=>{const v=mAvg(k),ch=MS[MS.length-1][k]-MS[0][k];return `<div class="kpi" style="--c:${c}"><div class="l">${l}</div><div class="v mono">${v.toFixed(dg)}</div><div class="dl">moy. / match · ${sgn(ch,dg)} depuis le 1er match</div></div>`}).join('')}</div>`}
 function miniBars(key,title,dg,color){
@@ -582,6 +610,7 @@ function renderOff(){
   $('#v-off').innerHTML=`
   <div class="hello"><div><h2>Offensif</h2><h1>Créer, progresser, finir</h1><p>Équipe match par match, puis les joueurs qui font vivre l'attaque</p></div></div>
   ${kpiRow([['Cumulative xG','xG créés',2,'var(--blue)'],['Goals & Penalty Goals','Buts',1,'var(--red)'],['Shots','Tirs',1,'#9db0ff'],['xGs','xG par tir',3,'var(--white)'],['Key Passes','Passes clés',1,'var(--gold)'],['Touches Inside Box','Touches dans la surface',0,'#7f95ff']])}
+  ${interpCard('off')}
   <div class="sect"><h1>L'équipe</h1><span>Totaux par match</span></div>
   <div class="grid g2"><div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">La qualité des occasions face au score</div>${xgChart()}</div>
   ${stacked('Origine des tirs','Dans la surface ou en dehors',[{k:'ShotsIn',l:'Dans la surface',c:'#4d6bff'},{k:'Shots Outside Box',l:'Hors surface',c:'#ed1e24'}])}</div>
@@ -595,6 +624,7 @@ function renderOff(){
     ${leaderboard('Progression','Deep Progressions','Progressions profondes /90',notGK)}
   </div>
   <div class="card mt"><h3>Finisseurs et créateurs</h3><div class="sub">En haut à droite : menace et création. Taille = minutes · clic = fiche joueur</div>${scatter('Non Penalty xG','Open Play xG Assisted',true)}</div>
+  ${shootersCard()}
   ${ptable('os',['Non Penalty xG','Non Penalty xG/Shot','Shots','Open Play xG Assisted','Touches Inside Box','Deep Progressions','Dribble & Carry OBV','Shot OBV','Pass OBV','Fouls Won'],'Joueurs offensifs','La barre montre le rang dans l\'effectif · pastille dorée = top 3 · cliquez un en-tête pour trier')}`;
 }
 function renderDef(){
@@ -602,6 +632,7 @@ function renderDef(){
   <div class="hello"><div><h2>Défensif</h2><h1>Presser, récupérer, protéger</h1><p>Équipe match par match, puis les joueurs qui défendent le plus et le mieux</p></div></div>
   ${kpiRow([['Ball Recoveries','Récupérations',0,'var(--gold)'],['TI','Tacles + interceptions',1,'var(--blue)'],['Blocked Shots','Tirs contrés',1,'var(--white)'],['Clearances','Dégagements',0,'#9db0ff'],['Fouls','Fautes commises',1,'var(--red)'],['Dribbled Past','Dribbles subis',1,'#7f95ff']])}
   <div class="note"><span>ℹ️</span><div><b>Ce que ces données mesurent.</b> Elles comptent les actions défensives, pas leur résultat : il n'y a ni buts encaissés, ni tirs concédés, ni statistiques de l'adversaire. Un chiffre élevé veut dire « beaucoup d'actions », pas forcément « bonne défense ».</div></div>
+  ${interpCard('def')}
   <div class="sect"><h1>L'équipe</h1><span>Totaux par match</span></div>
   <div class="grid g2">${stacked('Hauteur du pressing','Pressions en camp adverse et dans son propre camp',[{k:'Pressures in Attacking Half',l:'Camp adverse',c:'#d5a450'},{k:'pLow',l:'Propre camp',c:'#3b5b8f'}])}
   ${stacked('Duels disputés','Duels aériens et au sol',[{k:'All Aerials',l:'Aériens',c:'#fdfdfe'},{k:'Non Aerial Duels',l:'Au sol',c:'#9db0ff'}])}</div>
@@ -654,6 +685,7 @@ function renderTeam(){
   <div class="kpis">${kp.map(([k,l,dg,c,gd])=>{const v=d[k],a=mAvg(k),diff=v-a;const cls=sel==='all'?'nt':(Math.abs(diff)<.005*Math.max(1,a)?'nt':(diff>0)==(gd==='up')?'up':'dn');
     return `<div class="kpi" style="--c:${c}"><div class="l">${l}</div><div class="v mono">${v.toFixed(dg)}</div><div class="dl ${cls}">${sel==='all'?'moyenne / match':sgn(diff,dg)+' vs moyenne'}</div></div>`}).join('')}</div>
 
+  ${MS.length>=2?profilesCard():''}
   <div class="grid g12 mt">
     <div class="card"><h3>xG créés vs buts marqués</h3><div class="sub">Qualité des occasions face à la réalité du score — cliquez un match pour filtrer</div>${xgChart()}</div>
     <div class="card"><h3>Notes de l'analyste</h3><div class="sub">Constats générés automatiquement à partir des données</div>${insights().map(([i,t])=>`<div class="ins"><i>${i}</i><div>${t}</div></div>`).join('')}</div>
@@ -875,8 +907,122 @@ function renderData(){
 window.addEventListener('dragover',e=>e.preventDefault());window.addEventListener('drop',e=>{if(!e.target.closest('#drop')){e.preventDefault()}});
 
 
+
+/* ============ ANALYSTE : lecture des données, du constat à la préconisation ============ */
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const REF={xgMatch:1.5,xgShot:0.10,xgShotLow:0.085,outBox:0.40,cross:15,pHalf:55,cpress:0.30,fouls:13,dribPast:9};
+function trendOf(k){if(MS.length<2)return null;const h=Math.floor(MS.length/2),a=avg(MS.slice(0,h).map(m=>m[k])),b=avg(MS.slice(-h).map(m=>m[k]));return {A:a,B:b,p:a?(b-a)/a:0}}
+const tdir=(t,thr=.1)=>!t?0:t.p>thr?1:t.p<-thr?-1:0;
+const n0=v=>Math.round(v),n1=v=>(+v).toFixed(1),n2=v=>(+v).toFixed(2),n3=v=>(+v).toFixed(3),pc0=v=>Math.round(v*100)+' %';
+function shootersData(){return SQUAD.filter(p=>p.Pos!=='GB'&&p.Minutes>=60&&p.Shots!=null).map(p=>{const shots=Math.round(p.Shots*p.Minutes/90),xg=(p['Non Penalty xG']||0)*p.Minutes/90;return {name:p.Player,pos:p.Pos,min:p.Minutes,shots,xg,xgs:shots?xg/shots:0}}).filter(r=>r.shots>0).sort((a,b)=>b.shots-a.shots||b.xg-a.xg).slice(0,8)}
+function analyze(){
+  if(!MS.length)return [];
+  const out=[],T=k=>sum(MS.map(m=>m[k])),A=k=>mAvg(k),nm=MS.length;
+  const add=(area,tone,text,concl,rec,tag)=>out.push({area,tone,text,concl,rec,tag});
+  const tr=(k,dg=0)=>{const t=trendOf(k);return t&&Math.abs(t.p)>.1?` (${t.A.toFixed(dg)} sur les premiers matchs, ${t.B.toFixed(dg)} sur les derniers)`:''};
+  /* ---------- OFFENSIF ---------- */
+  const G=T('Goals & Penalty Goals'),X=T('Cumulative xG'),ratio=X?G/X:0;
+  if(ratio>=1.25)add('off','neutral',`${G} buts pour ${n1(X)} xG créés : l'équipe marque nettement plus que ses occasions ne le laissent attendre (${n2(ratio)} but par xG). C'est un point positif de réalisme, mais à relativiser : une surperformance de ce type est rarement durable.`,'Réalisme très élevé devant le but, à relativiser',"Ne pas s'appuyer sur ce réalisme : continuer à créer des occasions plus nombreuses et de meilleure qualité.",'FINITION');
+  else if(ratio<=.8)add('off','bad',`${G} buts seulement pour ${n1(X)} xG créés (${n2(ratio)} but par xG) : l'équipe gâche une partie de ses occasions.`,'Finition en dessous de la qualité des occasions','Travailler la finition en situation réelle : frappes sous pression, choix des angles, enchaînement dernière passe - frappe.','FINITION');
+  else add('off','good',`${G} buts pour ${n1(X)} xG : la finition est en ligne avec la qualité des occasions créées (${n2(ratio)} but par xG).`,'Finition cohérente avec les occasions créées','Conserver les automatismes devant le but.','FINITION');
+  const xm=A('Cumulative xG');
+  if(xm<REF.xgMatch*.9)add('off','bad',`Les occasions créées restent modestes : ${n2(xm)} xG par match, alors qu'une équipe qui domine ses matchs tourne plutôt autour de ${REF.xgMatch} et plus (repère indicatif).${tr('Cumulative xG',2)?` La tendance évolue${tr('Cumulative xG',2)}.`:''}`,"Pas assez d'occasions créées par match","Insister sur le travail dans les 30 derniers mètres : chercher plus de décalages et de déséquilibres dans les défenses adverses.",'DERNIÈRE PASSE');
+  else add('off','good',`${n2(xm)} xG par match : la création d'occasions est au niveau d'une équipe qui domine (repère indicatif ≈ ${REF.xgMatch}).`,"Création d'occasions satisfaisante",'Maintenir la dynamique offensive et la variété des offensives.','DÉSÉQUILIBRE');
+  const S_=A('Shots'),q=T('Shots')?X/T('Shots'):0;
+  if(S_>=14&&q<REF.xgShotLow)add('off','bad',`Les tirs sont nombreux (${n1(S_)} par match) mais peu dangereux : ${n3(q)} xG par tir, sous le repère indicatif de ${REF.xgShot}. L'équipe frappe souvent depuis des zones ou dans des conditions peu favorables.`,'Beaucoup de tirs, peu de qualité par tir',"Travailler le choix du tir : modifier les angles et le positionnement des joueurs, proposer des mises en situation plus réelles à l'entraînement.",'FINITION');
+  else if(q>=REF.xgShot)add('off','good',`${n3(q)} xG par tir pour ${n1(S_)} tirs par match : l'équipe frappe depuis de bonnes positions.`,'Bonne qualité moyenne de tir','Conserver la patience dans le choix du moment de frappe.','FINITION');
+  else add('off','neutral',`${n1(S_)} tirs par match pour ${n3(q)} xG par tir : qualité de tir moyenne (repère indicatif ${REF.xgShot}).`,'Qualité de tir moyenne',"Chercher à gagner un peu de qualité à chaque tir en entrant dans la surface avant de frapper.",'FINITION');
+  const ob=T('Shots')?T('Shots Outside Box')/T('Shots'):0;
+  if(ob>=REF.outBox)add('off','bad',`${pc0(ob)} des tirs sont pris hors de la surface (${n1(A('Shots Outside Box'))} par match) : cela pèse sur la qualité moyenne des tirs.`,'Trop de tirs de loin',"Aller chercher la surface avant de frapper : jeu entre les lignes, appels dans le dos de la défense, remises et combinaisons.",'DERNIÈRE PASSE');
+  else add('off','good',`Seulement ${pc0(ob)} des tirs viennent de l'extérieur de la surface : l'équipe frappe plutôt de près.`,'Tirs majoritairement pris dans la surface','Conserver cette présence dans la zone de vérité.','DERNIÈRE PASSE');
+  const cr=A('Crosses'),kp=A('Key Passes');
+  if(cr>=REF.cross)add('off','neutral',`${n1(cr)} centres par match pour ${n1(kp)} passes clés : le volume est élevé. Les fichiers ne donnent ni la réussite des centres ni les tirs qui en découlent : à vérifier en vidéo avant de conclure.`,'Beaucoup de centres, productivité à vérifier',"Introduire dans le travail de finition des centres suivis de reprises à plusieurs, pour travailler l'occupation de la surface et le timing.",'DERNIÈRE PASSE + FINITION');
+  const tb=trendOf('Touches Inside Box');
+  if(tdir(tb)>0)add('off','good',`Les touches de balle dans la surface adverse progressent : ${n0(tb.A)} par match sur les premiers matchs, ${n0(tb.B)} sur les derniers. L'équipe s'installe de plus en plus près du but.`,'Présence dans la surface en progression','Conserver les appels en profondeur et la présence de plusieurs joueurs dans la surface.','DÉSÉQUILIBRE');
+  else if(tdir(tb)<0)add('off','bad',`Les touches de balle dans la surface adverse reculent : ${n0(tb.A)} par match sur les premiers matchs, ${n0(tb.B)} sur les derniers.`,'Présence dans la surface en baisse','Retrouver des situations de jeu qui amènent le ballon dans la surface (jeu entre les lignes, appels en profondeur).','DÉSÉQUILIBRE');
+  const pd=trendOf('Passes from Defensive Third'),pa=trendOf('Passes Into Attacking Third');
+  if(pd&&pa&&pd.p<-.15&&pa.p>.1)add('off','neutral',`Le jeu devient plus vertical : moins de passes depuis le tiers défensif (${n0(pd.A)} puis ${n0(pd.B)} par match) et plus de passes vers le tiers offensif (${n0(pa.A)} puis ${n0(pa.B)}).`,'Jeu plus vertical au fil des matchs','Vérifier en vidéo que cette verticalité garde la maîtrise du ballon et la sécurité à la perte.','CONSTRUCTION');
+  else if(pd&&pa&&pd.p>.15&&pa.p<-.1)add('off','neutral',`Le jeu devient plus posé : davantage de passes depuis le tiers défensif (${n0(pd.A)} puis ${n0(pd.B)} par match) et moins de passes vers le tiers offensif (${n0(pa.A)} puis ${n0(pa.B)}).`,'Jeu plus posé au fil des matchs',"Vérifier que la circulation arrière débouche sur des progressions dangereuses.",'CONSTRUCTION');
+  const co=A('Corners'),fk=A('Free Kicks from Attacking Third');
+  add('off','neutral',`${n1(co)} corners et ${n1(fk)} coups francs dans le tiers offensif par match. Le volume est là ; le xG des coups de pied arrêtés ne figure pas dans les fichiers, on ne peut donc pas juger leur efficacité.`,'Volume de coups de pied arrêtés correct, efficacité inconnue',"Mesurer le xG sur coups de pied arrêtés dans le logiciel d'analyse et travailler la coordination passeur - receveur.",'COUPS DE PIED ARRÊTÉS');
+  if(nm>=3&&G>0){const mx=MS.reduce((a,b)=>b['Goals & Penalty Goals']>a['Goals & Penalty Goals']?b:a),gm=mx['Goals & Penalty Goals'];
+    if(gm/G>=.5)add('off','neutral',`${gm} des ${G} buts viennent d'un seul match (${mx.Match}). Sans ce match, la moyenne tombe à ${n2((G-gm)/(nm-1))} but par match : la moyenne cache une grande irrégularité.`,'Production offensive concentrée sur un match',"Regarder la régularité plutôt que la moyenne : identifier ce qui a fonctionné lors de ce match pour le reproduire.",'DÉSÉQUILIBRE')}
+  const sh=shootersData();
+  if(sh.length){const lead=sh[0],low=sh.filter(r=>r.shots>=6).sort((a,b)=>a.xgs-b.xgs)[0];
+    add('off','neutral',`${lead.name} est le joueur qui tire le plus (${lead.shots} tirs estimés, ${n2(lead.xg)} xG, soit ${n3(lead.xgs)} xG par tir).${low&&low!==lead?` ${low.name} a la qualité de tir la plus faible parmi les tireurs réguliers (${n3(low.xgs)} xG par tir pour ${low.shots} tirs).`:''} Sur peu de minutes, ces valeurs restent fragiles.`,'Répartition des tirs entre les joueurs',"Travail individuel sur le choix et la position de frappe pour les joueurs dont le xG par tir est faible.",'FINITION')}
+  /* ---------- DEFENSIF ---------- */
+  const pHs=T('Pressures')?T('Pressures in Attacking Half')/T('Pressures'):0;
+  if(pHs*100>=REF.pHalf)add('def','good',`${pc0(pHs)} des pressions ont lieu dans le camp adverse (${n1(A('Pressures in Attacking Half'))} sur ${n1(A('Pressures'))} par match) : l'équipe presse haut.${tr('pHalf')?` La part évolue${tr('pHalf')}.`:''}`,'Pressing haut et intense','Conserver cette agressivité haute et la coordination collective du pressing.','RÉCUPÉRATION – PRESSING');
+  else add('def','neutral',`${pc0(pHs)} des pressions seulement ont lieu dans le camp adverse : le pressing est plutôt médian ou bas.`,'Pressing plutôt médian ou bas',"Décider si le pressing doit monter d'un cran selon l'adversaire et le contexte du match.",'RÉCUPÉRATION – PRESSING');
+  const cp=T('Pressures')?T('Counterpressures')/T('Pressures'):0;
+  if(cp>=REF.cpress)add('def','good',`Environ une pression sur ${n0(1/cp)} est un contre-pressing (${n1(A('Counterpressures'))} par match) : l'équipe réagit tout de suite après une perte de balle.`,'Réaction immédiate à la perte du ballon',"Maintenir cette réaction collective et la travailler dans toutes les zones du terrain.",'CONTRE-PRESSING');
+  else add('def','neutral',`${pc0(cp)} des pressions sont des contre-pressings : la réaction à la perte peut être plus systématique.`,'Réaction à la perte perfectible',"Renforcer les consignes de réaction à la perte (qui presse, qui ferme les solutions de passe).",'CONTRE-PRESSING');
+  const rr=A('Ball Recoveries'),trr=trendOf('Ball Recoveries');
+  add('def',tdir(trr)>0?'good':'neutral',`${n0(rr)} récupérations de balle par match${tr('Ball Recoveries')}.${tdir(trr)>0?" La hausse montre une équipe de plus en plus présente dans les duels de récupération.":''}`,tdir(trr)>0?'Récupérations en hausse':'Volume de récupérations stable',"Insister sur cette force pour ne pas perdre cet avantage.",'RÉCUPÉRATION – PRESSING');
+  const fo=A('Fouls'),tf=trendOf('Fouls');
+  if(fo>=REF.fouls||tdir(tf,.25)>0)add('def','bad',`${n1(fo)} fautes par match${tr('Fouls')} pour ${n1(A('Fouls Won'))} fautes obtenues : l'agressivité coûte des coups francs à l'adversaire.`,'Trop de fautes commises',"Soigner l'agressivité maîtrisée : duels sans faute, placement pour éviter la faute tactique.",'AGRESSIVITÉ DÉFENSIVE – DUELS');
+  else add('def','good',`${n1(fo)} fautes par match pour ${n1(A('Fouls Won'))} fautes obtenues : l'agressivité reste maîtrisée.`,'Agressivité maîtrisée',"Conserver l'intensité sans prendre de risque inutile.",'AGRESSIVITÉ DÉFENSIVE – DUELS');
+  const dp=A('Dribbled Past');
+  if(dp>=REF.dribPast)add('def','bad',`${n1(dp)} joueurs adverses éliminent un de nos joueurs par match${tr('Dribbled Past',1)} : le pressing laisse des espaces derrière.`,'Trop de dribbles subis',"Travailler le 1 contre 1 défensif et l'équilibre derrière le pressing, à l'entraînement et à la vidéo.",'ÉQUILIBRE');
+  else add('def','neutral',`${n1(dp)} dribbles subis par match : un niveau correct à surveiller.`,'Dribbles subis à surveiller',"Garder le travail d'équilibre et de couverture derrière le pressing.",'ÉQUILIBRE');
+  const tpp=trendOf('Pressured Passes in Defensive Third');
+  if(tdir(tpp,.2)>0)add('def','bad',`Les passes jouées sous pression dans notre tiers défensif augmentent (${n0(tpp.A)} puis ${n0(tpp.B)} par match) : les adversaires gênent davantage notre sortie de balle.`,'Sortie de balle de plus en plus gênée',"Travailler les solutions de relance face au pressing adverse (appuis, gardien, changement de jeu).",'CONSTRUCTION');
+  else if(tdir(tpp,.2)<0)add('def','good',`Les passes jouées sous pression dans notre tiers défensif diminuent (${n0(tpp.A)} puis ${n0(tpp.B)} par match) : la sortie de balle est moins gênée.`,'Sortie de balle plus libre',"Conserver la qualité des premières relances.",'CONSTRUCTION');
+  add('def','neutral',`${n0(A('All Aerials'))} duels aériens et ${n0(A('Non Aerial Duels'))} duels au sol par match. Le taux de réussite des duels n'est pas dans les fichiers.`,'Volume de duels connu, réussite inconnue',"Ajouter le pourcentage de duels gagnés pour juger l'agressivité réelle.",'AGRESSIVITÉ DÉFENSIVE – DUELS');
+  add('def','neutral',`${n1(A('Blocked Shots'))} tirs contrés et ${n0(A('Clearances'))} dégagements par match : l'équipe défend aussi près de son but. À croiser avec les tirs concédés, absents des fichiers.`,'Protection de la surface à compléter par les tirs concédés',"Croiser ces données avec les tirs et les xG concédés pour mesurer la solidité réelle.",'ÉQUILIBRE');
+  const pl=SQUAD.filter(p=>p.Pos!=='GB'&&p.Minutes>=90),bestP=[...pl].sort((a,b)=>b.Pressures-a.Pressures)[0],bestR=[...pl].sort((a,b)=>b['Tackles & Interceptions']-a['Tackles & Interceptions'])[0];
+  if(bestP&&bestR)add('def','neutral',`${bestP.Player} presse le plus (${n1(bestP.Pressures)} pressions par 90 minutes) ; ${bestR.Player} gagne le plus de ballons par tacle ou interception (${n1(bestR['Tackles & Interceptions'])} par 90 minutes).`,'Joueurs moteurs du pressing et de la récupération',"S'appuyer sur ces profils pour structurer le pressing ; surveiller leur charge de travail.",'RÉCUPÉRATION – PRESSING');
+  add('def','neutral',"Pour juger la solidité défensive, il faudrait les données de l'adversaire : tirs, xG et buts concédés, passes réussies de l'adversaire (PPDA), hauteur moyenne du bloc.",'Données défensives incomplètes',"Ajouter ces données aux fichiers pour pouvoir qualifier la solidité de l'équipe.",'DONNÉES');
+  return out;
+}
+const toneTxt={good:'good',bad:'bad',neutral:'neutral'};
+function interpCard(area){const F=analyze().filter(f=>f.area===area);
+  return `<div class="card mt"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><h3>Interprétation</h3><div class="sub">Lecture des données comme le ferait un analyste : <b class="tg">vert</b> = point fort · <b class="tb">rouge</b> = point faible · blanc = nuance. Les repères chiffrés sont indicatifs.</div></div><button class="btn ghost" onclick="S.tab='bilan';sync()">Voir le bilan et les préconisations</button></div>
+  ${F.map((f,i)=>`<div class="it ${f.tone}"><span class="n">${i+1}</span><div>${f.text}</div></div>`).join('')}</div>`}
+function shootersCard(){const R=shootersData();if(!R.length)return '';const mx=Math.max(...R.map(r=>r.shots));
+  return `<div class="card mt"><h3>Qui tire, et avec quelle qualité</h3><div class="sub">Tirs et xG estimés à partir des valeurs par 90 minutes et du temps de jeu · l'xG par tir mesure la qualité des positions de frappe</div>
+  ${R.map((r,i)=>`<div class="srow" onclick="openPlayer('${r.name.replace(/'/g,"\\'")}')"><span class="rk">${i+1}</span><div class="sn"><b>${r.name}</b><small><span class="pbadge ${r.pos}">${r.pos}</span>${r.shots<5?'échantillon faible':r.min.toFixed(0)+' min'}</small></div><div class="sb"><i style="--w:${r.shots/mx*100}%"></i><b class="mono">${r.shots}</b><small>tirs</small></div><div class="sv mono"><b>${n2(r.xg)}</b><small>xG</small></div><div class="sv mono"><b class="${r.xgs>=REF.xgShot?'tg':r.xgs<REF.xgShotLow?'tb':''}">${n3(r.xgs)}</b><small>xG / tir</small></div></div>`).join('')}</div>`}
+/* ---------- profil de match : comparer deux matchs sur les mêmes axes ---------- */
+const AX_OFF=[['Cumulative xG','xG créés'],['Shots','Tirs'],['xGs','xG par tir'],['Key Passes','Passes clés'],['Touches Inside Box','Touches surface'],['Crosses','Centres']];
+const AX_DEF=[['Pressures','Pressions'],['pHalf','Pressing haut %'],['Counterpressures','Contre-pressings'],['Ball Recoveries','Récupérations'],['TI','Tacles + inter.'],['Blocked Shots','Tirs contrés']];
+function profileData(){
+  const a=S.mA!=null&&(S.mA==='avg'||MS[S.mA])?S.mA:MS.length-1,b=S.mB!=null&&(S.mB==='avg'||MS[S.mB])?S.mB:'avg';
+  const val=(sel,k)=>sel==='avg'?mAvg(k):MS[sel][k],nmx=sel=>sel==='avg'?'Moyenne des matchs':`${MS[sel].opp} (${MS[sel].home?'dom.':'ext.'})`;
+  const mk=(title,ax)=>({title,labels:ax.map(x=>x[1]),series:[a,b].map((sel,i)=>({name:nmx(sel),color:i?'#4d6bff':'#d5a450',vals:ax.map(([k])=>{const v=MS.map(m=>m[k]),lo=Math.min(...v),hi=Math.max(...v);return hi===lo?50:(val(sel,k)-lo)/(hi-lo)*100})}))});
+  return {a,b,off:mk('Profil offensif',AX_OFF),def:mk('Profil défensif',AX_DEF)};
+}
+const profTip=(n,ax,v)=>`<b>${n}</b>${ax} : ${Math.round(v)}/100<br>(100 = meilleur match de la période)`;
+function profilesInner(){const P=profileData();return [P.off,P.def].map(d=>`<div class="card"><h3>${d.title}</h3><div class="sub">0 = match le plus faible de la période · 100 = le plus fort</div><div style="display:grid;place-items:center">${radar(d.labels,d.series,360,profTip)}</div><div class="chips" style="justify-content:center">${d.series.map(se=>`<span style="display:flex;gap:7px;align-items:center;font-size:12.5px"><i style="width:10px;height:10px;border-radius:50%;background:${se.color}"></i>${se.name}</span>`).join('')}</div></div>`).join('')}
+function profilesCard(){const P=profileData(),opt=(sel)=>`<option value="avg" ${sel==='avg'?'selected':''}>Moyenne des matchs</option>`+MS.map((m,i)=>`<option value="${i}" ${sel===i?'selected':''}>${m.opp} (${m.home?'dom.':'ext.'}) · ${dfmt(m.date)}</option>`).join('');
+  return `<div class="sect"><h1>Profil de match</h1><span>Comparer deux matchs sur les mêmes axes</span></div>
+  <div class="ctl"><label>Match A <select onchange="S.mA=this.value==='avg'?'avg':+this.value;renderTeam()">${opt(P.a)}</select></label><label>Match B <select onchange="S.mB=this.value==='avg'?'avg':+this.value;renderTeam()">${opt(P.b)}</select></label></div>
+  <div class="grid g2">${profilesInner()}</div>`}
+/* ---------- bilan : conclusions, préconisations, items technico-tactiques (modifiable) ---------- */
+let BIL=null;const BIL_KEY='lb-bilan-v1';
+const bilanSig=()=>MS.map(m=>m.Date).join('|')+'#'+SQUAD.length;
+function genBilan(){const F=analyze(),row=f=>({t:f.tone,c:f.concl,p:f.rec,i:f.tag});return {sig:bilanSig(),off:F.filter(f=>f.area==='off').map(row),def:F.filter(f=>f.area==='def').map(row)}}
+function getBilan(){const sig=bilanSig();if(BIL&&BIL.sig===sig)return BIL;try{const j=JSON.parse(localStorage.getItem(BIL_KEY)||'null');if(j&&j.sig===sig&&j.off&&j.def){BIL=j;return BIL}}catch(e){}BIL=genBilan();return BIL}
+function saveBilan(){try{localStorage.setItem(BIL_KEY,JSON.stringify(BIL))}catch(e){}}
+function brow(a,i,r){return `<div class="brow ${r.t}" data-a="${a}" data-i="${i}"><button class="tdot" data-act="tone" title="Changer la nature : point faible, point fort ou nuance" aria-label="Changer la nature"></button><div class="ce" contenteditable="true" data-f="c" role="textbox" aria-label="Conclusion">${esc(r.c)}</div><div class="ce" contenteditable="true" data-f="p" role="textbox" aria-label="Préconisation">${esc(r.p)}</div><div class="ce tagc" contenteditable="true" data-f="i" role="textbox" aria-label="Item technico-tactique">${esc(r.i)}</div><button class="xdel" data-act="del" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</button></div>`}
+function bsection(a,label,B){return `<div class="card mt"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3>${label}</h3><div class="sub">Conclusions, préconisations d'entraînement et items technico-tactiques</div></div><button class="btn ghost" data-act="add" data-a="${a}">+ Ajouter une ligne</button></div>
+  <div class="bscroll"><div class="bhead"><span></span><span>Conclusions</span><span>Préconisations</span><span>Items technico-tactiques</span><span></span></div>${B[a].map((r,i)=>brow(a,i,r)).join('')}</div></div>`}
+function renderBilan(){const B=getBilan();
+  $('#v-bilan').innerHTML=`<div class="hello"><div><h2>Bilan</h2><h1>Conclusions et préconisations</h1><p>Chaque constat est comparé aux autres indicateurs, puis traduit en travail d'entraînement.</p></div></div>
+  <div class="card filt"><span style="font-size:13px;color:var(--mu);max-width:78ch;line-height:1.55">Le bilan est <b style="color:#fff">proposé automatiquement</b> à partir des données. Cliquez dans une case pour le corriger ou le compléter : vos modifications sont conservées sur cet appareil et reprises dans les exports. Le point de couleur change la nature du constat : <b class="tb">rouge</b> point faible, <b class="tg">vert</b> point fort, blanc nuance.</span><button class="btn ghost" data-act="regen" style="margin-left:auto">Régénérer depuis les données</button></div>
+  ${bsection('off','Bilan offensif',B)}${bsection('def','Bilan défensif',B)}`;}
+(function(){const root=()=>$('#v-bilan');
+  document.addEventListener('input',e=>{const c=e.target.closest&&e.target.closest('#v-bilan .ce');if(!c)return;const r=c.closest('.brow'),B=getBilan(),row=B[r.dataset.a][+r.dataset.i];if(row){row[c.dataset.f]=c.innerText.replace(/\n+/g,' ').trim();saveBilan()}});
+  document.addEventListener('paste',e=>{const c=e.target.closest&&e.target.closest('#v-bilan .ce');if(!c)return;e.preventDefault();const t=((e.clipboardData||window.clipboardData).getData('text/plain')||'').replace(/\s+/g,' ');document.execCommand('insertText',false,t)});
+  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('#v-bilan .ce')){e.preventDefault();e.target.blur()}});
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#v-bilan [data-act]');if(!b)return;const act=b.dataset.act,B=getBilan();
+    if(act==='tone'){const r=b.closest('.brow'),row=B[r.dataset.a][+r.dataset.i],nx={bad:'good',good:'neutral',neutral:'bad'}[row.t]||'bad';row.t=nx;r.className='brow '+nx;saveBilan()}
+    else if(act==='del'){const r=b.closest('.brow');B[r.dataset.a].splice(+r.dataset.i,1);saveBilan();renderBilan()}
+    else if(act==='add'){B[b.dataset.a].push({t:'neutral',c:'Nouvelle conclusion',p:'Préconisation',i:'ITEM'});saveBilan();renderBilan()}
+    else if(act==='regen'){BIL=genBilan();saveBilan();renderBilan();toast('Bilan régénéré à partir des données')}});
+})();
+
 /* ============ EXPORTS ============ */
-const SEC_NAME={home:"Vue d'ensemble",off:'Offensif',def:'Défensif',team:'Matchs',squad:'Effectif',player:'Fiche joueur'};
+const SEC_NAME={home:"Vue d'ensemble",off:'Offensif',def:'Défensif',team:'Matchs',squad:'Effectif',player:'Fiche joueur',bilan:'Bilan'};
 const OFF_ROWS=[['Cumulative xG','xG créés',2],['Goals & Penalty Goals','Buts',0],['Shots','Tirs',0],['Shots Outside Box','Tirs hors surface',0],['xGs','xG par tir',3],['Passes Into Attacking Third','Passes vers le tiers offensif',0],['Key Passes','Passes clés',0],['Through Balls','Passes en profondeur',0],['Touches Inside Box','Touches dans la surface',0],['Crosses','Centres',0],['Dribbles','Dribbles',0],['Corners','Corners',0],['Free Kicks from Attacking Third','Coups francs offensifs',0]];
 const DEF_ROWS=[['Pressures','Pressions',0],['Pressures in Attacking Half','Pressions en camp adverse',0],['pHalf','Pressions en camp adverse (%)',0],['Counterpressures','Contre-pressings',0],['Pressured Passes in Defensive Third','Passes sous pression (tiers défensif)',0],['Ball Recoveries','Récupérations',0],['Tackles','Tacles',0],['Interceptions','Interceptions',0],['Blocked Shots','Tirs contrés',0],['Clearances','Dégagements',0],['All Aerials','Duels aériens',0],['Non Aerial Duels','Duels au sol',0],['Dribbled Past','Dribbles subis',0],['Fouls','Fautes commises',0],['Fouls Won','Fautes obtenues',0]];
 const OFF_COLS=['Non Penalty xG','Non Penalty xG/Shot','Shots','Open Play xG Assisted','Touches Inside Box','Deep Progressions','Dribble & Carry OBV','Shot OBV','Pass OBV','Fouls Won'];
@@ -916,19 +1062,22 @@ function repHome(){
 }
 function repOff(){return {sub:`Offensif · ${MS.length} matchs · joueurs ≥ ${S.minMin} min`,body:`
   <h2>Chiffres clés (moyennes par match)</h2>${rKpi([['xG créés',fv(mAvg('Cumulative xG'),2)],['Buts',fv(mAvg('Goals & Penalty Goals'),1)],['Tirs',fv(mAvg('Shots'),1)],['xG par tir',fv(mAvg('xGs'),3)],['Passes clés',fv(mAvg('Key Passes'),1)],['Touches dans la surface',fv(mAvg('Touches Inside Box'),0)]])}
+  <h2>Interprétation</h2>${interpReport('off')}
   <h2>L'équipe</h2><div class="g2">${card('xG créés vs buts marqués','Qualité des occasions face au score',xgLight())}${light(withAll(()=>stacked('Origine des tirs','Dans la surface ou en dehors',[{k:'ShotsIn',l:'Dans la surface',c:'#4d6bff'},{k:'Shots Outside Box',l:'Hors surface',c:'#ed1e24'}])))}</div>
   <h2>Détail par match</h2>${rTable(mHead(),mRows(OFF_ROWS))}
   <h2>Les joueurs (valeurs par 90 minutes)</h2><div class="g4">${rLead('Finition','Non Penalty xG','xG sans penalty',notGK)}${rLead('Création','Open Play xG Assisted','xG assisté',notGK)}${rLead('Conduite de balle','Dribble & Carry OBV','OBV dribbles et conduites',notGK)}${rLead('Progression','Deep Progressions','Progressions profondes',notGK)}</div>
+  <h2>Tirs et qualité de tir</h2>${shootersReport()}
   <h2>Tableau offensif</h2>${rPlayers(OFF_COLS,notGK)}`}}
 function repDef(){return {sub:`Défensif · ${MS.length} matchs · joueurs ≥ ${S.minMin} min`,body:`
   <h2>Chiffres clés (moyennes par match)</h2>${rKpi([['Récupérations',fv(mAvg('Ball Recoveries'),0)],['Tacles + interceptions',fv(mAvg('TI'),1)],['Tirs contrés',fv(mAvg('Blocked Shots'),1)],['Dégagements',fv(mAvg('Clearances'),0)],['Fautes commises',fv(mAvg('Fouls'),1)],['Dribbles subis',fv(mAvg('Dribbled Past'),1)]])}
   <div class="note">Ces données comptent les actions défensives, pas leur résultat : il n'y a ni buts encaissés, ni tirs concédés, ni statistiques de l'adversaire.</div>
+  <h2>Interprétation</h2>${interpReport('def')}
   <h2>L'équipe</h2><div class="g2">${light(withAll(()=>stacked('Hauteur du pressing','Pressions en camp adverse et dans son propre camp',[{k:'Pressures in Attacking Half',l:'Camp adverse',c:'#d5a450'},{k:'pLow',l:'Propre camp',c:'#4d6bff'}])))}${light(withAll(()=>stacked('Duels disputés','Duels aériens et au sol',[{k:'All Aerials',l:'Aériens',c:'#d5a450'},{k:'Non Aerial Duels',l:'Au sol',c:'#4d6bff'}])))}</div>
   <h2>Détail par match</h2>${rTable(mHead(),mRows(DEF_ROWS))}
   <h2>Les joueurs (valeurs par 90 minutes)</h2><div class="g4">${rLead('Valeur défensive','Defensive Action OBV','OBV des actions défensives',notGK)}${rLead('Récupérateurs','Tackles & Interceptions','Tacles + interceptions',notGK)}${rLead('Presseurs','Pressures','Pressions',notGK)}${rLead('Difficiles à dribbler','Dribbled Past','Dribbles subis (moins = mieux)',notGK,true)}</div>
   <h2>Tableau défensif</h2>${rPlayers(DEF_COLS,notGK)}`}}
 function groupRows(){return GROUPS.flatMap(g=>[{h:g.t},...g.rows.map(([k,n,d])=>[k,n.trim(),d])])}
-function repTeam(){return {sub:`Match par match · ${MS.length} matchs`,body:`<h2>xG créés et buts marqués</h2>${card('Match par match','Qualité des occasions face au score',xgLight())}<h2>Tous les indicateurs par match</h2>${rTable(mHead(),mRows(groupRows()))}`}}
+function repTeam(){return {sub:`Match par match · ${MS.length} matchs`,body:`<h2>xG créés et buts marqués</h2>${card('Match par match','Qualité des occasions face au score',xgLight())}${MS.length>=2?'<h2>Profil de match</h2><div class="g2">'+light(profilesInner())+'</div>':''}<h2>Tous les indicateurs par match</h2>${rTable(mHead(),mRows(groupRows()))}`}}
 function repSquad(){return {sub:`Effectif · ${SQUAD.length} joueurs · joueurs ≥ ${S.minMin} min`,body:`<h2>Les meilleurs par domaine (par 90 minutes)</h2><div class="g4">${rLead('Impact global','OBV','On-Ball Value',notGK)}${rLead('Menace offensive','Non Penalty xG','xG sans penalty',notGK)}${rLead('Créateurs','Open Play xG Assisted','xG assisté',notGK)}${rLead('Récupérateurs','Tackles & Interceptions','Tacles + interceptions',notGK)}</div><h2>Tableau de l'effectif</h2>${rPlayers(SQ_COLS)}`}}
 function playerProf(p){return PROFILE_KEYS.map(k=>({k,v:p[k],pc:p.Pos==='GB'?null:pctOf(k,p,INV.has(k))})).filter(x=>x.v!=null)}
 function repPlayer(){
@@ -941,7 +1090,12 @@ function repPlayer(){
   <div class="g2"><div>${gk?'':'<h2>Profil de performance</h2>'+card('Percentiles dans l\'effectif','Joueurs de champ ≥ 60 min'+(o?' · comparé à '+o.Player+' (rouge)':''),rad)}</div><div><h2>Décomposition de l'OBV</h2>${rTable(['Source','OBV /90'],obv.map(([l,k])=>[l,sgn(p[k]||0,2)]))}</div></div>
   <h2>Tous les indicateurs</h2>${rTable(['Indicateur','Valeur /90','Percentile'],prof.map(x=>[PMI[x.k][1],x.v.toFixed(PMI[x.k][3]),x.pc==null?'–':`<span class="cl" style="background:${colorPct(x.pc)}">${x.pc.toFixed(0)}</span>`]))}`};
 }
-const REP={home:repHome,off:repOff,def:repDef,team:repTeam,squad:repSquad,player:repPlayer};
+
+const interpReport=area=>analyze().filter(f=>f.area===area).map((f,i)=>`<div class="it ${f.tone}"><b class="n">${i+1}</b><div>${f.text}</div></div>`).join('')+'<div class="bn">Vert : point fort · rouge : point faible · blanc : nuance. Repères chiffrés indicatifs.</div>';
+const shootersReport=()=>{const R=shootersData();return rTable(['Joueur','Poste','Tirs (est.)','xG (est.)','xG par tir'],R.map(r=>[r.name,r.pos,r.shots,n2(r.xg),n3(r.xgs)]))+'<div class="bn">Tirs et xG estimés à partir des valeurs par 90 minutes et du temps de jeu.</div>'};
+const bilanTable=(a)=>{const B=getBilan();return `<table class="rt bil"><thead><tr><th style="width:36%">Conclusions</th><th style="width:44%">Préconisations</th><th style="width:20%">Items technico-tactiques</th></tr></thead><tbody>${B[a].map(r=>`<tr><td class="${r.t}">${esc(r.c)}</td><td>${esc(r.p)}</td><td class="${r.t} tg">${esc(r.i)}</td></tr>`).join('')}</tbody></table>`};
+function repBilan(){return {sub:`Bilan offensif et défensif · ${MS.length} matchs`,body:`<h2>Bilan offensif</h2>${bilanTable('off')}<h2>Bilan défensif</h2>${bilanTable('def')}<div class="bn">Vert : point fort · rouge : point faible · blanc : nuance.</div>`}}
+const REP={bilan:repBilan,home:repHome,off:repOff,def:repDef,team:repTeam,squad:repSquad,player:repPlayer};
 const REP_CSS=`:root{--mu:#4a58a8;--mu2:#6a77b8;--line:#dfe4f5;--blue:#4d6bff;--white:#fdfdfe}*{box-sizing:border-box}body{font:14px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#0a1450;margin:0;background:#fff}
 .hd{background:#011682;color:#fdfdfe;padding:22px 34px;display:flex;align-items:center;gap:22px;border-bottom:5px solid #d5a450;-webkit-print-color-adjust:exact;print-color-adjust:exact}.hd img{height:88px}.hd h1{margin:0;font-size:26px;letter-spacing:-.01em}.hd p{margin:5px 0 0;color:#c3ccf5;font-size:13.5px}.hd .pb{margin-left:auto;background:#ed1e24;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font:inherit;font-weight:700}
 main{padding:10px 34px 30px;max-width:1120px;margin:auto}h2{color:#011682;font-size:16px;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid #d5a450;break-after:avoid}
@@ -953,15 +1107,18 @@ table.rt{width:100%;border-collapse:collapse;font-size:12px}.rt th{background:#0
 .ins{padding:7px 0;border-bottom:1px solid #e6e9f7;font-size:13px}.note{background:#fff8ea;border:1px solid #efd9a8;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#6b5320;margin-top:12px}
 svg{max-width:100%;height:auto}footer{padding:14px 34px;color:#6a77b8;font-size:11px;border-top:1px solid #dfe4f5}
 @media print{.noprint{display:none}main{padding:6px 0 20px}.hd{padding:14px 20px}@page{margin:11mm}}`;
+const REP_CSS_EXTRA=`.it{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #e6e9f7;font-size:13px;line-height:1.5}.it .n{flex:none;width:22px;height:22px;border-radius:7px;background:#d5a450;color:#010a45;display:grid;place-items:center;font-size:12px;font-weight:700}.it.good{color:#0a7a3d}.it.bad{color:#c4131a}
+.rt.bil td{text-align:left!important;vertical-align:top;padding:9px 10px;font-size:12.5px;line-height:1.45}.rt.bil td.good{color:#0a7a3d}.rt.bil td.bad{color:#c4131a}.rt.bil td.tg{font-weight:700;text-align:center!important}.rt.bil th{text-align:left}
+.bn{font-size:11.5px;color:#4a58a8;margin-top:8px}`;
 const REP_CSS_DARK=`:root{--mu:#d6defe;--mu2:#b4c3fa;--line:#4264e0}body{background:#0b2ba3;color:#fdfdfe}
 h2{color:#fdfdfe;border-bottom:2px solid #d5a450}.kp div{background:#1a40c4;border-color:#4a6bea}.kp small{color:#d6defe}.kp b{color:#fdfdfe}.kp span{color:#d6defe}
 table.rt th{background:#d5a450;color:#0b2ba3}.rt th span{color:#4a3510}.rt td{border-bottom:1px solid #4264e0;color:#fdfdfe}.rt tr.grp td{background:#1a40c4;color:#ffd98a}
 .card{background:#1a40c4;border-color:#4a6bea}.card h3{color:#fdfdfe}.sub{color:#d6defe}.lb li{border-bottom-color:#4264e0}.lb em{color:#d6defe}.ins{border-bottom-color:#4264e0;color:#fdfdfe}.ins b{color:#ffd98a}
-.note{background:#2250d8;border-color:#5a7af0;color:#ffd98a}main{padding-top:6px}`;
+.note{background:#2250d8;border-color:#5a7af0;color:#ffd98a}main{padding-top:6px}.it{border-bottom-color:#4264e0}.it.good,.rt.bil td.good{color:#7ef0ae}.it.bad,.rt.bil td.bad{color:#ff9aa5}.bn{color:#d6defe}`;
 function buildReport(sec,opt){
   opt=opt||{};REP_DARK=!!opt.dark;let r;try{r=REP[sec]()}finally{REP_DARK=false}
   const title=r.title||SEC_NAME[sec];const team=TEAM==='France'?"Équipe de France":TEAM;
-  const css=REP_CSS+(opt.dark?REP_CSS_DARK:'');
+  const css=REP_CSS+REP_CSS_EXTRA+(opt.dark?REP_CSS_DARK:'');
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${team} · ${title}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"><style>${css}</style></head><body>${opt.noHeader?'':`<div class="hd"><img src="${LOGO}" alt=""><div><h1>${team} · ${title}</h1><p>${r.sub}</p></div><button class="pb noprint" onclick="print()">Imprimer / PDF</button></div>`}<main>${r.body}</main>${opt.noHeader?'':`<footer>Récapitulatif généré le ${todayFR()} · Les Bleus Data Room · OBV = On-Ball Value, xG = buts attendus, valeurs joueurs par 90 minutes.</footer>`}</body></html>`;
 }
 const csvQ=v=>{if(v==null)return '';if(typeof v==='number')return String(+v.toFixed(4)).replace('.',',');v=String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
@@ -969,6 +1126,7 @@ const csvOut=rows=>'﻿'+rows.map(r=>r.map(csvQ).join(';')).join('\r\n');
 const mCsv=list=>[['Indicateur',...MS.map(m=>`${m.opp} (${m.home?'dom.':'ext.'}) ${m.Date}`),'Moyenne'],...list.filter(r=>!r.h).map(r=>[r[1],...MS.map(m=>m[r[0]]),mAvg(r[0])])];
 const pCsv=(cols,f)=>[['Joueur','Poste','Minutes','Âge',...cols.map(k=>PMI[k][1])],...pRows(cols,f).map(p=>[p.Player,POSN[p.Pos],p.Minutes,p.Age,...cols.map(k=>p[k])])];
 function buildCsv(sec){
+  if(sec==='bilan'){const B=getBilan(),T={good:'Point fort',bad:'Point faible',neutral:'Nuance'};return csvOut([['Domaine','Nature','Conclusion','Préconisation','Item technico-tactique'],...['off','def'].flatMap(a=>B[a].map(r=>[a==='off'?'Offensif':'Défensif',T[r.t]||'',r.c,r.p,r.i]))])}
   if(sec==='home'){const a=k=>mAvg(k),f=MS[0],l=MS[MS.length-1];return csvOut([['Indicateur','Moyenne / match','1er match','Dernier match'],...[...OFF_ROWS.slice(0,3),...OFF_ROWS.slice(5,7),...DEF_ROWS.slice(0,3),...DEF_ROWS.slice(5,9)].map(([k,n])=>[n,a(k),f[k],l[k]])])}
   if(sec==='off')return csvOut([['ÉQUIPE PAR MATCH'],...mCsv(OFF_ROWS),[],['JOUEURS (par 90 minutes)'],...pCsv(OFF_COLS,notGK)]);
   if(sec==='def')return csvOut([['ÉQUIPE PAR MATCH'],...mCsv(DEF_ROWS),[],['JOUEURS (par 90 minutes)'],...pCsv(DEF_COLS,notGK)]);
@@ -988,7 +1146,7 @@ const LIBS={h2c:'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2c
 function loadLib(k){return LIBP[k]||(LIBP[k]=new Promise((res,rej)=>{const e=document.createElement('script');e.src=LIBS[k];e.onload=res;e.onerror=()=>{delete LIBP[k];rej(new Error('bibliothèque indisponible (connexion ?)'))};document.head.appendChild(e)}))}
 let LOGOPNG;function logoPNG(){return LOGOPNG||(LOGOPNG=new Promise(res=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');c.width=360;c.height=Math.round(360*i.naturalHeight/i.naturalWidth)||592;c.getContext('2d').drawImage(i,0,0,c.width,c.height);res(c.toDataURL('image/png'))};i.onerror=()=>res(null);i.src=LOGO}))}
 /* ---- identité du rapport ---- */
-const REPORT_TITLE={home:"Vue d'ensemble",off:'Analyse offensive',def:'Analyse défensive',team:'Analyse match par match',squad:"Analyse de l'effectif"};
+const REPORT_TITLE={home:"Vue d'ensemble",off:'Analyse offensive',def:'Analyse défensive',team:'Analyse match par match',squad:"Analyse de l'effectif",bilan:'Conclusions et préconisations'};
 const reportTitle=sec=>sec==='player'?'Fiche joueur · '+S.player:REPORT_TITLE[sec];
 const getAuthor=()=>{try{return (localStorage.getItem('lb-author')||'').trim()}catch(e){return ''}};
 const periodTxt=sep=>MS.length+' matchs · '+dfmt(MS[0].date)+sep+dfmt(MS[MS.length-1].date);
@@ -1082,6 +1240,15 @@ async function buildPptx(sec){
     s.addTable(rows.map((r,ri)=>[cell(`${ri+1}`,{fontSize:12,color:PD.gold,bold:true,fill:{color:ri%2?PD.deep:PD.card}}),cell(r[0],{fontSize:12,fill:{color:ri%2?PD.deep:PD.card}}),cell(r[1],{fontSize:14,bold:true,color:ri===0?PD.gold2:PD.tx,align:'right',fill:{color:ri%2?PD.deep:PD.card}})]),{x:x+0.12,y:2.5,w:2.71,colW:[0.35,1.62,0.74],rowH:0.62,border:{type:'none'}})});
   const playerSlides=(section,cols,flt,title)=>{const rows=pRows(cols,flt).map(p=>[p.Player,p.Pos,p.Minutes.toFixed(0),...cols.map(k=>p[k]==null?'–':p[k].toFixed(PMI[k][3]))]);
     tableSlides(section,title,'Valeurs par 90 minutes · joueurs ≥ '+S.minMin+' min',['Joueur','Poste','Min',...cols.map(k=>PMI[k][2])],rows,{first:2.9,rowH:0.36,fs:10.5})};
+
+  const toneCol=t=>t==='good'?'7EF0AE':t==='bad'?'FF9AA5':PD.tx;
+  const interpSlides=area=>{const list=analyze().filter(f=>f.area===area).map((f,i)=>({f,i}));chunks(list,4).forEach((c,ci,all)=>sl('Interprétation','Interprétation'+(all.length>1?` (${ci+1}/${all.length})`:''),'Vert : point fort · rouge : point faible · blanc : nuance · repères chiffrés indicatifs',s=>s.addText(c.map(({f,i})=>({text:(i+1)+'.  '+f.text,options:{color:toneCol(f.tone),fontSize:15,fontFace:'Calibri',breakLine:true,paraSpaceAfter:14}})),{x:0.6,y:1.7,w:12.1,h:5.1,valign:'top'})))};
+  const shooterSlides=()=>{const R=shootersData();if(R.length)tableSlides('Tirs et qualité de tir','Qui tire, avec quelle qualité','Tirs et xG estimés à partir des valeurs par 90 minutes et du temps de jeu',['Joueur','Poste','Tirs (est.)','xG (est.)','xG par tir'],R.map(r=>[r.name,r.pos,String(r.shots),n2(r.xg),n3(r.xgs)]),{first:3.8,rowH:0.46,fs:14})};
+  const bilanSlides=()=>{const B=getBilan();[['off','Bilan offensif'],['def','Bilan défensif']].forEach(([a,label])=>chunks(B[a],4).forEach((c,ci,all)=>sl(label,label+(all.length>1?` (${ci+1}/${all.length})`:''),'Conclusions, préconisations et items technico-tactiques',s=>{
+    const head=['Conclusions','Préconisations','Items technico-tactiques'].map(h=>cell(h,{bold:true,color:PD.bg,fill:{color:PD.gold},fontSize:13,align:'left'}));
+    const body=c.map((r,ri)=>{const fl={color:ri%2?PD.deep:PD.card};return [cell(r.c,{color:toneCol(r.t),fontSize:12.5,fill:fl,valign:'top'}),cell(r.p,{color:PD.tx,fontSize:12.5,fill:fl,valign:'top'}),cell(r.i,{color:toneCol(r.t),bold:true,fontSize:12,fill:fl,valign:'top',align:'center'})]});
+    s.addTable([head,...body],{x:0.5,y:1.7,w:12.3,colW:[4.8,5.2,2.3],border:{type:'solid',pt:0.5,color:PD.line},margin:[0.08,0.12,0.08,0.12],rowH:[0.45,...c.map(()=>1.1)]})})))};
+  const profSlide=()=>{if(MS.length<2)return;sl('Profil de match','Profil de match','0 = match le plus faible de la période · 100 = le plus fort',s=>{const P=profileData();[['off',0.4],['def',6.8]].forEach(([k,x])=>s.addChart(pptx.charts.RADAR,P[k].series.map(se=>({name:se.name,labels:P[k].labels,values:se.vals.map(v=>Math.round(v))})),{x,y:1.6,w:6.1,h:5.2,radarStyle:'standard',chartColors:[PD.gold,PD.blue],showLegend:true,legendPos:'b',legendFontSize:11,legendColor:PD.tx,catAxisLabelFontSize:11,catAxisLabelColor:PD.tx,valAxisMaxVal:100,valAxisMinVal:0,valAxisMajorUnit:25,valAxisLabelFontSize:8,valAxisLabelColor:PD.mu2,valGridLine:{color:PD.line,size:0.5},showTitle:true,title:P[k].title,titleFontSize:13,titleColor:PD.gold2,titleFontFace:'Calibri'}))})};
   /* ---------- contenu par rubrique ---------- */
   if(sec==='home'){
     sl('Chiffres clés','Chiffres clés',periodTxt(' → '),s=>tiles(s,[['Buts marqués',tot('Goals & Penalty Goals'),a('Goals & Penalty Goals').toFixed(1)+' par match'],['xG créés',tot('Cumulative xG').toFixed(1),a('Cumulative xG').toFixed(2)+' par match'],['Tirs',tot('Shots'),(tot('Cumulative xG')/tot('Shots')).toFixed(3)+' xG par tir'],['Pressions',tot('Pressures'),(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)+'% en camp adverse'],['Récupérations',tot('Ball Recoveries'),a('Ball Recoveries').toFixed(0)+' par match'],['Fautes commises',tot('Fouls'),tot('Fouls Won')+' subies']]));
@@ -1094,17 +1261,23 @@ async function buildPptx(sec){
     sl('Joueurs qui ressortent','Joueurs qui ressortent','≥ 90 minutes · joueurs de champ',s=>tbl(s,['Rubrique','Joueur','Poste','Valeur','Unité'],kr,{first:3.6,rowH:0.55,fs:14}));
   }else if(sec==='off'){
     sl('Chiffres clés','Chiffres clés','Moyennes par match',s=>tiles(s,[['xG créés',fv(a('Cumulative xG'),2),'par match'],['Buts',fv(a('Goals & Penalty Goals'),1),'par match'],['Tirs',fv(a('Shots'),1),'par match'],['xG par tir',fv(a('xGs'),3),'qualité moyenne d\'un tir'],['Passes clés',fv(a('Key Passes'),1),'par match'],['Touches dans la surface',fv(a('Touches Inside Box'),0),'par match']]));
+    interpSlides('off');
     sl('Équipe','L\'équipe, match par match','Qualité des occasions et origine des tirs',s=>{xgChartPpt(s,0.4,1.55,6.3,5.2);stackPpt(s,6.8,1.55,6.2,5.2,'Origine des tirs',[{k:'ShotsIn',l:'Dans la surface',c:PD.blue},{k:'Shots Outside Box',l:'Hors surface',c:PD.red}])});
     matchTbl('Détail par match','Détail par match','Indicateurs offensifs',OFF_ROWS,{rowH:0.36});
     sl('Joueurs offensifs','Les joueurs offensifs','Par 90 minutes · ≥ '+S.minMin+' min',s=>leaders(s,[['Finition','Non Penalty xG',notGK],['Création','Open Play xG Assisted',notGK],['Conduite','Dribble & Carry OBV',notGK],['Progression','Deep Progressions',notGK]]));
+    shooterSlides();
     playerSlides('Joueurs offensifs',OFF_COLS,notGK,'Tableau offensif');
   }else if(sec==='def'){
     sl('Chiffres clés','Chiffres clés','Moyennes par match',s=>tiles(s,[['Récupérations',fv(a('Ball Recoveries'),0),'par match'],['Tacles + interceptions',fv(a('TI'),1),'par match'],['Tirs contrés',fv(a('Blocked Shots'),1),'par match'],['Dégagements',fv(a('Clearances'),0),'par match'],['Fautes commises',fv(a('Fouls'),1),'par match'],['Dribbles subis',fv(a('Dribbled Past'),1),'par match']]));
+    interpSlides('def');
     sl('Pressing et duels','Pressing et duels','Ces données comptent les actions défensives, pas leur résultat (pas de buts encaissés)',s=>{stackPpt(s,0.4,1.55,6.3,5.2,'Hauteur du pressing',[{k:'Pressures in Attacking Half',l:'Camp adverse',c:PD.gold},{k:'pLow',l:'Propre camp',c:PD.blue}]);stackPpt(s,6.8,1.55,6.2,5.2,'Duels disputés',[{k:'All Aerials',l:'Aériens',c:PD.gold},{k:'Non Aerial Duels',l:'Au sol',c:PD.blue}])});
     matchTbl('Détail par match','Détail par match','Indicateurs défensifs',DEF_ROWS,{rowH:0.33,fs:10.5});
     sl('Joueurs défensifs','Les joueurs défensifs','Par 90 minutes · ≥ '+S.minMin+' min',s=>leaders(s,[['Valeur défensive','Defensive Action OBV',notGK],['Récupérateurs','Tackles & Interceptions',notGK],['Presseurs','Pressures',notGK],['Difficiles à dribbler','Dribbled Past',notGK,true]]));
     playerSlides('Joueurs défensifs',DEF_COLS,notGK,'Tableau défensif');
+  }else if(sec==='bilan'){
+    bilanSlides();
   }else if(sec==='team'){
+    profSlide();
     sl('Résultat offensif','xG créés et buts marqués','Match par match',s=>xgChartPpt(s,1.2,1.55,10.9,5.2));
     GROUPS.forEach(g=>matchTbl(g.t,g.t,'Totaux par match',g.rows.map(([k,n,d])=>[k,n.trim(),d]),{rowH:0.4,fs:12}));
   }else if(sec==='squad'){
@@ -1215,7 +1388,7 @@ function sync(){
   $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.tab));
   $$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+S.tab));
   if(nodata){$('#v-'+S.tab).innerHTML=emptyState();scrollTo({top:0});return}
-  const tab=S.tab,run=()=>{if(S.tab!==tab)return;({home:renderHome,off:renderOff,def:renderDef,team:renderTeam,squad:renderSquad,player:renderPlayer,data:renderData})[tab]();stagger($('#v-'+tab));countUp($('#v-'+tab))};
+  const tab=S.tab,run=()=>{if(S.tab!==tab)return;({home:renderHome,off:renderOff,def:renderDef,team:renderTeam,squad:renderSquad,player:renderPlayer,bilan:renderBilan,data:renderData})[tab]();stagger($('#v-'+tab));countUp($('#v-'+tab))};
   clearTimeout(skT);
   if(tab==='data'||REDUCED){run()}else{$('#v-'+tab).innerHTML=skeleton();skT=setTimeout(run,560)}
   scrollTo({top:0});
