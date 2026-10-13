@@ -430,6 +430,25 @@ input[type=range]{accent-color:var(--blue)}
 /* place réservée aux boutons image / agrandir en haut à droite */
 .zoomable>:first-child:not(.cardsnap):not(.zoomhint),.ztable>:first-child:not(.cardsnap):not(.zoomhint){padding-right:86px}
 @media(max-width:560px){.zoomable>:first-child:not(.cardsnap):not(.zoomhint),.ztable>:first-child:not(.cardsnap):not(.zoomhint){padding-right:80px}}
+
+/* fenêtre agrandie : le haut de la carte laisse la place aux boutons Image et fermer */
+.modal-box.zoom>.card>:first-child:not(svg),.modal-box.zoom>.card>.sub{padding-right:190px}
+.modal-box .mhead{padding-right:190px}
+@media(max-width:700px){.modal-box.zoom>.card>:first-child:not(svg),.modal-box.zoom>.card>.sub{padding-right:150px}.modal-box .mhead{padding-right:150px}}
+.bscroll{margin-top:18px}
+.bhead{padding-top:4px}
+
+@media(max-width:900px){
+ #v-bilan .bscroll{overflow:visible}
+ #v-bilan .bhead{display:none}
+ #v-bilan .brow{grid-template-columns:26px minmax(0,1fr) 30px;min-width:0;gap:6px 12px}
+ #v-bilan .brow .tdot{grid-row:1/span 3}
+ #v-bilan .brow .ce{grid-column:2}
+ #v-bilan .brow .xdel{grid-column:3;grid-row:1}
+ #v-bilan .ce[data-f=p]::before,#v-bilan .ce[data-f=i]::before{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu2);font-family:'JetBrains Mono',monospace;margin-bottom:3px;font-weight:700}
+ #v-bilan .ce[data-f=p]::before{content:'Préconisation'}#v-bilan .ce[data-f=i]::before{content:'Item technico-tactique'}
+ #v-bilan .ce[data-f=i]{text-align:left}
+}
 /* cascade */
 .rise{animation:rise .75s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms)}
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.985);filter:blur(4px)}}
@@ -1520,7 +1539,10 @@ document.addEventListener('click',e=>{const zb=e.target.closest&&e.target.closes
 
 
 /* carte des profils : sans les commandes de sélection, la sélection devient le titre */
-function tidyCard(cl){const m=cl.classList&&cl.classList.contains('profmap')?cl:cl.querySelector&&cl.querySelector('.profmap');if(!m)return;
+function tidyCard(cl){
+  cl.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));
+  if(cl.querySelector('.bscroll')){cl.querySelectorAll('[data-act=add],[data-act=regen],[data-act=del],.xdel,.bhead>span:last-child').forEach(x=>x.remove());cl.querySelectorAll('.bhead,.brow').forEach(r=>{r.style.gridTemplateColumns='26px minmax(0,1.2fr) minmax(0,1.5fr) minmax(0,.75fr)';r.style.minWidth='0';r.style.gap='10px'});cl.querySelectorAll('.ce').forEach(x=>{x.style.fontSize='12.5px'});cl.querySelectorAll('.bscroll').forEach(x=>{x.style.overflow='visible'})}
+  const m=cl.classList&&cl.classList.contains('profmap')?cl:cl.querySelector&&cl.querySelector('.profmap');if(!m)return;
   m.querySelectorAll('.presets,.axl').forEach(x=>x.remove());const h=m.querySelector('h3');if(h)h.textContent=m.dataset.title||h.textContent;
   const sub=m.querySelector('.sub');if(sub)sub.textContent='Carte des profils · taille = minutes jouées · couleur = poste';
   const ctl=m.querySelector('.ctl');if(ctl){ctl.style.margin='0 0 4px';const lg=ctl.querySelector('.poslegend');if(lg)lg.style.marginLeft='0'}}
