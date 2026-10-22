@@ -529,24 +529,104 @@ body.locked{overflow:hidden}
 .adt th{text-align:left!important}
 .adt td{vertical-align:middle}
 
+/* ===== cadre d'application ===== */
+body.shell{--sw:252px}
+@media(min-width:1100px){
+  body.shell{padding-left:var(--sw)}
+  #side{position:fixed;left:0;top:0;bottom:0;width:var(--sw);z-index:60;display:flex;flex-direction:column;padding:18px 14px 14px;background:linear-gradient(180deg,rgba(3,22,120,.92),rgba(1,10,69,.96));border-right:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+  #side .sbrand{display:flex;align-items:center;gap:12px;padding:4px 8px 18px}
+  #side .sbrand .logo{height:44px;width:auto}
+  #side .sbrand b{display:block;font-size:15.5px;letter-spacing:.01em}#side .sbrand span{font-size:11px;color:var(--mu);letter-spacing:.14em;text-transform:uppercase}
+  #side #nav{display:flex;flex-direction:column;gap:2px;margin:0;padding:0;background:none;border:0;border-radius:0;overflow-y:auto;flex:1;max-width:none}
+  #side .ngl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mu2);font-weight:800;padding:16px 12px 6px}
+  #side #nav button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;font-size:14px;font-weight:600;color:var(--mu);white-space:nowrap;background:none;box-shadow:none}
+  #side #nav button svg{flex:0 0 auto;opacity:.8}
+  #side #nav button:hover{color:#fff;background:rgba(255,255,255,.06)}
+  #side #nav button.on{color:#fff;background:linear-gradient(90deg,rgba(77,107,255,.5),rgba(77,107,255,.12));box-shadow:inset 3px 0 0 var(--gold)}
+  #side #nav button.on svg{opacity:1;color:var(--gold)}
+  #side .sfoot{padding:12px 8px 2px;border-top:1px solid var(--line)}
+  .hbar{height:auto;min-height:64px}
+}
+#side .sfs{display:flex;gap:10px;align-items:center}
+#side .sfs i,.fresh i{width:9px;height:9px;border-radius:50%;background:#7ef0ae;box-shadow:0 0 10px #7ef0ae;flex:0 0 auto}
+#side .sfs.warn i,.fresh.warn i{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+#side .sfs.bad i,.fresh.bad i{background:var(--red);box-shadow:0 0 10px var(--red)}
+#side .sfs.mid i,.fresh.mid i{background:var(--mu);box-shadow:none}
+#side .sfs b{display:block;font-size:12.5px}#side .sfs span{font-size:11.5px;color:var(--mu)}
+#side .sfp{font-size:11px;color:var(--mu2);margin-top:8px;line-height:1.5}
+/* barre du haut */
+header .hbar{gap:14px;flex-wrap:nowrap}
+.ptl{display:flex;flex-direction:column;min-width:0;margin-right:auto}
+.ptl small{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mu)}
+.ptl b{font-size:19px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srch{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--mu);font-size:13px;min-width:260px;max-width:420px;flex:0 1 380px;transition:.2s}
+.srch:hover{border-color:var(--blue);color:#fff}
+.srch span{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srch kbd{font:600 11px 'JetBrains Mono',monospace;padding:2px 7px;border-radius:6px;border:1px solid var(--line2);color:var(--mu)}
+.fresh{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:12.5px;font-weight:700;color:var(--white);white-space:nowrap}
+.fresh em{font-style:normal;font-weight:500;color:var(--mu);font-size:11.5px}
+.fresh:hover{border-color:var(--blue)}
+header .xp{margin-left:0}
+@media(max-width:1500px){.fresh em{display:none}.srch{min-width:200px}}
+@media(max-width:1250px){.srch span,.srch kbd{display:none}.srch{min-width:0;flex:0 0 auto;padding:10px}.fresh span{display:none}}
+/* mobile : barre d'onglets en bas */
+@media(max-width:1099px){
+  body.shell{padding-bottom:78px}
+  #side{position:fixed;left:0;right:0;bottom:0;z-index:70;display:block;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));background:rgba(1,10,69,.94);border-top:1px solid var(--line2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+  #side .sbrand,#side .sfoot,#side .ngl{display:none}
+  #side #nav{display:flex;flex-direction:row;gap:2px;margin:0;padding:0;width:100%;overflow-x:auto;background:none;border:0;border-radius:0;order:0;scrollbar-width:none}
+  #side #nav button{flex:1 0 62px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border-radius:12px;font-size:10.5px;font-weight:600;color:var(--mu);background:none;box-shadow:none}
+  #side #nav button.on{color:#fff;background:rgba(77,107,255,.28);box-shadow:none}
+  #side #nav button.on svg{color:var(--gold)}
+  header .hbar{flex-wrap:wrap;padding:10px 14px;gap:10px}
+  .ptl b{font-size:16px}
+  .srch{order:2}.fresh{order:3}header .xp{order:4}.uchip{order:5}
+}
+/* palette de commandes */
+#cmd{position:fixed;inset:0;z-index:9000;display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;background:rgba(0,5,40,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:cfade .15s}
+@keyframes cfade{from{opacity:0}}
+.cmdbox{width:min(640px,100%);border-radius:20px;overflow:hidden;background:rgba(6,30,140,.96);border:1px solid var(--line2);box-shadow:0 40px 100px rgba(0,0,0,.6);animation:cpop .2s cubic-bezier(.2,.8,.2,1)}
+@keyframes cpop{from{opacity:0;transform:translateY(-8px) scale(.98)}}
+#cmdq{width:100%;padding:18px 20px;background:none;border:0;border-bottom:1px solid var(--line2);color:#fff;font:inherit;font-size:16px;outline:none}
+#cmdlist{max-height:min(50vh,420px);overflow-y:auto;padding:8px}
+.cmdit{display:grid;grid-template-columns:1fr auto;gap:2px 14px;width:100%;text-align:left;padding:10px 14px;border-radius:12px;color:var(--white)}
+.cmdit b{font-size:14px}.cmdit small{grid-column:1;font-size:11.5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmdit em{grid-row:1/span 2;grid-column:2;align-self:center;font-style:normal;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.cmdit.on{background:rgba(77,107,255,.32)}
+.cmdno{padding:24px;text-align:center;color:var(--mu)}
+.cmdft{display:flex;gap:18px;padding:10px 18px;border-top:1px solid var(--line2);font-size:11px;color:var(--mu)}
+/* widgets accueil */
+.mrw{display:grid;grid-template-columns:52px 1fr 70px 64px;gap:10px;align-items:center;padding:10px 6px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:10px;transition:.2s}
+.mrw:hover{background:rgba(255,255,255,.06)}.mrw:last-child{border-bottom:0}
+.mrw .md{font-size:12px;color:var(--mu);font-weight:600}.mrw .mo b{display:block;font-size:13.5px}.mrw small{font-size:11px;color:var(--mu)}
+.mrw .mb{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.mrw .mb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#4d6bff,#35d0ff)}
+.mrw .mv{text-align:right}.mrw .mv b{display:block;font-size:15px}
+.rvw{display:grid;grid-template-columns:1.2fr 1fr 54px;gap:12px;align-items:center;padding:8px 0;font-size:12.5px}
+.rvw .rb{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.rvw .rb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#d5a450,#ffd98a)}
+.rvw b{text-align:right;font-size:12.5px}
+.rvw{grid-template-columns:1.2fr 1fr 66px}.rvw b{white-space:nowrap}
+
 </style>
 </head>
-<body>
-<header><div class="wrap hbar">
-  <div class="brand"><img class="logo" id="logo" alt="Fédération française de football"><div><b>Équipe de France</b></div></div>
+<body class="shell">
+<aside id="side">
+  <div class="sbrand"><img class="logo" id="logo" alt="Fédération française de football"><div><b>Équipe de France</b><span>Analyse vidéo</span></div></div>
   <nav id="nav">
-    <button data-t="home" class="on">Vue d'ensemble</button>
-    <button data-t="off">Offensif</button>
-    <button data-t="def">Défensif</button>
-    <button data-t="team">Matchs</button>
-    <button data-t="squad">Effectif</button>
-    <button data-t="player">Joueur</button>
-    <button data-t="rivals">Rivaux</button>
-    <button data-t="bilan">Bilan</button>
-    <button data-t="data">Admin</button>
+    <div class="ngl">Tableau de bord</div><button data-t="home" class="on"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Vue d'ensemble</span></button>
+    <div class="ngl">Équipe</div><button data-t="off"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span>Offensif</span></button><button data-t="def"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg><span>Défensif</span></button><button data-t="team"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Matchs</span></button>
+    <div class="ngl">Joueurs</div><button data-t="squad"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 6.5-6s6 2 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4 1.5 4.5 5"/></svg><span>Effectif</span></button><button data-t="player"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/></svg><span>Joueur</span></button>
+    <div class="ngl">Comparaison</div><button data-t="rivals"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Rivaux</span></button>
+    <div class="ngl">Rapports</div><button data-t="bilan"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 14l2 2 4-4"/></svg><span>Bilan</span></button>
+    <div class="ngl ngadm">Administration</div><button data-t="data"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Admin</span></button>
   </nav>
+  <div class="sfoot" id="sfoot"></div>
+</aside>
+<header><div class="wrap hbar">
+  <div class="ptl"><small id="pcrumb"></small><b id="ptitle"></b></div>
+  <button class="srch" id="srchbtn" type="button" aria-label="Rechercher"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span>Rechercher un joueur, un match, un indicateur…</span><kbd>⌘K</kbd></button>
+  <button class="fresh" id="fresh" type="button"></button>
   <div class="xp" id="xp" hidden><button class="btn" id="xbtn" aria-haspopup="true">Exporter ⬇</button><div class="xmenu" id="xmenu" hidden><div class="xh" id="xh"></div><label class="xa">Auteur du rapport<input id="xauthor" type="text" placeholder="Votre nom (optionnel)" maxlength="60" autocomplete="name"></label><button data-f="pdf">PDF<span>Rapport prêt à envoyer</span></button><button data-f="pptx">PowerPoint<span>Présentation modifiable, tableaux et graphiques inclus</span></button><button data-f="csv">Excel (CSV)<span>Tableau de données brutes</span></button></div></div>
-  <div class="hr"><b id="hrange"></b><br><span id="nm"></span> matchs · <span id="np"></span> joueurs</div>
+  <div class="hr" hidden><b id="hrange"></b><br><span id="nm"></span> matchs · <span id="np"></span> joueurs</div>
   <button class="uchip" id="uchip" type="button" hidden onclick="logout()"></button>
 </div></header>
 
@@ -599,7 +679,7 @@ function hideTip(){tip.style.opacity=0}
 document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-tip]');if(t)showTip(e,t.dataset.tip)});
 document.addEventListener('mousemove',e=>{if(tip.style.opacity==1&&e.target.closest('[data-tip]'))showTip(e,e.target.closest('[data-tip]').dataset.tip)});
 document.addEventListener('mouseout',e=>{if(e.target.closest('[data-tip]'))hideTip()});
-function updateHeader(){$('#hrange').textContent=MS.length?dfmt(MS[0].date)+' → '+dfmt(MS[MS.length-1].date)+' '+MS[MS.length-1].date.getFullYear():'Aucune donnée';$('#nm').textContent=MS.length;$('#np').textContent=SQUAD.length}
+function updateHeader(){try{renderFresh()}catch(e){};$('#hrange').textContent=MS.length?dfmt(MS[0].date)+' → '+dfmt(MS[MS.length-1].date)+' '+MS[MS.length-1].date.getFullYear():'Aucune donnée';$('#nm').textContent=MS.length;$('#np').textContent=SQUAD.length}
 
 /* ============ state ============ */
 const S={tab:'home',match:'all',minMin:90,pos:'ALL',sort:'OBV',dir:-1,player:'Désiré Doué',cmp:'',sx:'Non Penalty xG',sy:'Open Play xG Assisted'};
@@ -699,6 +779,7 @@ function renderHome(){
     <div class="kpi b2" style="--c:var(--gold)"><div class="l">Pressions</div><div class="v mono">${tot('Pressures')}</div><div class="dl">${(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)}% en camp adverse</div></div>
     <div class="kpi b2" style="--c:var(--white)"><div class="l">Récupérations</div><div class="v mono">${tot('Ball Recoveries')}</div><div class="dl">${a('Ball Recoveries').toFixed(0)} par match</div></div>
     <div class="kpi b2" style="--c:#7f95ff"><div class="l">Touches dans la surface</div><div class="v mono">${a('Touches Inside Box').toFixed(0)}</div><div class="dl">par match · ${tot('Touches Inside Box')} au total</div></div>
+    ${homeWidgets()}
     <div class="b12 sect2"><h2>Les quatre piliers du jeu</h2><span>Chiffre en grand : moyenne par match. Dessous : valeur du 1er match → du dernier match, puis l'écart entre les deux. Cliquez sur un bloc pour le détail.</span></div>
     ${pillars.map((g,pi)=>`<div class="card pill b3 clk" tabindex="0" role="button" aria-label="Détail ${g.t}" onclick="openPillar(${pi},this)" onkeydown="if(event.key==='Enter')openPillar(${pi},this)" style="--c:${g.c}"><div class="ph"><i></i><h3>${g.t}</h3><span class="more">Détail ›</span></div>
       ${g.rows.map(([k,n,dg,pol])=>{const v=a(k),ch=last[k]-first[k],cls=Math.abs(ch)<1e-9||pol==='nt'?'nt':(ch>0?'up':'dn');return `<div class="pr"><div class="n">${n}<span class="d">1er match <b>${first[k].toFixed(dg)}</b> → dernier <b>${last[k].toFixed(dg)}</b> <em class="${cls}">${ch>0?'↗':ch<0?'↘':'→'} ${sgn(ch,dg)}</em></span></div>${lineTrend(k,g.c)}<span class="v mono">${v.toFixed(dg)}</span></div>`}).join('')}</div>`).join('')}
@@ -1812,8 +1893,8 @@ function renderRivals(){
 function sourcesCard(){
   const sb=[['Matchs StatsBomb',MS.length?`${MS.length} matchs · ${SRC.matches}`:null],['Joueurs StatsBomb',SQUAD.length?`${SQUAD.length} joueurs · ${SRC.squad}`:null]];
   const op=Object.keys(OPTA_TYPES).map(t=>[OPTA_TYPES[t].lab,OPTA_RAW[t]?`${t==='sbr'?[...new Set(OPTA_RAW[t].recs.map(r=>r.Team))].length:OPTA_RAW[t].recs.length} équipes · ${OPTA_RAW[t].name}`:null]);
-  const api=SERVER.status&&SERVER.status.opta;const apiRow=['API Opta',api&&api.ok?'connectée':null,api&&api.ok?null:'en attente de l\'accès Opta'];
-  return [...sb,...op,apiRow].map(([l,s,w])=>`<div class="st ${s?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${s?'✓':'–'}</div><div><b>${l}</b><span>${s||w||'pas de données'}</span></div></div>`).join('');
+  const apiR=(k,n)=>{const a=SERVER.status&&SERVER.status[k];return ['API '+n,a&&a.ok?'connectée':null,a&&a.ok?null:'en attente de l\'accès '+n]};
+  return [...sb,...op,apiR('statsbomb','StatsBomb'),apiR('opta','Opta')].map(([l,s,w])=>`<div class="st ${s?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${s?'✓':'–'}</div><div><b>${l}</b><span>${s||w||'pas de données'}</span></div></div>`).join('');
 }
 function mergeReport(){
   if(!TEAMS.length)return '';
@@ -1987,7 +2068,7 @@ function admOver(d){
   if(d.stats.fails24h)watch.push(['bad',`${d.stats.fails24h} tentative${d.stats.fails24h>1?'s':''} de connexion échouée${d.stats.fails24h>1?'s':''} en 24 h`,'Voir le journal','log']);
   Object.entries(d.status||{}).filter(([,v])=>!v.ok).forEach(([k,v])=>watch.push(['bad',`Source « ${k} » indisponible : ${v.error}`,'Voir le serveur','srv']));
   if(TREP.flags.length)watch.push(['neutral',`${TREP.flags.length} point${TREP.flags.length>1?'s':''} à vérifier dans les données`,'Voir les données','data']);
-  if(!(d.status&&d.status.opta&&d.status.opta.ok))watch.push(['neutral',"API Opta : en attente de l'accès","Voir le serveur",'srv']);
+  ['opta','statsbomb'].forEach(k=>{if(!(d.status&&d.status[k]&&d.status[k].ok))watch.push(['neutral',`API ${k==='opta'?'Opta':'StatsBomb'} : en attente de l'accès`,'Voir le serveur','srv'])});
   const last=d.events.slice(0,6);
   return `<div class="adk">
     <div class="card"><small>Utilisateurs</small><b>${d.users.length}</b><span>${admins} administrateur${admins>1?'s':''} · ${d.users.length-admins} en lecture</span></div>
@@ -2028,16 +2109,16 @@ function admLog(d){
   <div class="card"><h3>Journal d'activité</h3><div class="sub">Les 300 derniers évènements, du plus récent au plus ancien. Conservé sur le serveur.</div>${admEvents(list)}</div>`;
 }
 function admSrv(d){
-  const o=d.server.opta,opt=d.status&&d.status.opta,row=(ok,l,s)=>`<div class="st ${ok?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${ok?'✓':'–'}</div><div><b>${l}</b><span>${s}</span></div></div>`;
+  const row=(ok,l,s)=>`<div class="st ${ok?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${ok?'✓':'–'}</div><div><b>${l}</b><span>${s}</span></div></div>`;
   return `${serverCard()}
   <div class="card mt"><h3>Adresse IP du serveur</h3><div class="sub">C'est l'adresse que voit Opta quand le serveur les appelle : celle à communiquer pour la liste d'adresses autorisées. Elle doit rester fixe.</div>
     ${ADM.ip?`<div class="ipbox"><b class="mono">${esc(ADM.ip)}</b><button class="btn ghost sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(ADM.ip)}').then(()=>toast('Adresse copiée'))">Copier</button></div><div class="sub">Si le serveur tourne sur votre ordinateur, c'est l'adresse de votre connexion internet, pas celle de la future VM. Refaites ce test depuis la VM.</div>`:''}
     <button class="btn" onclick="admIp()" ${ADM.ipBusy?'disabled':''}>${ADM.ipBusy?'Détection…':ADM.ip?'Détecter à nouveau':"Détecter l'adresse IP"}</button></div>
-  <div class="card mt"><h3>Branchement de l'API Opta</h3><div class="sub">Ce qu'il reste à faire pour que les données Opta arrivent automatiquement.</div>
-    ${row(d.server.sources.includes('opta'),'Source « opta » activée',d.server.sources.includes('opta')?'Activée dans la configuration':"À ajouter dans SOURCES quand l'accès sera ouvert")}
-    ${row(o.url,"Adresse de l'API renseignée",o.url?'OPTA_BASE_URL défini':'OPTA_BASE_URL absent')}
-    ${row(o.key,"Clé d'API renseignée",o.key?'OPTA_API_KEY défini (jamais affiché)':'OPTA_API_KEY absent')}
-    ${row(opt&&opt.ok,'Dernière connexion à Opta',opt?(opt.ok?'Réussie':esc(opt.error)):'Jamais tentée')}</div>
+  ${[['opta','Opta','OPTA_BASE_URL','OPTA_API_KEY'],['statsbomb','StatsBomb','STATSBOMB_BASE_URL','STATSBOMB_USER et STATSBOMB_PASSWORD']].map(([k,n,u,c])=>{const o=d.server[k],opt=d.status&&d.status[k];return `<div class="card mt"><h3>Branchement de l'API ${n}</h3><div class="sub">Ce qu'il reste à faire pour que les données ${n} arrivent automatiquement.</div>
+    ${row(d.server.sources.includes(k),'Source « '+k+' » activée',d.server.sources.includes(k)?'Activée dans la configuration':"À ajouter dans SOURCES quand l'accès sera ouvert")}
+    ${row(o.url,"Adresse de l'API renseignée",o.url?u+' défini':u+' absent')}
+    ${row(o.key,"Identifiants renseignés",o.key?'Définis (jamais affichés)':c+' absent')}
+    ${row(opt&&opt.ok,'Dernière connexion à '+n,opt?(opt.ok?'Réussie':esc(opt.error)):'Jamais tentée')}</div>`}).join('')}
   <div class="card mt"><h3>Configuration</h3><div class="sub">Lecture seule : ces réglages se modifient dans le fichier .env du serveur.</div>
     ${admTable(['Réglage','Valeur'],[['Démarré le',dtFR(d.server.started)],['Système',d.server.os+' · Python '+d.server.python],['Port',d.server.port],['Actualisation automatique','toutes les '+d.server.refreshMinutes+' minutes'],['Sources',d.server.sources.join(', ')],['Site autorisé (CORS)',d.server.cors||'même adresse que le serveur']].map(r=>`<tr><td class="ml">${r[0]}</td><td class="ml">${esc(String(r[1]))}</td></tr>`))}</div>`;
 }
@@ -2052,10 +2133,79 @@ function renderAdmin(){
   ${d?({over:admOver,users:admUsers,data:admData,log:admLog,srv:admSrv})[ADM.tab](d):`<div class="card"><div class="gload" style="margin:20px 0"><i></i><i></i><i></i></div></div>`}`;
 }
 
+/* ============ CADRE D'APPLICATION : menu latéral, barre du haut, recherche, fraîcheur des données ============ */
+const PAGES={home:['Tableau de bord',"Vue d'ensemble"],off:['Équipe','Offensif'],def:['Équipe','Défensif'],team:['Équipe','Matchs'],squad:['Joueurs','Effectif'],player:['Joueurs','Fiche joueur'],rivals:['Comparaison','Rivaux'],bilan:['Rapports','Bilan'],data:['Administration','Administration']};
+function setTitle(){const p=PAGES[S.tab]||['',''];const c=$('#pcrumb'),t=$('#ptitle');if(c)c.textContent=p[0];if(t)t.textContent=S.tab==='player'&&S.player?S.player:p[1];document.title=(t?t.textContent+' · ':'')+'Équipe de France · Analyse vidéo'}
+function periodLine(){return MS.length?`${dfmt(MS[0].date)} → ${dfmt(MS[MS.length-1].date)} · ${MS.length} matchs · ${SQUAD.length} joueurs`:'Aucune donnée'}
+function renderFresh(){
+  const f=$('#fresh'),sf=$('#sfoot');if(!f)return;
+  const every=(SERVER.every||60)*60*1000,age=SERVER.updated?Date.now()-new Date(SERVER.updated).getTime():null;
+  let tone='mid',txt='Données intégrées',sub='Cette page ne se met pas à jour seule';
+  if(SERVER.ok===true){const stale=age!=null&&age>every*2.5;tone=stale?'warn':'ok';txt=stale?'Données anciennes':'Données à jour';sub=`Mise à jour il y a ${agoISO(SERVER.updated)}`}
+  else if(SERVER.ok===false){tone='bad';txt='Serveur non connecté';sub=SERVER.msg||''}
+  const src=[MS.length?'StatsBomb':'',TEAMS.length?'Opta':''].filter(Boolean).join(' + ')||'Aucune source';
+  f.className='fresh '+tone;f.innerHTML=`<i></i><span>${txt}</span><em>${sub}</em>`;f.title=`${src} · ${MS.length} matchs · ${SQUAD.length} joueurs · ${TEAMS.length} équipes`;
+  f.onclick=()=>loadServer(true);
+  if(sf)sf.innerHTML=`<div class="sfs ${tone}"><i></i><div><b>${txt}</b><span>${src}</span></div></div><div class="sfp">${periodLine()}</div>`;
+}
+setInterval(renderFresh,30000);
+/* nouvelles données : on vérifie toutes les 5 minutes si le serveur a de quoi actualiser */
+setInterval(async()=>{if(!SERVER.ok||document.visibilityState!=='visible')return;try{const r=await fetch(apiBase()+'/api/health',{cache:'no-store'});const j=await r.json();if(j.updated&&SERVER.updated&&j.updated!==SERVER.updated){await loadServer(false);toast('Nouvelles données chargées')}}catch(e){}},300000);
+
+/* ---- palette de commandes (⌘K / Ctrl+K) ---- */
+const norm=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function cmdItems(){
+  const it=[];
+  Object.entries(PAGES).forEach(([k,[g,l]])=>{if(k==='data'&&!isAdmin())return;it.push({k:'Page',l:l,s:g,run:()=>{S.tab=k;sync()}})});
+  MS.forEach((m,i)=>it.push({k:'Match',l:`${m.home?'':'@ '}${m.opp}`,s:dfmt(m.date)+(m.home?' · domicile':' · extérieur'),run:()=>{S.tab='team';S.match=i;S.pSel=null;sync()}}));
+  SQUAD.forEach(p=>it.push({k:'Joueur',l:p.Player,s:`${POSN[p.Pos]} · ${p.Minutes.toFixed(0)} min`,run:()=>openPlayer(p.Player)}));
+  TEAMS.forEach(t=>it.push({k:'Équipe',l:t.name,s:'Comparaison avec les rivaux',run:()=>{S.tab='rivals';sync()}}));
+  TM.forEach(m=>it.push({k:'Indicateur',l:m.l,s:GLAB[m.g]+' · '+m.t.slice(0,70),run:()=>{S.tab='rivals';tState().tg='all';sync();setTimeout(()=>{const q=$('#rvq');if(q){q.value=m.l;rvFind(m.l);q.scrollIntoView({block:'center'})}},900)}}));
+  [['Exporter la page en PDF','pdf'],['Exporter la page en PowerPoint','pptx'],['Exporter la page en CSV','csv']].forEach(([l,f])=>it.push({k:'Action',l,s:'Page en cours',run:()=>exportNow(f)}));
+  it.push({k:'Action',l:'Actualiser les données',s:'Recharger depuis le serveur',run:()=>loadServer(true)});
+  if(SERVER.me)it.push({k:'Action',l:'Se déconnecter',s:SERVER.me.user,run:()=>logout()});
+  return it;
+}
+const CMD={open:false,sel:0,list:[]};
+function cmdFilter(q){const n=norm(q).trim(),all=cmdItems();if(!n)return all.filter(x=>x.k==='Page'||x.k==='Action').slice(0,14);
+  return all.map(x=>{const h=norm(x.l),w=norm(x.s);let sc=0;if(h===n)sc=100;else if(h.startsWith(n))sc=80;else if(h.split(/\s+/).some(t=>t.startsWith(n)))sc=65;else if(h.includes(n))sc=50;else if(w.includes(n))sc=25;else{let i=0;for(const c of h)if(c===n[i])i++;if(i===n.length)sc=10}return {x,sc}}).filter(r=>r.sc).sort((a,b)=>b.sc-a.sc).slice(0,16).map(r=>r.x)}
+function cmdRender(){const l=$('#cmdlist');if(!l)return;l.innerHTML=CMD.list.length?CMD.list.map((x,i)=>`<button class="cmdit ${i===CMD.sel?'on':''}" data-i="${i}"><b>${esc(x.l)}</b><small>${esc(x.s||'')}</small><em>${x.k}</em></button>`).join(''):'<div class="cmdno">Aucun résultat</div>';const on=l.querySelector('.on');if(on)on.scrollIntoView({block:'nearest'})}
+function cmdOpen(){if(CMD.open||$('#gate'))return;CMD.open=true;CMD.sel=0;const d=document.createElement('div');d.id='cmd';d.innerHTML=`<div class="cmdbox" role="dialog" aria-label="Recherche"><input id="cmdq" type="text" placeholder="Rechercher un joueur, un match, un indicateur, une action…" autocomplete="off" spellcheck="false"><div id="cmdlist"></div><div class="cmdft"><span>↑↓ pour naviguer</span><span>↵ pour ouvrir</span><span>Échap pour fermer</span></div></div>`;document.body.appendChild(d);
+  CMD.list=cmdFilter('');cmdRender();const q=$('#cmdq');q.focus();
+  q.oninput=()=>{CMD.list=cmdFilter(q.value);CMD.sel=0;cmdRender()};
+  d.addEventListener('mousedown',e=>{if(e.target===d)cmdClose()});
+  $('#cmdlist').addEventListener('click',e=>{const b=e.target.closest('.cmdit');if(b)cmdRun(+b.dataset.i)});
+  $('#cmdlist').addEventListener('mousemove',e=>{const b=e.target.closest('.cmdit');if(b&&+b.dataset.i!==CMD.sel){CMD.sel=+b.dataset.i;cmdRender()}});
+}
+function cmdClose(){CMD.open=false;const d=$('#cmd');if(d)d.remove()}
+function cmdRun(i){const x=CMD.list[i];cmdClose();if(x)setTimeout(x.run,30)}
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();CMD.open?cmdClose():cmdOpen();return}
+  if(!CMD.open)return;
+  if(e.key==='Escape'){cmdClose();return}
+  if(e.key==='ArrowDown'){e.preventDefault();CMD.sel=Math.min(CMD.list.length-1,CMD.sel+1);cmdRender()}
+  else if(e.key==='ArrowUp'){e.preventDefault();CMD.sel=Math.max(0,CMD.sel-1);cmdRender()}
+  else if(e.key==='Enter'){e.preventDefault();cmdRun(CMD.sel)}
+});
+$('#srchbtn').addEventListener('click',cmdOpen);
+if(!/Mac|iPhone|iPad/.test(navigator.platform)){const k=$('#srchbtn kbd');if(k)k.textContent='Ctrl K'}
+
+/* ---- blocs « pilotage » de l'accueil ---- */
+function homeWidgets(){
+  const last=[...MS].reverse().slice(0,5),mx=Math.max(...MS.map(m=>m['Cumulative xG']),1);
+  const matches=`<div class="card b4"><h3>Derniers matchs</h3><div class="sub">Du plus récent au plus ancien · cliquez pour le détail</div>${last.map(m=>{const i=MS.indexOf(m);return `<div class="mrw" onclick="S.tab='team';S.match=${i};S.pSel=null;sync()"><div class="md">${dfmt(m.date)}</div><div class="mo"><b>${esc(m.opp)}</b><small>${m.home?'Domicile':'Extérieur'}</small></div><div class="mb"><i style="width:${Math.round(m['Cumulative xG']/mx*100)}%"></i></div><div class="mv"><b class="mono">${m['Cumulative xG'].toFixed(2)}</b><small>xG · ${m['Goals & Penalty Goals']} but${m['Goals & Penalty Goals']>1?'s':''}</small></div></div>`}).join('')}</div>`;
+  let riv='';
+  if(TEAMS.length>1){const f=focusTeam(),sel=TEAMS,keys=['xg','xga','poss','shots','duelp','rec'].map(k=>TMI[k]).filter(m=>f.v[m.k]!=null);
+    riv=`<div class="card b4"><h3>Face aux rivaux</h3><div class="sub">Rang de ${f.name} parmi ${sel.length} équipes</div>${keys.map(m=>{const rk=rankIn(m,f,sel),pct=rk?Math.round((rk.n-rk.r)/(rk.n-1)*100):null;return `<div class="rvw"><span>${m.l}</span><div class="rb"><i style="width:${pct==null?50:Math.max(6,pct)}%"></i></div><b>${rk?rankLab(rk.r)+'/'+rk.n:'≈ '+vfmt(m,f.v[m.k])}</b></div>`}).join('')}<div style="margin-top:12px"><button class="btn ghost sm" onclick="S.tab='rivals';sync()">Voir la comparaison</button></div></div>`}
+  const bad=analyze().filter(f=>f.tone==='bad'),flags=TREP.flags.length;
+  const att=`<div class="card b4"><h3>Points d'attention</h3><div class="sub">À regarder en priorité</div>${bad.slice(0,3).map(f=>`<div class="rvi bad"><div><b>${esc(f.concl||f.text.slice(0,80))}</b><small>${esc(f.tag||'')}</small></div></div>`).join('')||'<div class="rvi good"><div><b>Aucun point faible détecté</b></div></div>'}${flags&&isAdmin()?`<div class="rvi neutral"><div><b>${flags} point${flags>1?'s':''} à vérifier dans les données</b></div><button class="btn ghost sm" onclick="S.tab='data';ADM.tab='data';sync()">Voir</button></div>`:''}<div style="margin-top:12px"><button class="btn ghost sm" onclick="S.tab='bilan';sync()">Ouvrir le bilan</button></div></div>`;
+  return matches+riv+att;
+}
+
 const EXTRA={};
 let skT;
 function sync(){
-  setTimeout(syncExport,0);
+  setTimeout(syncExport,0);try{setTitle();renderFresh()}catch(e){}
   const nodata=!hasData(S.tab)&&S.tab!=='data';
   $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.tab));
   $$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+S.tab));
