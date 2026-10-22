@@ -1606,11 +1606,11 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 function emptyState(){return `<div class="drop" onclick="S.tab='data';sync()"><div class="ic">📂</div><h3>Aucune donnée à afficher</h3><p>Importez d'abord un fichier des matchs et un fichier des joueurs.</p><div style="margin-top:16px"><button class="btn">Aller à l'import</button></div></div>`}
 /* ============ OPTA + STATSBOMB : fusion des sources et onglet Rivaux ============ */
 const OPTA_KEY='lb-opta-v1';
-const OPTA_TYPES={off:{name:'Offensif',sig:'ThrghBlCmp'},mai:{name:'Maîtrise du jeu',sig:'AvgPossStart'},def:{name:'Défensif',sig:'PPDA'},res:{name:'Résumé équipe',sig:'LBP'}};
+const OPTA_TYPES={off:{name:'Offensif',sig:'ThrghBlCmp',lab:'Opta · Offensif'},mai:{name:'Maîtrise du jeu',sig:'AvgPossStart',lab:'Opta · Maîtrise du jeu'},def:{name:'Défensif',sig:'PPDA',lab:'Opta · Défensif'},res:{name:'Résumé équipe',sig:'LBP',lab:'Opta · Résumé équipe'},sbr:{name:'Profil des équipes',sig:null,lab:'StatsBomb · Profil des équipes'}};
 const OPTA_RAW={};
 let TEAMS=[],TREP={merge:[],flags:[],n90:null,minutes:null};
 const numOf=v=>{if(v==null||v==='')return null;if(typeof v==='number')return isFinite(v)?v:null;const s=String(v).trim().replace('%','').replace(',','.');if(s===''||!/^-?\d+(\.\d+)?$/.test(s))return null;return Number(s)};
-const optaType=head=>head.includes('optaTeamId')?Object.keys(OPTA_TYPES).find(t=>head.includes(OPTA_TYPES[t].sig)):null;
+const optaType=head=>head.includes('optaTeamId')?Object.keys(OPTA_TYPES).find(t=>OPTA_TYPES[t].sig&&head.includes(OPTA_TYPES[t].sig)):(['Team','Metric','Value','Percentile'].every(h=>head.includes(h))?'sbr':null);
 
 /* ---- catalogue des indicateurs équipe : une seule ligne par indicateur, quelle que soit la source ---- */
 const GLAB={att:'Attaque',con:'Construction',def:'Défense',res:'Résultats'};
@@ -1661,6 +1661,20 @@ const TM=[
  ['win','Victoires (%)','res',0,1,'pct',[['res','Win%']],null,0,"Part des matchs gagnés sur la période."],
  ['gd','Différence de buts','res',2,1,'n',[['res','GD']],null,0,"Buts marqués moins buts encaissés."]
 ].map(a=>({k:a[0],l:a[1],g:a[2],d:a[3],dir:a[4],kind:a[5],o:a[6],sb:a[7],radar:!!a[8],t:a[9]}));
+[['cashots','Tirs en contre-attaque','att',2,0,'n','Counter Attack Shots',"Tirs obtenus en contre-attaque. C'est un style de jeu."],
+ ['spxg','xG sur coups de pied arrêtés','att',2,1,'xg','Set Piece xG',"Qualité des occasions créées sur coups de pied arrêtés."],
+ ['clear','Tirs avec le but dégagé','att',1,1,'n','Clear Shots',"Tirs pris avec le but bien dégagé, sans défenseur sur la trajectoire."],
+ ['gkpl','Longueur des passes du gardien','att',0,0,'n','GK Pass Length',"Distance moyenne des relances du gardien : plus elle est grande, plus la relance est longue."],
+ ['obc','Centres dans la surface, jeu ouvert (%)','att',0,0,'n','Open Play Box Cross%',"Part des centres en jeu ouvert qui arrivent dans la surface (définition StatsBomb à confirmer)."],
+ ['xgas','xG concédé par tir','def',3,-1,'n','Opposition xG/Shot',"Qualité moyenne des tirs de l'adversaire : moins c'est mieux."],
+ ['cashf','Tirs de contre-attaque concédés','def',2,-1,'n','Counter Attack Shots Faced',"Tirs adverses venus d'une contre-attaque : moins c'est mieux."],
+ ['clearf','Tirs avec le but dégagé concédés','def',1,-1,'n','Clear Shots Faced',"Tirs adverses pris avec le but dégagé : moins c'est mieux."],
+ ['spxga','xG concédé sur coups de pied arrêtés','def',2,-1,'xg','Opposition Set Piece xG',"Qualité des occasions concédées sur coups de pied arrêtés."],
+ ['oppp','Passes adverses réussies (%)','def',0,0,'n','Opposition Passing%',"Précision de passe de l'adversaire : plus elle est basse, plus la défense le gêne."],
+ ['aggr','Agressivité','def',3,0,'n','Aggression',"Intensité des actions défensives (mesure StatsBomb). Style de jeu."],
+ ['dad','Hauteur des actions défensives','def',0,0,'n','Def Action Dist',"Distance moyenne du but à laquelle l'équipe défend : plus elle est grande, plus l'équipe défend haut."]
+].forEach(a=>TM.push({k:a[0],l:a[1],g:a[2],d:a[3],dir:a[4],kind:a[5],o:[],sb:null,radar:false,t:a[7],sr:a[6]}));
+Object.entries({xg:'Non Penalty Cumulative xG',shots:'Non Penalty Shots',xga:'Opposition xG',sha:'Non Penalty Shots Faced'}).forEach(([k,v])=>{TM.find(m=>m.k===k).sr=v});
 const TMI=Object.fromEntries(TM.map(m=>[m.k,m]));
 const TEAM_PAL=['#d5a450','#4d6bff','#ed1e24','#35d0ff','#c4a1ff','#7ef0ae'];
 
@@ -1678,7 +1692,7 @@ const SKIP_COL=new Set(['Rank','teamImageId','optaTeamId','GM']);
 function dupFlags(){
   const out=[];
   Object.entries(OPTA_RAW).forEach(([t,f])=>{
-    const recs=f.recs;if(!recs.length)return;
+    const recs=f.recs;if(!recs.length||t==='sbr')return;
     const cols=Object.keys(recs[0]).filter(c=>!SKIP_COL.has(c)&&recs.some(r=>numOf(r[c])!=null));
     const pairs={};
     recs.forEach(r=>{const nm=r.teamFullName||r.Team;
@@ -1692,7 +1706,9 @@ function dupFlags(){
 }
 function buildTeams(){
   const by={};
-  Object.entries(OPTA_RAW).forEach(([t,f])=>f.recs.forEach(r=>{const nm=r.teamFullName||r.Team;if(!nm)return;const e=(by[nm]??=({name:nm,abbr:r.teamAbbrevName||nm.slice(0,3).toUpperCase(),comp:r.leagueName||'',gm:numOf(r.GM),src:{},v:{}}));e.src[t]=r;if(r.leagueName)e.comp=r.leagueName;if(numOf(r.GM)!=null)e.gm=numOf(r.GM)}));
+  Object.entries(OPTA_RAW).forEach(([t,f])=>f.recs.forEach(r=>{const nm=r.teamFullName||r.Team;if(!nm)return;const e=(by[nm]??=({name:nm,abbr:r.teamAbbrevName||nm.slice(0,3).toUpperCase(),comp:r.leagueName||'',gm:numOf(r.GM),src:{},v:{},sr:{}}));
+    if(t==='sbr'){const v=numOf(r.Value);if(v!=null)e.sr[r.Metric]=v;return}
+    e.src[t]=r;if(r.leagueName)e.comp=r.leagueName;if(numOf(r.GM)!=null)e.gm=numOf(r.GM)}));
   TEAMS=Object.values(by).sort((a,b)=>(b.name===TEAM)-(a.name===TEAM)||a.name.localeCompare(b.name));
   TREP={merge:[],flags:[],n90:null,minutes:null};
   const foc=TEAMS.find(t=>t.name.toLowerCase()===String(TEAM).toLowerCase());
@@ -1705,12 +1721,13 @@ function buildTeams(){
     TM.forEach(m=>{
       const vals=m.o.map(([t,c])=>numOf(tm.src[t]?.[c])).filter(x=>x!=null);
       let o=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
-      if(vals.length>1&&Math.abs(vals[0]-vals[1])/Math.max(Math.abs(vals[0]),Math.abs(vals[1]),1e-9)>.02&&foc===tm)TREP.flags.push({lvl:'mid',txt:`Opta · ${m.l} : deux fichiers donnent ${vals[0]} et ${vals[1]}.`});
+      if(vals.length>1&&Math.abs(vals[0]-vals[1])/Math.max(Math.abs(vals[0]),Math.abs(vals[1]),1e-9)>.02)TREP.flags.push({lvl:'mid',txt:`Opta · ${tm.name} · ${m.l} : deux fichiers donnent ${vals[0]} et ${vals[1]}.`});
       let sbv=null;
       if(tm===foc&&m.sb&&n90&&MS.every(x=>x[m.sb]!=null))sbv=sum(MS.map(x=>x[m.sb]))/n90;
+      else if(m.sr&&tm.sr[m.sr]!=null)sbv=tm.sr[m.sr];
       const r=mergeVal(m,o,sbv);
       tm.v[m.k]=r?r.v:null;
-      if(tm===foc&&r&&sbv!=null&&o!=null){TREP.merge.push({m,sb:sbv,o,rel:r.rel,v:r.v,rule:r.rule,big:!!r.big});if(r.big)TREP.flags.push({lvl:'high',txt:`${m.l} : écart important entre StatsBomb (${sbv.toFixed(m.d)}) et Opta (${o.toFixed(m.d)}). Valeur StatsBomb retenue.`})}
+      if(r&&sbv!=null&&o!=null){TREP.merge.push({tm:tm.name,m,sb:sbv,o,rel:r.rel,v:r.v,rule:r.rule,big:!!r.big});if(r.big)TREP.flags.push({lvl:'high',txt:`${tm.name} · ${m.l} : écart important entre StatsBomb (${sbv.toFixed(m.d)}) et Opta (${o.toFixed(m.d)}). Valeur StatsBomb retenue.`})}
     });
     const x=tm.v;if(x.xg!=null&&x.shots)x.xgs=x.xg/x.shots;
   });
@@ -1795,15 +1812,15 @@ function renderRivals(){
 /* ---- rapport Données : fichiers reconnus, fusion, points à vérifier ---- */
 function sourcesCard(){
   const sb=[['Matchs StatsBomb',MS.length?`${MS.length} matchs · ${SRC.matches}`:null],['Joueurs StatsBomb',SQUAD.length?`${SQUAD.length} joueurs · ${SRC.squad}`:null]];
-  const op=Object.keys(OPTA_TYPES).map(t=>[`Opta · ${OPTA_TYPES[t].name}`,OPTA_RAW[t]?`${OPTA_RAW[t].recs.length} équipes · ${OPTA_RAW[t].name}`:null]);
+  const op=Object.keys(OPTA_TYPES).map(t=>[OPTA_TYPES[t].lab,OPTA_RAW[t]?`${t==='sbr'?[...new Set(OPTA_RAW[t].recs.map(r=>r.Team))].length:OPTA_RAW[t].recs.length} équipes · ${OPTA_RAW[t].name}`:null]);
   return [...sb,...op].map(([l,s])=>`<div class="st ${s?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${s?'✓':'–'}</div><div><b>${l}</b><span>${s||'pas de fichier'}</span></div></div>`).join('');
 }
 function mergeReport(){
   if(!TEAMS.length)return '';
   const f=focusTeam(),rows=TREP.merge;
   const flags=TREP.flags;
-  return `<div class="card mt"><h3>Fusion des sources</h3><div class="sub">Quand StatsBomb et Opta mesurent la même chose pour ${f.name}, le tableau de bord n'affiche qu'une valeur, sans mention de la source.${TREP.minutes?` Temps de jeu de ${f.name} : environ ${TREP.minutes} minutes (déduit du nombre de buts).`:''}</div>
-    ${rows.length?`<div class="tw"><table class="tmt"><thead><tr><th>Indicateur</th><th>StatsBomb</th><th>Opta</th><th>Écart</th><th>Valeur affichée</th><th>Règle</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.big?'w':''}"><td class="ml">${r.m.l}</td><td><span class="mono">${vfmt(r.m,r.sb)}</span></td><td><span class="mono">${vfmt(r.m,r.o)}</span></td><td><span class="mono">${(r.rel*100).toFixed(0)} %</span></td><td><b class="mono">${vfmt(r.m,r.v)}</b></td><td class="ml">${r.rule}</td></tr>`).join('')}</tbody></table></div>`:`<div class="sub">Aucun indicateur n'existe à la fois dans les fichiers StatsBomb et Opta pour l'instant.</div>`}
+  return `<div class="card mt"><h3>Fusion des sources</h3><div class="sub">Quand StatsBomb et Opta mesurent la même chose pour une équipe, le tableau de bord n'affiche qu'une valeur, sans mention de la source.${TREP.minutes?` Temps de jeu de ${f.name} : environ ${TREP.minutes} minutes (déduit du nombre de buts).`:''}</div>
+    ${rows.length?`<div class="tw"><table class="tmt"><thead><tr><th>Équipe</th><th>Indicateur</th><th>StatsBomb</th><th>Opta</th><th>Écart</th><th>Valeur affichée</th><th>Règle</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.big?'w':''}"><td class="ml">${r.tm}</td><td class="ml">${r.m.l}</td><td><span class="mono">${vfmt(r.m,r.sb)}</span></td><td><span class="mono">${vfmt(r.m,r.o)}</span></td><td><span class="mono">${(r.rel*100).toFixed(0)} %</span></td><td><b class="mono">${vfmt(r.m,r.v)}</b></td><td class="ml">${r.rule}</td></tr>`).join('')}</tbody></table></div>`:`<div class="sub">Aucun indicateur n'existe à la fois dans les fichiers StatsBomb et Opta pour l'instant.</div>`}
     <div class="sub" style="margin-top:12px">Règles : écart de 5 % ou moins, moyenne des deux. Entre 5 % et 25 %, moyenne pour les xG, StatsBomb pour les comptages. Au-delà de 25 %, StatsBomb retenu et le cas est signalé ci-dessous.</div></div>
   <div class="card mt"><h3>Points à vérifier avec la source</h3><div class="sub">Détectés automatiquement à l'import. À transmettre tels quels si besoin.</div>
     ${flags.length?flags.map(x=>`<div class="rvi ${x.lvl==='high'?'bad':'neutral'}"><div><b>${x.txt}</b></div></div>`).join(''):`<div class="sub">Rien d'anormal détecté.</div>`}
