@@ -503,6 +503,12 @@ body.locked{overflow:hidden}
 .gload i:nth-child(2){animation-delay:.15s}.gload i:nth-child(3){animation-delay:.3s}
 @keyframes gl{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1.15)}}
 
+.uchip{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--white);font-size:12.5px;font-weight:600;transition:.2s}
+.uchip i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--blue);font-style:normal;font-weight:800;font-size:12px}
+.uchip em{font-style:normal;color:var(--mu);font-size:11.5px;display:none}
+.uchip:hover em{display:inline}.uchip:hover span{display:none}.uchip:hover{border-color:var(--red)}
+@media(max-width:900px){.uchip span,.uchip em{display:none!important}.uchip{padding:4px}}
+
 </style>
 </head>
 <body>
@@ -521,6 +527,7 @@ body.locked{overflow:hidden}
   </nav>
   <div class="xp" id="xp" hidden><button class="btn" id="xbtn" aria-haspopup="true">Exporter ⬇</button><div class="xmenu" id="xmenu" hidden><div class="xh" id="xh"></div><label class="xa">Auteur du rapport<input id="xauthor" type="text" placeholder="Votre nom (optionnel)" maxlength="60" autocomplete="name"></label><button data-f="pdf">PDF<span>Rapport prêt à envoyer</span></button><button data-f="pptx">PowerPoint<span>Présentation modifiable, tableaux et graphiques inclus</span></button><button data-f="csv">Excel (CSV)<span>Tableau de données brutes</span></button></div></div>
   <div class="hr"><b id="hrange"></b><br><span id="nm"></span> matchs · <span id="np"></span> joueurs</div>
+  <button class="uchip" id="uchip" type="button" hidden onclick="logout()"></button>
 </div></header>
 
 <main class="wrap">
@@ -1827,7 +1834,7 @@ function rivalsPptx(sl,tbl,tableSlides,pptx,PD){
   ['att','con','def','res'].forEach(g=>{const rows=rivalRows(g,sel);if(rows.length)tableSlides(GLAB[g],GLAB[g]+' : comparaison','Valeur et rang dans la comparaison',['Indicateur',...sel.map(t=>t.name)],rows,{first:4.4,rowH:0.36,fs:11})});
 }
 /* ---- serveur (IP fixe) : toutes les données viennent d'ici ---- */
-const SERVER={ok:null,msg:'',updated:null,status:{},every:null};
+const SERVER={ok:null,msg:'',updated:null,status:{},every:null,me:null};
 const lsGet=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const apiBase=()=>lsGet('lb-api').trim().replace(/\/+$/,'');
@@ -1839,35 +1846,40 @@ async function loadServer(manual){
   SERVER.checking=true;SERVER.auth=false;
   try{
     const r=await fetch(apiBase()+'/api/data',{headers:srvHeaders(),cache:'no-store'});
-    if(r.status===401){SERVER.ok=false;SERVER.msg=tokGet()?'Mot de passe incorrect.':'Mot de passe requis.';SERVER.auth=true}
+    if(r.status===401){SERVER.ok=false;SERVER.msg=tokGet()?'Session expirée, reconnectez-vous.':'';SERVER.auth=true;SERVER.me=null;tokSet('',false)}
     else if(!r.ok||!/json/.test(r.headers.get('content-type')||'')){SERVER.ok=false;SERVER.msg="Aucun serveur de données à cette adresse."}
     else{
       const j=await r.json();
       Object.keys(OPTA_RAW).forEach(k=>delete OPTA_RAW[k]);Object.assign(OPTA_RAW,j.opta||{});
       if(j.matches&&j.matches.length&&j.squad&&j.squad.length)applyData(j.matches,j.squad,{matches:'serveur',squad:'serveur'});else{applyData([],[],{matches:'aucun fichier',squad:'aucun fichier'})}
-      SERVER.ok=true;SERVER.msg='';SERVER.updated=j.updated;SERVER.status=j.status||{};SERVER.every=j.refreshMinutes||null;
+      SERVER.ok=true;SERVER.msg='';SERVER.updated=j.updated;SERVER.status=j.status||{};SERVER.every=j.refreshMinutes||null;SERVER.me=j.me||null;applyRole();
       updateHeader();if(S.tab==='data'&&!manual&&MS.length&&SQUAD.length)S.tab='home';
     }
   }catch(e){SERVER.ok=false;SERVER.msg='Serveur injoignable.'}
   SERVER.checking=false;renderGate();sync();if(manual&&SERVER.ok)toast('Données à jour')
 }
 async function srvRefresh(){try{await fetch(apiBase()+'/api/refresh',{method:'POST',headers:srvHeaders()})}catch(e){}await loadServer(true)}
-function srvSave(){lsSet('lb-api',($('#srvurl')||{}).value||'');const v=(($('#srvtok')||{}).value||'').trim();if(v)tokSet(v,true);loadServer(true)}
+function srvSave(){lsSet('lb-api',($('#srvurl')||{}).value||'');loadServer(true)}
+const isAdmin=()=>!SERVER.me||SERVER.me.role==='admin';
+function applyRole(){
+  const nb=document.querySelector('#nav [data-t=data]');if(nb)nb.hidden=!isAdmin();
+  if(!isAdmin()&&S.tab==='data')S.tab='home';
+  const u=$('#uchip');if(u){u.hidden=!SERVER.me;if(SERVER.me){u.innerHTML=`<i>${SERVER.me.user.slice(0,1).toUpperCase()}</i><span>${SERVER.me.user}</span><em>Quitter</em>`;u.title='Se déconnecter ('+SERVER.me.user+')'}}
+}
 function logout(){tokSet('',false);location.reload()}
 function serverCard(){
   const when=SERVER.updated?new Date(SERVER.updated).toLocaleString('fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'–';
   const embedded=SERVER.ok===null&&(MS.length||TEAMS.length);
-  const head=SERVER.ok?`<div class="st ok"><div class="dot">✓</div><div><b>Connecté au serveur</b><span>Dernière mise à jour : ${when}${SERVER.every?` · actualisation automatique toutes les ${SERVER.every} min`:''}</span></div></div>`
+  const head=SERVER.ok?`<div class="st ok"><div class="dot">✓</div><div><b>Connecté au serveur</b><span>${SERVER.me?`Connecté en tant que <b>${SERVER.me.user}</b> (${SERVER.me.role==='admin'?'administrateur':'lecture'}) · `:''}Dernière mise à jour : ${when}${SERVER.every?` · actualisation automatique toutes les ${SERVER.every} min`:''}</span></div></div>`
    :SERVER.ok===false?`<div class="st bad"><div class="dot">!</div><div><b>Serveur non connecté</b><span>${SERVER.msg}</span></div></div>`
    :`<div class="st ${embedded?'ok':'bad'}"><div class="dot">${embedded?'✓':'–'}</div><div><b>${embedded?'Données intégrées à cette page':'Hors serveur'}</b><span>${embedded?'Cette version ne se met pas à jour toute seule.':'Ouvrez le site depuis le serveur, ou indiquez son adresse ci-dessous.'}</span></div></div>`;
   const bad=Object.entries(SERVER.status||{}).filter(([,v])=>!v.ok);
   return `<div class="card"><h3>Connexion au serveur</h3><div class="sub">Le serveur récupère les données et les met à disposition du site. Rien n'est à déposer à la main.</div>${head}
     ${bad.map(([k,v])=>`<div class="rvi bad"><div><b>Source « ${k} » indisponible</b><small>${v.error||''}</small></div></div>`).join('')}
-    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">${SERVER.ok?'<button class="btn" onclick="srvRefresh()">Actualiser maintenant</button>':''}${MS.length&&SQUAD.length?'<button class="btn ghost" onclick="S.tab=\'home\';sync()">Voir le tableau de bord</button>':''}${tokGet()?'<button class="btn ghost" onclick="logout()">Se déconnecter</button>':''}</div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">${SERVER.ok&&isAdmin()?'<button class="btn" onclick="srvRefresh()">Actualiser maintenant</button>':''}${MS.length&&SQUAD.length?'<button class="btn ghost" onclick="S.tab=\'home\';sync()">Voir le tableau de bord</button>':''}${SERVER.me?'<button class="btn ghost" onclick="logout()">Se déconnecter</button>':''}</div>
     <details class="srvset" ${SERVER.ok===false?'open':''}><summary>Paramètres de connexion</summary>
       <div class="srvrow"><label>Adresse du serveur<input id="srvurl" class="rvq" value="${apiBase().replace(/"/g,'&quot;')}" placeholder="Laisser vide si le site est servi par le serveur"></label>
-      <label>Mot de passe<input id="srvtok" class="rvq" type="password" value="${tokGet().replace(/"/g,'&quot;')}" autocomplete="current-password" onkeydown="if(event.key==='Enter')srvSave()"></label>
-      <button class="btn" onclick="srvSave()">Se connecter</button></div></details></div>`;
+      <button class="btn" onclick="srvSave()">Enregistrer</button></div></details></div>`;
 }
 function renderAdmin(){
   $('#v-data').innerHTML=`
@@ -1880,8 +1892,17 @@ function renderAdmin(){
 }
 /* ---- page de connexion à l'entrée ---- */
 const gateOpen=()=>SERVER.ok===true||(SERVER.ok===null&&!SERVER.checking&&(MS.length>0||TEAMS.length>0));
-function gateLogin(){const v=($('#gpw')||{}).value||'';if(!v.trim()){const m=$('#gmsg');if(m)m.textContent='Saisissez le mot de passe.';return}
-  tokSet(v.trim(),!!($('#grem')||{}).checked);const b=$('#gbtn');if(b){b.disabled=true;b.textContent='Connexion…'}loadServer(false)}
+async function gateLogin(){
+  const u=(($('#gus')||{}).value||'').trim(),pw=($('#gpw')||{}).value||'',m=$('#gmsg'),btn=$('#gbtn');
+  if(!u||!pw){if(m)m.textContent='Saisissez votre identifiant et votre mot de passe.';return}
+  const remember=!!($('#grem')||{}).checked;if(btn){btn.disabled=true;btn.textContent='Connexion…'}
+  try{
+    const r=await fetch(apiBase()+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:pw,remember})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){if(m)m.textContent=j.error||'Connexion impossible.';if(btn){btn.disabled=false;btn.textContent='Se connecter'}const p=$('#gpw');if(p){p.value='';p.focus()}return}
+    tokSet(j.token,remember);SERVER.auth=false;await loadServer(false)
+  }catch(e){if(m)m.textContent='Serveur injoignable.';if(btn){btn.disabled=false;btn.textContent='Se connecter'}}
+}
 function gateAddr(){lsSet('lb-api',($('#gurl')||{}).value||'');loadServer(false)}
 function renderGate(){
   let g=$('#gate');
@@ -1892,10 +1913,11 @@ function renderGate(){
   const brand=`<img class="glogo" src="${LOGO}" alt=""><div class="gtitle">Équipe de France</div><div class="gsub">Analyse vidéo · Espace réservé au staff</div>`;
   if(SERVER.checking||SERVER.ok===undefined){g.innerHTML=`<div class="gcard">${brand}<div class="gload"><i></i><i></i><i></i></div></div>`;return}
   if(SERVER.auth){g.innerHTML=`<form class="gcard" onsubmit="gateLogin();return false">${brand}
-    <label class="glab">Mot de passe<input id="gpw" class="gin" type="password" autocomplete="current-password" autofocus></label>
-    <div id="gmsg" class="gmsg">${SERVER.msg==='Mot de passe requis.'?'':SERVER.msg}</div>
+    <label class="glab">Identifiant<input id="gus" class="gin" type="text" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+    <label class="glab" style="margin-top:12px">Mot de passe<input id="gpw" class="gin" type="password" autocomplete="current-password"></label>
+    <div id="gmsg" class="gmsg">${SERVER.msg||''}</div>
     <label class="grem"><input id="grem" type="checkbox" checked> Rester connecté sur cet appareil</label>
-    <button id="gbtn" class="btn gbtn" type="submit">Entrer</button></form>`;setTimeout(()=>{const i=$('#gpw');if(i)i.focus()},50);return}
+    <button id="gbtn" class="btn gbtn" type="submit">Se connecter</button></form>`;setTimeout(()=>{const i=$('#gus');if(i)i.focus()},50);return}
   g.innerHTML=`<form class="gcard" onsubmit="gateAddr();return false">${brand}
     <div class="gmsg" style="min-height:0;margin-bottom:6px">${SERVER.ok===false?SERVER.msg:'Le site doit être ouvert depuis le serveur de données.'}</div>
     <label class="glab">Adresse du serveur<input id="gurl" class="gin" value="${apiBase().replace(/"/g,'&quot;')}" placeholder="https://…"></label>
