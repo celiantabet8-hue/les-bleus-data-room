@@ -484,6 +484,25 @@ input[type=range]{accent-color:var(--blue)}
 .srvrow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}
 .srvrow label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--mu);flex:1 1 220px}
 
+body.locked{overflow:hidden}
+#gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px;background:radial-gradient(900px 600px at 50% -10%,#1a3fd0 0%,#0b2ba3 45%,#010a45 100%);transition:opacity .45s,transform .45s}
+#gate.out{opacity:0;transform:scale(1.03);pointer-events:none}
+.gcard{width:min(380px,100%);padding:34px 30px 28px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 30px 80px rgba(0,5,40,.5);display:flex;flex-direction:column;align-items:stretch;text-align:center;animation:gin .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes gin{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.glogo{width:64px;margin:0 auto 14px;filter:drop-shadow(0 6px 18px rgba(0,0,0,.4))}
+.gtitle{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.gsub{font-size:12.5px;color:var(--mu);margin:4px 0 22px}
+.glab{display:flex;flex-direction:column;gap:7px;text-align:left;font-size:12px;color:var(--mu);font-weight:600}
+.gin{padding:13px 15px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:15px}
+.gin:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,107,255,.3)}
+.gmsg{min-height:20px;margin:10px 0 4px;font-size:12.5px;color:#ff8a96}
+.grem{display:flex;gap:8px;align-items:center;justify-content:center;font-size:12.5px;color:var(--mu);margin:6px 0 16px}
+.gbtn{width:100%;justify-content:center}
+.gload{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.gload i{width:9px;height:9px;border-radius:50%;background:var(--blue);animation:gl 1s infinite ease-in-out}
+.gload i:nth-child(2){animation-delay:.15s}.gload i:nth-child(3){animation-delay:.3s}
+@keyframes gl{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1.15)}}
+
 </style>
 </head>
 <body>
@@ -1812,12 +1831,15 @@ const SERVER={ok:null,msg:'',updated:null,status:{},every:null};
 const lsGet=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const apiBase=()=>lsGet('lb-api').trim().replace(/\/+$/,'');
-const srvHeaders=()=>lsGet('lb-token')?{Authorization:'Bearer '+lsGet('lb-token')}:{};
+const tokGet=()=>{try{return sessionStorage.getItem('lb-token')||localStorage.getItem('lb-token')||''}catch(e){return ''}};
+const tokSet=(v,remember)=>{try{sessionStorage.removeItem('lb-token');localStorage.removeItem('lb-token');if(v)(remember?localStorage:sessionStorage).setItem('lb-token',v)}catch(e){}};
+const srvHeaders=()=>tokGet()?{Authorization:'Bearer '+tokGet()}:{};
 async function loadServer(manual){
-  if(!/^https?:/.test(location.protocol)&&!apiBase()){SERVER.ok=null;return}
+  if(!/^https?:/.test(location.protocol)&&!apiBase()){SERVER.ok=null;SERVER.checking=false;renderGate();return}
+  SERVER.checking=true;SERVER.auth=false;
   try{
     const r=await fetch(apiBase()+'/api/data',{headers:srvHeaders(),cache:'no-store'});
-    if(r.status===401){SERVER.ok=false;SERVER.msg=lsGet('lb-token')?'Mot de passe refusé.':'Mot de passe requis.'}
+    if(r.status===401){SERVER.ok=false;SERVER.msg=tokGet()?'Mot de passe incorrect.':'Mot de passe requis.';SERVER.auth=true}
     else if(!r.ok||!/json/.test(r.headers.get('content-type')||'')){SERVER.ok=false;SERVER.msg="Aucun serveur de données à cette adresse."}
     else{
       const j=await r.json();
@@ -1827,10 +1849,11 @@ async function loadServer(manual){
       updateHeader();if(S.tab==='data'&&!manual&&MS.length&&SQUAD.length)S.tab='home';
     }
   }catch(e){SERVER.ok=false;SERVER.msg='Serveur injoignable.'}
-  sync();if(manual&&SERVER.ok)toast('Données à jour')
+  SERVER.checking=false;renderGate();sync();if(manual&&SERVER.ok)toast('Données à jour')
 }
 async function srvRefresh(){try{await fetch(apiBase()+'/api/refresh',{method:'POST',headers:srvHeaders()})}catch(e){}await loadServer(true)}
-function srvSave(){lsSet('lb-api',($('#srvurl')||{}).value||'');lsSet('lb-token',(($('#srvtok')||{}).value||'').trim());loadServer(true)}
+function srvSave(){lsSet('lb-api',($('#srvurl')||{}).value||'');const v=(($('#srvtok')||{}).value||'').trim();if(v)tokSet(v,true);loadServer(true)}
+function logout(){tokSet('',false);location.reload()}
 function serverCard(){
   const when=SERVER.updated?new Date(SERVER.updated).toLocaleString('fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'–';
   const embedded=SERVER.ok===null&&(MS.length||TEAMS.length);
@@ -1840,10 +1863,10 @@ function serverCard(){
   const bad=Object.entries(SERVER.status||{}).filter(([,v])=>!v.ok);
   return `<div class="card"><h3>Connexion au serveur</h3><div class="sub">Le serveur récupère les données et les met à disposition du site. Rien n'est à déposer à la main.</div>${head}
     ${bad.map(([k,v])=>`<div class="rvi bad"><div><b>Source « ${k} » indisponible</b><small>${v.error||''}</small></div></div>`).join('')}
-    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">${SERVER.ok?'<button class="btn" onclick="srvRefresh()">Actualiser maintenant</button>':''}${MS.length&&SQUAD.length?'<button class="btn ghost" onclick="S.tab=\'home\';sync()">Voir le tableau de bord</button>':''}</div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">${SERVER.ok?'<button class="btn" onclick="srvRefresh()">Actualiser maintenant</button>':''}${MS.length&&SQUAD.length?'<button class="btn ghost" onclick="S.tab=\'home\';sync()">Voir le tableau de bord</button>':''}${tokGet()?'<button class="btn ghost" onclick="logout()">Se déconnecter</button>':''}</div>
     <details class="srvset" ${SERVER.ok===false?'open':''}><summary>Paramètres de connexion</summary>
       <div class="srvrow"><label>Adresse du serveur<input id="srvurl" class="rvq" value="${apiBase().replace(/"/g,'&quot;')}" placeholder="Laisser vide si le site est servi par le serveur"></label>
-      <label>Mot de passe<input id="srvtok" class="rvq" type="password" value="${lsGet('lb-token').replace(/"/g,'&quot;')}" autocomplete="current-password" onkeydown="if(event.key==='Enter')srvSave()"></label>
+      <label>Mot de passe<input id="srvtok" class="rvq" type="password" value="${tokGet().replace(/"/g,'&quot;')}" autocomplete="current-password" onkeydown="if(event.key==='Enter')srvSave()"></label>
       <button class="btn" onclick="srvSave()">Se connecter</button></div></details></div>`;
 }
 function renderAdmin(){
@@ -1855,6 +1878,31 @@ function renderAdmin(){
   <div class="card mt"><h3>Postes des joueurs</h3><div class="sub">Gardien, défenseur, milieu ou attaquant. Les nouveaux joueurs reçoivent un poste estimé d'après leurs statistiques : corrigez-le si besoin.</div>
     <div class="pos-grid">${[...SQUAD].sort((a,b)=>a.Player.localeCompare(b.Player)).map(p=>`<label><span>${p.Player}</span><select onchange="setPos(this.dataset.n,this.value)" data-n="${p.Player.replace(/"/g,'&quot;')}">${Object.keys(POSN).map(k=>`<option value="${k}" ${p.Pos===k?'selected':''}>${POSN[k]}</option>`).join('')}</select></label>`).join('')}</div></div>`;
 }
+/* ---- page de connexion à l'entrée ---- */
+const gateOpen=()=>SERVER.ok===true||(SERVER.ok===null&&!SERVER.checking&&(MS.length>0||TEAMS.length>0));
+function gateLogin(){const v=($('#gpw')||{}).value||'';if(!v.trim()){const m=$('#gmsg');if(m)m.textContent='Saisissez le mot de passe.';return}
+  tokSet(v.trim(),!!($('#grem')||{}).checked);const b=$('#gbtn');if(b){b.disabled=true;b.textContent='Connexion…'}loadServer(false)}
+function gateAddr(){lsSet('lb-api',($('#gurl')||{}).value||'');loadServer(false)}
+function renderGate(){
+  let g=$('#gate');
+  if(gateOpen()){if(g)g.classList.add('out'),setTimeout(()=>g.remove(),500);document.body.classList.remove('locked');return}
+  document.body.classList.add('locked');
+  if(!g){g=document.createElement('div');g.id='gate';document.body.appendChild(g)}
+  g.classList.remove('out');
+  const brand=`<img class="glogo" src="${LOGO}" alt=""><div class="gtitle">Équipe de France</div><div class="gsub">Analyse vidéo · Espace réservé au staff</div>`;
+  if(SERVER.checking||SERVER.ok===undefined){g.innerHTML=`<div class="gcard">${brand}<div class="gload"><i></i><i></i><i></i></div></div>`;return}
+  if(SERVER.auth){g.innerHTML=`<form class="gcard" onsubmit="gateLogin();return false">${brand}
+    <label class="glab">Mot de passe<input id="gpw" class="gin" type="password" autocomplete="current-password" autofocus></label>
+    <div id="gmsg" class="gmsg">${SERVER.msg==='Mot de passe requis.'?'':SERVER.msg}</div>
+    <label class="grem"><input id="grem" type="checkbox" checked> Rester connecté sur cet appareil</label>
+    <button id="gbtn" class="btn gbtn" type="submit">Entrer</button></form>`;setTimeout(()=>{const i=$('#gpw');if(i)i.focus()},50);return}
+  g.innerHTML=`<form class="gcard" onsubmit="gateAddr();return false">${brand}
+    <div class="gmsg" style="min-height:0;margin-bottom:6px">${SERVER.ok===false?SERVER.msg:'Le site doit être ouvert depuis le serveur de données.'}</div>
+    <label class="glab">Adresse du serveur<input id="gurl" class="gin" value="${apiBase().replace(/"/g,'&quot;')}" placeholder="https://…"></label>
+    <button class="btn gbtn" type="submit">Se connecter</button></form>`;
+}
+SERVER.checking=/^https?:/.test(location.protocol)||!!apiBase();
+renderGate();
 initOpta();
 const hasData=tab=>tab==='rivals'?TEAMS.length>0:(MS.length>0&&SQUAD.length>0);
 
