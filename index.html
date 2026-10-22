@@ -508,6 +508,26 @@ body.locked{overflow:hidden}
 .uchip em{font-style:normal;color:var(--mu);font-size:11.5px;display:none}
 .uchip:hover em{display:inline}.uchip:hover span{display:none}.uchip:hover{border-color:var(--red)}
 @media(max-width:900px){.uchip span,.uchip em{display:none!important}.uchip{padding:4px}}
+.adk{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.adk .card small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);font-weight:700}
+.adk .card b{display:block;font-size:40px;font-weight:800;margin:8px 0 4px;letter-spacing:-.02em}
+.adk .card b em{font-style:normal;font-size:20px;color:var(--mu)}
+.adk .card span{font-size:12.5px;color:var(--mu)}.adk .card span.bd{color:#ff8a96}
+.admnav{margin-bottom:18px}
+.btn.sm{padding:6px 12px;font-size:12px;border-radius:10px}
+.btn.dng:hover:not(:disabled){border-color:var(--red);color:#ff8a96}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.sel{padding:8px 10px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:12.5px}
+.sel option{color:#0a1a6e}
+.evb{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.08);color:var(--white)}
+.evb.ok{background:rgba(126,240,174,.14);color:#7ef0ae}.evb.bad{background:rgba(237,30,36,.2);color:#ff8a96}.evb.adm{background:rgba(77,107,255,.28);color:#c3ccf5}
+.dotl{display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);margin-right:8px}.dotl.on{background:#7ef0ae;box-shadow:0 0 8px #7ef0ae}
+.adt td small{color:var(--mu)}
+.ipbox{display:flex;align-items:center;gap:14px;margin:6px 0 10px}.ipbox b{font-size:28px;letter-spacing:.02em}
+.rvi .btn{flex:0 0 auto}
+.srvrow .rvq,.srvrow .sel{flex:0 0 auto;width:100%}
+.adt th{text-align:left!important}
+.adt td{vertical-align:middle}
 
 </style>
 </head>
@@ -1881,15 +1901,6 @@ function serverCard(){
       <div class="srvrow"><label>Adresse du serveur<input id="srvurl" class="rvq" value="${apiBase().replace(/"/g,'&quot;')}" placeholder="Laisser vide si le site est servi par le serveur"></label>
       <button class="btn" onclick="srvSave()">Enregistrer</button></div></details></div>`;
 }
-function renderAdmin(){
-  $('#v-data').innerHTML=`
-  <div class="hello"><div><h2>Admin</h2><h1>Données et sources</h1><p>Les données arrivent automatiquement du serveur. Il n'y a plus de fichiers à déposer.</p></div></div>
-  ${serverCard()}
-  <div class="card mt"><h3>Sources de données</h3><div class="sub">Ce que le serveur a récupéré, et d'où.</div>${sourcesCard()}</div>
-  ${mergeReport()}
-  <div class="card mt"><h3>Postes des joueurs</h3><div class="sub">Gardien, défenseur, milieu ou attaquant. Les nouveaux joueurs reçoivent un poste estimé d'après leurs statistiques : corrigez-le si besoin.</div>
-    <div class="pos-grid">${[...SQUAD].sort((a,b)=>a.Player.localeCompare(b.Player)).map(p=>`<label><span>${p.Player}</span><select onchange="setPos(this.dataset.n,this.value)" data-n="${p.Player.replace(/"/g,'&quot;')}">${Object.keys(POSN).map(k=>`<option value="${k}" ${p.Pos===k?'selected':''}>${POSN[k]}</option>`).join('')}</select></label>`).join('')}</div></div>`;
-}
 /* ---- page de connexion à l'entrée ---- */
 const gateOpen=()=>SERVER.ok===true||(SERVER.ok===null&&!SERVER.checking&&(MS.length>0||TEAMS.length>0));
 async function gateLogin(){
@@ -1927,6 +1938,119 @@ SERVER.checking=/^https?:/.test(location.protocol)||!!apiBase();
 renderGate();
 initOpta();
 const hasData=tab=>tab==='rivals'?TEAMS.length>0:(MS.length>0&&SQUAD.length>0);
+
+/* ============ ADMIN : vrai tableau de bord d'administration ============ */
+const ADM={tab:'over',d:null,t:0,flt:'all',note:'',ip:null,ipBusy:false,err:''};
+const ADM_TABS=[['over',"Vue d'ensemble"],['users','Utilisateurs'],['data','Données et sources'],['log',"Journal d'activité"],['srv','Serveur']];
+const EV_LAB={login:['Connexion','ok'],login_fail:['Échec de connexion','bad'],login_blocked:['Compte bloqué (trop d\'essais)','bad'],refresh:['Actualisation des données','ok'],user_create:['Compte créé','adm'],user_role:['Rôle modifié','adm'],user_password:['Mot de passe changé','adm'],user_delete:['Compte supprimé','adm']};
+const FLT={all:['Tout',()=>true],login:['Connexions',e=>e.ev==='login'],fail:['Échecs',e=>e.ev==='login_fail'||e.ev==='login_blocked'],adm:['Comptes',e=>e.ev.startsWith('user_')],refresh:['Actualisations',e=>e.ev==='refresh']};
+const dtFR=iso=>iso?new Date(iso).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'–';
+const ago=sec=>sec==null?'–':sec<60?'à l\'instant':sec<3600?Math.floor(sec/60)+' min':sec<86400?Math.floor(sec/3600)+' h':Math.floor(sec/86400)+' j';
+const agoISO=iso=>iso?ago(Math.max(0,(Date.now()-new Date(iso).getTime())/1000)):'jamais';
+const upFR=sec=>sec<3600?Math.floor(sec/60)+' min':sec<86400?Math.floor(sec/3600)+' h '+Math.floor(sec%3600/60)+' min':Math.floor(sec/86400)+' j '+Math.floor(sec%86400/3600)+' h';
+const kbFR=n=>n<1024?n+' o':(n/1024).toFixed(1)+' Ko';
+
+async function admApi(path,method,body){
+  const r=await fetch(apiBase()+path,{method:method||'GET',headers:{...srvHeaders(),'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,cache:'no-store'});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('Erreur '+r.status));return j;
+}
+async function admLoad(silent){
+  if(!SERVER.ok||!isAdmin())return;
+  try{ADM.d=await admApi('/api/admin/overview');ADM.t=Date.now();ADM.err=''}catch(e){ADM.err=e.message}
+  const act=document.activeElement;if(S.tab==='data'&&!(silent&&act&&/INPUT|SELECT|TEXTAREA/.test(act.tagName)&&act.closest('#v-data')))renderAdmin();
+}
+setInterval(()=>{if(S.tab==='data'&&document.visibilityState==='visible')admLoad(true)},30000);
+function admTab(t){ADM.tab=t;renderAdmin()}
+async function admAct(path,body,okMsg){try{await admApi(path,'POST',body);if(okMsg)toast(okMsg);await admLoad()}catch(e){toast(e.message)}}
+function admRole(el){admAct('/api/admin/user/role',{username:el.dataset.n,role:el.value},'Rôle modifié')}
+function admPw(el){const n=el.dataset.n,p=prompt(`Nouveau mot de passe pour « ${n} » (8 caractères minimum) :`);if(p)admAct('/api/admin/user/password',{username:n,password:p},'Mot de passe changé. Les sessions de cette personne sont fermées.')}
+function admDel(el){const n=el.dataset.n;if(confirm(`Supprimer le compte « ${n} » ? Cette personne sera déconnectée immédiatement.`))admAct('/api/admin/user/delete',{username:n},'Compte supprimé')}
+function admGen(){const c='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789',a=crypto.getRandomValues(new Uint32Array(12));$('#nupw').value=[...a].map(x=>c[x%c.length]).join('')}
+async function admCreate(){
+  const u=$('#nuid').value.trim(),p=$('#nupw').value,r=$('#nurole').value;
+  try{await admApi('/api/admin/user/create','POST',{username:u,password:p,role:r});ADM.note=`Compte « ${u.toLowerCase()} » créé. Mot de passe à transmettre : ${p} (il ne sera plus affiché).`;await admLoad()}catch(e){toast(e.message)}
+}
+async function admIp(){ADM.ipBusy=true;renderAdmin();try{ADM.ip=(await admApi('/api/admin/ip')).ip}catch(e){ADM.ip=null;toast(e.message)}ADM.ipBusy=false;renderAdmin()}
+function admCsv(){const d=ADM.d;if(!d)return;const rows=[['Date','Évènement','Utilisateur','Détail','Adresse IP'],...d.events.filter(FLT[ADM.flt][1]).map(e=>[e.t,(EV_LAB[e.ev]||[e.ev])[0],e.user,e.detail,e.ip])];saveFile('journal-activite-'+todayISO()+'.csv',csvOut(rows),'text/csv')}
+function admFlt(f){ADM.flt=f;renderAdmin()}
+function admRefresh(){srvRefresh().then(()=>admLoad())}
+
+const postesCard=()=>`<div class="card mt"><h3>Postes des joueurs</h3><div class="sub">Gardien, défenseur, milieu ou attaquant. Les nouveaux joueurs reçoivent un poste estimé d'après leurs statistiques : corrigez-le si besoin.</div>
+  <div class="pos-grid">${[...SQUAD].sort((a,b)=>a.Player.localeCompare(b.Player)).map(p=>`<label><span>${p.Player}</span><select onchange="setPos(this.dataset.n,this.value)" data-n="${p.Player.replace(/"/g,'&quot;')}">${Object.keys(POSN).map(k=>`<option value="${k}" ${p.Pos===k?'selected':''}>${POSN[k]}</option>`).join('')}</select></label>`).join('')}</div></div>`;
+const admTable=(head,rows)=>`<div class="tw"><table class="tmt adt"><thead><tr>${head.map((h,i)=>`<th ${i?'':'style="text-align:left"'}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+
+function admOver(d){
+  const admins=d.users.filter(u=>u.role==='admin').length,src=Object.values(d.status||{}),okN=src.filter(x=>x.ok).length;
+  const days=Object.entries(d.stats.days),mx=Math.max(1,...days.map(x=>x[1]));
+  const bars=days.map(([k,v],i)=>{const h=Math.round(v/mx*86),x=14+i*54;return `<g><rect x="${x}" y="${100-h}" width="34" height="${Math.max(h,2)}" rx="6" fill="${i===6?'#d5a450':'#4d6bff'}" opacity="${v?1:.35}"><title>${v} connexion(s)</title></rect><text x="${x+17}" y="${96-h}" text-anchor="middle" font-size="11" fill="#fdfdfe" font-weight="700">${v||''}</text><text x="${x+17}" y="118" text-anchor="middle" font-size="10.5" fill="#c3ccf5">${new Date(k+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short'})}</text></g>`}).join('');
+  const watch=[];
+  if(d.stats.fails24h)watch.push(['bad',`${d.stats.fails24h} tentative${d.stats.fails24h>1?'s':''} de connexion échouée${d.stats.fails24h>1?'s':''} en 24 h`,'Voir le journal','log']);
+  Object.entries(d.status||{}).filter(([,v])=>!v.ok).forEach(([k,v])=>watch.push(['bad',`Source « ${k} » indisponible : ${v.error}`,'Voir le serveur','srv']));
+  if(TREP.flags.length)watch.push(['neutral',`${TREP.flags.length} point${TREP.flags.length>1?'s':''} à vérifier dans les données`,'Voir les données','data']);
+  if(!(d.status&&d.status.opta&&d.status.opta.ok))watch.push(['neutral',"API Opta : en attente de l'accès","Voir le serveur",'srv']);
+  const last=d.events.slice(0,6);
+  return `<div class="adk">
+    <div class="card"><small>Utilisateurs</small><b>${d.users.length}</b><span>${admins} administrateur${admins>1?'s':''} · ${d.users.length-admins} en lecture</span></div>
+    <div class="card"><small>Connexions (24 h)</small><b>${d.stats.logins24h}</b><span class="${d.stats.fails24h?'bd':''}">${d.stats.fails24h} échec${d.stats.fails24h>1?'s':''}</span></div>
+    <div class="card"><small>Sources de données</small><b>${okN}<em>/${src.length}</em></b><span>Mise à jour il y a ${agoISO(d.updated)}</span></div>
+    <div class="card"><small>Serveur en ligne depuis</small><b style="font-size:26px">${upFR(d.server.uptime)}</b><span>actualisation toutes les ${d.server.refreshMinutes} min</span></div></div>
+  <div class="grid g2 mt">
+    <div class="card"><h3>Connexions sur 7 jours</h3><div class="sub">Une connexion = une ouverture de session</div><svg viewBox="0 0 392 126" width="100%" style="max-width:520px">${bars}</svg></div>
+    <div class="card"><h3>À surveiller</h3><div class="sub">Ce qui mérite votre attention</div>${watch.length?watch.map(([t,x,l,tab])=>`<div class="rvi ${t}"><div><b>${esc(x)}</b></div><button class="btn ghost sm" onclick="admTab('${tab}')">${l}</button></div>`).join(''):'<div class="rvi good"><div><b>Rien à signaler</b></div></div>'}</div></div>
+  <div class="card mt"><h3>Dernières activités</h3><div class="sub">Les 6 derniers évènements</div>${admEvents(last)}<div style="margin-top:12px"><button class="btn ghost sm" onclick="admTab('log')">Voir tout le journal</button></div></div>`;
+}
+function admEvents(list){
+  if(!list.length)return '<div class="sub">Aucun évènement pour l\'instant.</div>';
+  return admTable(['Date','Évènement','Utilisateur','Détail','Adresse IP'],list.map(e=>{const l=EV_LAB[e.ev]||[e.ev,'ok'];return `<tr><td class="ml" style="min-width:110px">${dtFR(e.t)}</td><td class="ml"><span class="evb ${l[1]}">${l[0]}</span></td><td class="ml">${esc(e.user||'–')}</td><td class="ml">${esc(e.detail||'')}</td><td class="mono">${esc(e.ip||'–')}</td></tr>`}));
+}
+function admUsers(d){
+  const me=SERVER.me&&SERVER.me.user;
+  return `${ADM.note?`<div class="rvi good" style="margin-bottom:14px"><div><b>${esc(ADM.note)}</b></div><button class="btn ghost sm" onclick="ADM.note='';renderAdmin()">Fermer</button></div>`:''}
+  <div class="card"><h3>Comptes</h3><div class="sub">Administrateur : voit l'admin et peut actualiser. Lecture : tableau de bord seulement.</div>
+  ${admTable(['Identifiant','Rôle','Créé le','Dernière connexion','Statut','Actions'],d.users.map(u=>{const self=u.name===me,on=u.seen!=null&&u.seen<300;
+    return `<tr><td class="ml"><b>${esc(u.name)}</b>${self?' <span class="evb adm">vous</span>':''}</td><td class="ml"><select class="sel" data-n="${esc(u.name)}" onchange="admRole(this)" ${self?'disabled':''}><option value="admin" ${u.role==='admin'?'selected':''}>Administrateur</option><option value="viewer" ${u.role==='viewer'?'selected':''}>Lecture</option></select></td><td class="ml">${u.created||'–'}</td><td class="ml">${u.last_login?dtFR(u.last_login)+' <small>('+agoISO(u.last_login)+')</small>':'jamais'}</td><td class="ml"><span class="dotl ${on?'on':''}"></span>${on?'En ligne':'Hors ligne'}</td><td class="ml"><button class="btn ghost sm" data-n="${esc(u.name)}" onclick="admPw(this)">Mot de passe</button> <button class="btn ghost sm dng" data-n="${esc(u.name)}" onclick="admDel(this)" ${self?'disabled':''}>Supprimer</button></td></tr>`}))}</div>
+  <div class="card mt"><h3>Créer un compte</h3><div class="sub">Choisissez un identifiant et un mot de passe, puis transmettez-les à la personne. Elle pourra être déconnectée à tout moment.</div>
+    <div class="srvrow"><label>Identifiant<input id="nuid" class="rvq" autocomplete="off" autocapitalize="none" placeholder="prenom"></label>
+    <label>Mot de passe<input id="nupw" class="rvq" autocomplete="new-password" placeholder="8 caractères minimum"></label>
+    <label style="flex:0 0 170px">Rôle<select id="nurole" class="sel"><option value="viewer">Lecture</option><option value="admin">Administrateur</option></select></label>
+    <button class="btn ghost" onclick="admGen()">Générer</button><button class="btn" onclick="admCreate()">Créer le compte</button></div></div>`;
+}
+function admData(d){
+  const hist=d.history;
+  return `<div class="card"><h3>Sources de données</h3><div class="sub">Ce que le serveur a récupéré, et d'où.</div>${sourcesCard()}</div>
+  <div class="card mt"><h3>Fichiers sur le serveur</h3><div class="sub">Dossier de données lu par le serveur. Ils sont reconnus automatiquement.</div>${d.files.length?admTable(['Fichier','Type reconnu','Taille','Modifié'],d.files.map(f=>`<tr><td class="ml">${esc(f.name)}</td><td class="ml">${f.kind?({off:'Opta · Offensif',mai:'Opta · Maîtrise du jeu',def:'Opta · Défensif',res:'Opta · Résumé',sbr:'StatsBomb · Profil équipes',matches:'StatsBomb · Matchs',squad:'StatsBomb · Joueurs'})[f.kind]||f.kind:'<span class="evb bad">non reconnu</span>'}</td><td class="mono">${kbFR(f.size)}</td><td class="ml">${dtFR(f.mtime)}</td></tr>`)):'<div class="sub">Aucun fichier.</div>'}</div>
+  <div class="card mt"><h3>Historique des actualisations</h3><div class="sub">Automatiques (toutes les ${d.server.refreshMinutes} min) ou lancées à la main</div>${hist.length?admTable(['Date','Déclenchée par','Résultat','Durée'],hist.slice(0,12).map(h=>`<tr><td class="ml">${dtFR(h.t)}</td><td class="ml">${h.trigger==='manual'?'Manuelle ('+esc(h.who)+')':'Automatique'}</td><td class="ml">${Object.entries(h.sources).map(([k,v])=>`<span class="evb ${v?'ok':'bad'}">${k} ${v?'ok':'erreur'}</span>`).join(' ')}</td><td class="mono">${h.ms} ms</td></tr>`)):'<div class="sub">Aucune actualisation depuis le démarrage du serveur.</div>'}<div style="margin-top:12px"><button class="btn" onclick="admRefresh()">Actualiser maintenant</button></div></div>
+  ${mergeReport()}${postesCard()}`;
+}
+function admLog(d){
+  const list=d.events.filter(FLT[ADM.flt][1]);
+  return `<div class="card filt" style="margin-bottom:12px"><div class="chips">${Object.entries(FLT).map(([k,v])=>`<button class="chip ${ADM.flt===k?'on':''}" onclick="admFlt('${k}')">${v[0]}</button>`).join('')}</div><span class="cnt">${list.length} évènement${list.length>1?'s':''}</span><button class="btn ghost sm" onclick="admCsv()">Exporter en CSV</button></div>
+  <div class="card"><h3>Journal d'activité</h3><div class="sub">Les 300 derniers évènements, du plus récent au plus ancien. Conservé sur le serveur.</div>${admEvents(list)}</div>`;
+}
+function admSrv(d){
+  const o=d.server.opta,opt=d.status&&d.status.opta,row=(ok,l,s)=>`<div class="st ${ok?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${ok?'✓':'–'}</div><div><b>${l}</b><span>${s}</span></div></div>`;
+  return `${serverCard()}
+  <div class="card mt"><h3>Adresse IP du serveur</h3><div class="sub">C'est l'adresse que voit Opta quand le serveur les appelle : celle à communiquer pour la liste d'adresses autorisées. Elle doit rester fixe.</div>
+    ${ADM.ip?`<div class="ipbox"><b class="mono">${esc(ADM.ip)}</b><button class="btn ghost sm" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(ADM.ip)}').then(()=>toast('Adresse copiée'))">Copier</button></div><div class="sub">Si le serveur tourne sur votre ordinateur, c'est l'adresse de votre connexion internet, pas celle de la future VM. Refaites ce test depuis la VM.</div>`:''}
+    <button class="btn" onclick="admIp()" ${ADM.ipBusy?'disabled':''}>${ADM.ipBusy?'Détection…':ADM.ip?'Détecter à nouveau':"Détecter l'adresse IP"}</button></div>
+  <div class="card mt"><h3>Branchement de l'API Opta</h3><div class="sub">Ce qu'il reste à faire pour que les données Opta arrivent automatiquement.</div>
+    ${row(d.server.sources.includes('opta'),'Source « opta » activée',d.server.sources.includes('opta')?'Activée dans la configuration':"À ajouter dans SOURCES quand l'accès sera ouvert")}
+    ${row(o.url,"Adresse de l'API renseignée",o.url?'OPTA_BASE_URL défini':'OPTA_BASE_URL absent')}
+    ${row(o.key,"Clé d'API renseignée",o.key?'OPTA_API_KEY défini (jamais affiché)':'OPTA_API_KEY absent')}
+    ${row(opt&&opt.ok,'Dernière connexion à Opta',opt?(opt.ok?'Réussie':esc(opt.error)):'Jamais tentée')}</div>
+  <div class="card mt"><h3>Configuration</h3><div class="sub">Lecture seule : ces réglages se modifient dans le fichier .env du serveur.</div>
+    ${admTable(['Réglage','Valeur'],[['Démarré le',dtFR(d.server.started)],['Système',d.server.os+' · Python '+d.server.python],['Port',d.server.port],['Actualisation automatique','toutes les '+d.server.refreshMinutes+' minutes'],['Sources',d.server.sources.join(', ')],['Site autorisé (CORS)',d.server.cors||'même adresse que le serveur']].map(r=>`<tr><td class="ml">${r[0]}</td><td class="ml">${esc(String(r[1]))}</td></tr>`))}</div>`;
+}
+function renderAdmin(){
+  const V=$('#v-data');
+  if(!SERVER.ok||!isAdmin()){V.innerHTML=`<div class="hello"><div><h2>Administration</h2><h1>Tableau de bord admin</h1><p>${SERVER.ok?'Cette page est réservée aux administrateurs.':'Connectez-vous au serveur pour accéder à l\'administration.'}</p></div></div>${serverCard()}`;return}
+  if(!ADM.d||Date.now()-ADM.t>15000){if(!ADM._l){ADM._l=1;admLoad(true).finally(()=>{ADM._l=0})}}
+  const d=ADM.d;
+  V.innerHTML=`<div class="hello"><div><h2>Administration</h2><h1>Tableau de bord admin</h1><p>Comptes, activité, sources de données et état du serveur.</p></div><div class="chips">${SERVER.me?`<span class="evb adm" style="padding:8px 14px">${esc(SERVER.me.user)} · administrateur</span>`:''}</div></div>
+  <div class="chips admnav">${ADM_TABS.map(([k,l])=>`<button class="chip ${ADM.tab===k?'on':''}" onclick="admTab('${k}')">${l}</button>`).join('')}</div>
+  ${ADM.err?`<div class="rvi bad" style="margin-bottom:12px"><div><b>${esc(ADM.err)}</b></div></div>`:''}
+  ${d?({over:admOver,users:admUsers,data:admData,log:admLog,srv:admSrv})[ADM.tab](d):`<div class="card"><div class="gload" style="margin:20px 0"><i></i><i></i><i></i></div></div>`}`;
+}
 
 const EXTRA={};
 let skT;
