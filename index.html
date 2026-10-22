@@ -479,6 +479,11 @@ input[type=range]{accent-color:var(--blue)}
 .sty{font-style:normal;color:var(--mu);margin-left:6px;font-size:12px}
 @media(max-width:700px){.rvi{flex-wrap:wrap}.tmt td.ml{min-width:150px}}
 
+.srvset{margin-top:16px;border-top:1px solid var(--line2);padding-top:12px}
+.srvset summary{cursor:pointer;font-size:13px;color:var(--mu);font-weight:600}
+.srvrow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}
+.srvrow label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--mu);flex:1 1 220px}
+
 </style>
 </head>
 <body>
@@ -493,7 +498,7 @@ input[type=range]{accent-color:var(--blue)}
     <button data-t="player">Joueur</button>
     <button data-t="rivals">Rivaux</button>
     <button data-t="bilan">Bilan</button>
-    <button data-t="data">Importer</button>
+    <button data-t="data">Admin</button>
   </nav>
   <div class="xp" id="xp" hidden><button class="btn" id="xbtn" aria-haspopup="true">Exporter ⬇</button><div class="xmenu" id="xmenu" hidden><div class="xh" id="xh"></div><label class="xa">Auteur du rapport<input id="xauthor" type="text" placeholder="Votre nom (optionnel)" maxlength="60" autocomplete="name"></label><button data-f="pdf">PDF<span>Rapport prêt à envoyer</span></button><button data-f="pptx">PowerPoint<span>Présentation modifiable, tableaux et graphiques inclus</span></button><button data-f="csv">Excel (CSV)<span>Tableau de données brutes</span></button></div></div>
   <div class="hr"><b id="hrange"></b><br><span id="nm"></span> matchs · <span id="np"></span> joueurs</div>
@@ -982,56 +987,10 @@ function applyData(m,sq,src){
   if(SQUAD.length&&!SQUAD.some(p=>p.Player===S.player))S.player=([...SQUAD].sort((a,b)=>b.Minutes-a.Minutes).find(p=>p.Pos!=='GB')||SQUAD[0]).Player;
   S.cmp='';S.match='all';buildTeams();
 }
-function persist(){try{localStorage.setItem('lb-data-v1',JSON.stringify({m:MATCHES,s:SQUAD.map(({Pos,...r})=>r),pos:POSMAP,src:SRC}))}catch(e){}}
-function loadSaved(){try{const j=JSON.parse(localStorage.getItem('lb-data-v1')||'null');if(j&&j.m&&j.s&&j.m.length&&j.s.length){Object.assign(POSMAP,j.pos||{});applyData(j.m,j.s,j.src)}}catch(e){}}
-const IMP={log:[],errs:[]};
-async function handleFiles(files){
-  IMP.log=[];IMP.errs=[];let m=null,sq=null,opta=false;
-  for(const f of files){
-    try{const {head,recs}=parseCSV(await f.text());const ot=optaType(head);
-      if(ot){const rr=recs.filter(r=>r.teamFullName||r.Team);if(!rr.length)IMP.errs.push(`${f.name} : aucune équipe trouvée.`);else{OPTA_RAW[ot]={name:f.name,recs:rr};opta=true;IMP.log.push(['ok',f.name,`Opta · ${OPTA_TYPES[ot].name} · ${rr.length} équipes`])}}
-      else if(head.includes('Match')&&head.includes('Date')){const miss=REQ_M.filter(k=>!head.includes(k));
-        if(miss.length)IMP.errs.push(`${f.name} : il manque les colonnes ${miss.join(', ')}.`);else{m=recs.filter(r=>r.Match);IMP.log.push(['ok',`${f.name}`,`${m.length} matchs importés`]);SRC.matches=f.name}}
-      else if(head.includes('Player')&&head.includes('Minutes')){const miss=REQ_S.filter(k=>!head.includes(k));
-        if(miss.length)IMP.errs.push(`${f.name} : il manque les colonnes ${miss.join(', ')}.`);else{sq=recs.filter(r=>r.Player);IMP.log.push(['ok',`${f.name}`,`${sq.length} joueurs importés`]);SRC.squad=f.name}}
-      else IMP.errs.push(`${f.name} : fichier non reconnu. Il faut un export StatsBomb (colonne « Match » ou « Player ») ou un export Opta d'équipe (Offensif, Maîtrise du jeu, Défensif ou Résumé).`);
-    }catch(e){IMP.errs.push(`${f.name} : lecture impossible.`)}
-  }
-  if(m||sq){applyData(m||MATCHES,sq||SQUAD,{});persist()}
-  if(opta)persistOpta();
-  if(m||sq||opta)buildTeams();
-  renderData();
-}
-function resetData(){try{localStorage.removeItem('lb-data-v1')}catch(e){}applyData(JSON.parse(JSON.stringify(DEFAULT_MATCHES)),JSON.parse(JSON.stringify(DEFAULT_SQUAD)),{matches:"données d'exemple",squad:"données d'exemple"});IMP.log=[];IMP.errs=[];resetOpta();renderData()}
+function persist(){try{localStorage.setItem('lb-pos-v1',JSON.stringify(POSMAP))}catch(e){}}
+function loadSaved(){try{const j=JSON.parse(localStorage.getItem('lb-pos-v1')||'null');if(j)Object.assign(POSMAP,j)}catch(e){}}
 function setPos(name,v){POSMAP[name]=v;const p=SQUAD.find(q=>q.Player===name);if(p)p.Pos=v;persist()}
-function renderData(){
-  const ex=HAS_DEFAULT&&SRC.matches.startsWith('données')&&SRC.squad.startsWith('données'),none=!MS.length&&!SQUAD.length&&!TEAMS.length;
-  $('#v-data').innerHTML=`
-  <div class="hello"><div><h2>Importer</h2><h1>Déposez vos fichiers</h1><p>Le tableau de bord se recalcule dans votre navigateur. Rien n'est envoyé ailleurs.</p></div></div>
-  <div class="drop" id="drop"><div class="ic">⬇</div><h3>Glissez ici tous vos fichiers CSV</h3><p><b>StatsBomb</b> : matchs et joueurs · <b>Opta</b> : Offensif, Maîtrise du jeu, Défensif, Résumé équipe<br>Déposez-les ensemble ou un par un : chaque fichier est reconnu automatiquement et remplace le précédent du même type.</p><div style="margin-top:16px"><button class="btn" id="pick">Choisir les fichiers</button></div><input id="fin" type="file" accept=".csv,text/csv" multiple hidden></div>
-  ${serverCard()}
-  ${IMP.errs.length?`<div class="errs"><b>Un fichier n'a pas pu être lu.</b><br>${IMP.errs.map(e=>'• '+e).join('<br>')}<br>Vérifiez qu'il s'agit bien d'un export CSV du même format que les précédents.</div>`:''}
-  <div class="grid g2 mt">
-    <div class="card"><h3>Données affichées</h3><div class="sub">${none?'Aucun fichier pour le moment. Déposez-les ci-dessus pour afficher le tableau de bord.':ex?'Actuellement : données d\'exemple.':'Vos fichiers sont enregistrés dans ce navigateur uniquement : ils seront encore là à votre prochaine visite.'}</div>
-      ${sourcesCard()}
-      ${IMP.log.length?`<div style="margin-top:14px;font-size:13px;color:var(--gold)">${IMP.log.map(l=>'✓ '+l[1]+' — '+l[2]).join('<br>')}</div>`:''}
-      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">${MS.length&&SQUAD.length?'<button class="btn" onclick="S.tab=\'home\';sync()">Voir le tableau de bord</button>':''}${TEAMS.length?'<button class="btn ghost" onclick="S.tab=\'rivals\';sync()">Voir les rivaux</button>':''}${ex?'':`<button class="btn ghost" onclick="resetData()">${HAS_DEFAULT?'Revenir aux données d\'exemple':'Effacer mes données'}</button>`}</div></div>
-    <div class="card"><h3>Comment ça marche</h3><div class="sub">Trois étapes</div>
-      <div class="ins"><i>1</i><div>Déposez vos exports StatsBomb et Opta, dans l'ordre que vous voulez.</div></div>
-      <div class="ins"><i>2</i><div>Le tableau de bord se met à jour tout de suite : Vue d'ensemble, Offensif, Défensif, Matchs, Effectif, Joueur et Rivaux.</div></div>
-      <div class="ins"><i>3</i><div>Quand les deux sources donnent la même information, une seule valeur est affichée. Le détail est dans « Fusion des sources », plus bas.</div></div>
-      <div class="ins"><i>4</i><div>Le fichier des joueurs ne donne pas le poste : vérifiez-le dans la liste ci-dessous.</div></div></div>
-  </div>
-  ${mergeReport()}
-  <div class="card mt"><h3>Postes des joueurs</h3><div class="sub">Gardien, défenseur, milieu ou attaquant. Les nouveaux joueurs reçoivent un poste estimé d'après leurs statistiques : corrigez-le si besoin.</div>
-    <div class="pos-grid">${[...SQUAD].sort((a,b)=>a.Player.localeCompare(b.Player)).map(p=>`<label><span>${p.Player}</span><select onchange="setPos(this.dataset.n,this.value)" data-n="${p.Player.replace(/"/g,'&quot;')}">${Object.keys(POSN).map(k=>`<option value="${k}" ${p.Pos===k?'selected':''}>${POSN[k]}</option>`).join('')}</select></label>`).join('')}</div></div>`;
-  const dz=$('#drop'),fi=$('#fin');
-  $('#pick').onclick=e=>{e.stopPropagation();fi.click()};dz.onclick=()=>fi.click();
-  fi.onchange=()=>handleFiles([...fi.files]);
-  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));
-  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over')}));
-  dz.addEventListener('drop',e=>handleFiles([...e.dataTransfer.files]));
-}
+function renderData(){renderAdmin()}
 window.addEventListener('dragover',e=>e.preventDefault());window.addEventListener('drop',e=>{if(!e.target.closest('#drop')){e.preventDefault()}});
 
 
@@ -1603,7 +1562,7 @@ const snapModal=btn=>snapNode(document.querySelector('.modal-box'),btn);
 const CAM='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" fill="currentColor"/></svg>';
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.cardsnap');if(!b)return;e.stopPropagation();snapNode(b.closest('.card'),b)},true);
 /* ============ router ============ */
-function emptyState(){return `<div class="drop" onclick="S.tab='data';sync()"><div class="ic">📂</div><h3>Aucune donnée à afficher</h3><p>Importez d'abord un fichier des matchs et un fichier des joueurs.</p><div style="margin-top:16px"><button class="btn">Aller à l'import</button></div></div>`}
+function emptyState(){return `<div class="drop" onclick="S.tab='data';sync()"><div class="ic">📂</div><h3>Aucune donnée à afficher</h3><p>Le serveur de données n'est pas connecté. L'état de la connexion est dans l'onglet Admin.</p><div style="margin-top:16px"><button class="btn">Ouvrir l'admin</button></div></div>`}
 /* ============ OPTA + STATSBOMB : fusion des sources et onglet Rivaux ============ */
 const OPTA_KEY='lb-opta-v1';
 const OPTA_TYPES={off:{name:'Offensif',sig:'ThrghBlCmp',lab:'Opta · Offensif'},mai:{name:'Maîtrise du jeu',sig:'AvgPossStart',lab:'Opta · Maîtrise du jeu'},def:{name:'Défensif',sig:'PPDA',lab:'Opta · Défensif'},res:{name:'Résumé équipe',sig:'LBP',lab:'Opta · Résumé équipe'},sbr:{name:'Profil des équipes',sig:null,lab:'StatsBomb · Profil des équipes'}};
@@ -1733,14 +1692,8 @@ function buildTeams(){
   });
   TREP.flags.push(...dupFlags());
 }
-function persistOpta(){try{localStorage.setItem(OPTA_KEY,JSON.stringify(OPTA_RAW))}catch(e){}}
-function initOpta(){
-  let loaded=false;
-  try{const j=JSON.parse(localStorage.getItem(OPTA_KEY)||'null');if(j&&Object.keys(j).length){Object.assign(OPTA_RAW,j);loaded=true}}catch(e){}
-  if(!loaded&&typeof OPTA_CSV!=='undefined')Object.entries(OPTA_CSV).forEach(([t,txt])=>{const {recs}=parseCSV(txt);OPTA_RAW[t]={name:'données d\'exemple',recs:recs.filter(r=>r.teamFullName||r.Team)}});
-  buildTeams();
-}
-function resetOpta(){Object.keys(OPTA_RAW).forEach(k=>delete OPTA_RAW[k]);try{localStorage.removeItem(OPTA_KEY)}catch(e){}if(typeof OPTA_CSV!=='undefined')Object.entries(OPTA_CSV).forEach(([t,txt])=>{const {recs}=parseCSV(txt);OPTA_RAW[t]={name:'données d\'exemple',recs:recs.filter(r=>r.teamFullName||r.Team)}});buildTeams()}
+const loadOptaDefaults=()=>{if(typeof OPTA_CSV!=='undefined')Object.entries(OPTA_CSV).forEach(([t,txt])=>{const {recs}=parseCSV(txt);OPTA_RAW[t]={name:'données intégrées',recs:recs.filter(r=>r.teamFullName||r.Team)}})};
+function initOpta(){loadOptaDefaults();buildTeams()}
 
 /* ---- classements ---- */
 const focusTeam=()=>TEAMS.find(t=>t.name.toLowerCase()===String(TEAM).toLowerCase())||TEAMS[0];
@@ -1767,7 +1720,7 @@ function radarData(g,list){
 const rvTip=(n,ax,v,raw)=>`<b>${n}</b>${ax} : ${raw}<br>${Math.round(v)} / 100 parmi les équipes comparées`;
 
 /* ---- onglet Rivaux ---- */
-function emptyRivals(){return `<div class="drop" onclick="S.tab='data';sync()"><div class="ic">📂</div><h3>Aucune donnée d'équipe</h3><p>Déposez les fichiers Opta (Offensif, Maîtrise du jeu, Défensif, Résumé) dans l'onglet Importer.</p><div style="margin-top:16px"><button class="btn">Aller à l'import</button></div></div>`}
+function emptyRivals(){return `<div class="drop" onclick="S.tab='data';sync()"><div class="ic">📡</div><h3>Aucune donnée d'équipe</h3><p>Le serveur de données n'est pas connecté. L'état de la connexion est dans l'onglet Admin.</p><div style="margin-top:16px"><button class="btn">Ouvrir l'admin</button></div></div>`}
 function rvTeam(i){const t=TEAMS[i],st=tState();if(!t||t===focusTeam())return;const k=st.off.indexOf(t.name);if(k>=0)st.off.splice(k,1);else st.off.push(t.name);renderRivals()}
 function rvGroup(g){tState().rg=g;renderRivals()}
 function rvTable(g){tState().tg=g;renderRivals()}
@@ -1813,7 +1766,8 @@ function renderRivals(){
 function sourcesCard(){
   const sb=[['Matchs StatsBomb',MS.length?`${MS.length} matchs · ${SRC.matches}`:null],['Joueurs StatsBomb',SQUAD.length?`${SQUAD.length} joueurs · ${SRC.squad}`:null]];
   const op=Object.keys(OPTA_TYPES).map(t=>[OPTA_TYPES[t].lab,OPTA_RAW[t]?`${t==='sbr'?[...new Set(OPTA_RAW[t].recs.map(r=>r.Team))].length:OPTA_RAW[t].recs.length} équipes · ${OPTA_RAW[t].name}`:null]);
-  return [...sb,...op].map(([l,s])=>`<div class="st ${s?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${s?'✓':'–'}</div><div><b>${l}</b><span>${s||'pas de fichier'}</span></div></div>`).join('');
+  const api=SERVER.status&&SERVER.status.opta;const apiRow=['API Opta',api&&api.ok?'connectée':null,api&&api.ok?null:'en attente de l\'accès Opta'];
+  return [...sb,...op,apiRow].map(([l,s,w])=>`<div class="st ${s?'ok':'bad'}" style="margin-bottom:10px"><div class="dot">${s?'✓':'–'}</div><div><b>${l}</b><span>${s||w||'pas de données'}</span></div></div>`).join('');
 }
 function mergeReport(){
   if(!TEAMS.length)return '';
@@ -1853,31 +1807,53 @@ function rivalsPptx(sl,tbl,tableSlides,pptx,PD){
     sl('Profils de jeu',GLAB[g]+' : profil comparé','100 = meilleure équipe de la comparaison',s=>s.addChart(pptx.charts.RADAR,R.series.map(se=>({name:se.name,labels:R.axes,values:se.vals.map(v=>Math.round(v))})),{x:2.4,y:1.5,w:8.5,h:5.3,radarStyle:'standard',chartColors:R.series.map(se=>se.color.replace('#','').toUpperCase()),showLegend:true,legendPos:'b',legendFontSize:12,legendColor:PD.tx,catAxisLabelFontSize:12,catAxisLabelColor:PD.tx,valAxisMaxVal:100,valAxisMinVal:0,valAxisMajorUnit:25,valAxisLabelFontSize:9,valAxisLabelColor:PD.mu2,valGridLine:{color:PD.line,size:0.5}}))});
   ['att','con','def','res'].forEach(g=>{const rows=rivalRows(g,sel);if(rows.length)tableSlides(GLAB[g],GLAB[g]+' : comparaison','Valeur et rang dans la comparaison',['Indicateur',...sel.map(t=>t.name)],rows,{first:4.4,rowH:0.36,fs:11})});
 }
-/* ---- serveur (IP fixe) : le site lit les données ici quand il est servi par server.py ---- */
-const SERVER={ok:null,msg:'',updated:null};
-const srvToken=()=>{try{return localStorage.getItem('lb-token')||''}catch(e){return ''}};
+/* ---- serveur (IP fixe) : toutes les données viennent d'ici ---- */
+const SERVER={ok:null,msg:'',updated:null,status:{},every:null};
+const lsGet=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const apiBase=()=>lsGet('lb-api').trim().replace(/\/+$/,'');
+const srvHeaders=()=>lsGet('lb-token')?{Authorization:'Bearer '+lsGet('lb-token')}:{};
 async function loadServer(manual){
-  if(!/^https?:/.test(location.protocol))return;
+  if(!/^https?:/.test(location.protocol)&&!apiBase()){SERVER.ok=null;return}
   try{
-    const r=await fetch('api/data',{headers:srvToken()?{Authorization:'Bearer '+srvToken()}:{},cache:'no-store'});
-    if(r.status===401){SERVER.ok=false;SERVER.msg=srvToken()?'Mot de passe refusé':'Mot de passe requis';if(S.tab==='data')renderData();return}
-    if(!r.ok||!/json/.test(r.headers.get('content-type')||''))return;
-    const j=await r.json();
-    Object.keys(OPTA_RAW).forEach(k=>delete OPTA_RAW[k]);Object.assign(OPTA_RAW,j.opta||{});
-    if(j.matches&&j.matches.length&&j.squad&&j.squad.length)applyData(j.matches,j.squad,{matches:'serveur',squad:'serveur'});else buildTeams();
-    SERVER.ok=true;SERVER.msg='';SERVER.updated=j.updated;SERVER.status=j.status||{};
-    updateHeader();if(S.tab==='data'&&!manual&&MS.length&&SQUAD.length)S.tab='home';
-    sync();if(manual)toast('Données du serveur à jour');
-  }catch(e){}
+    const r=await fetch(apiBase()+'/api/data',{headers:srvHeaders(),cache:'no-store'});
+    if(r.status===401){SERVER.ok=false;SERVER.msg=lsGet('lb-token')?'Mot de passe refusé.':'Mot de passe requis.'}
+    else if(!r.ok||!/json/.test(r.headers.get('content-type')||'')){SERVER.ok=false;SERVER.msg="Aucun serveur de données à cette adresse."}
+    else{
+      const j=await r.json();
+      Object.keys(OPTA_RAW).forEach(k=>delete OPTA_RAW[k]);Object.assign(OPTA_RAW,j.opta||{});
+      if(j.matches&&j.matches.length&&j.squad&&j.squad.length)applyData(j.matches,j.squad,{matches:'serveur',squad:'serveur'});else{applyData([],[],{matches:'aucun fichier',squad:'aucun fichier'})}
+      SERVER.ok=true;SERVER.msg='';SERVER.updated=j.updated;SERVER.status=j.status||{};SERVER.every=j.refreshMinutes||null;
+      updateHeader();if(S.tab==='data'&&!manual&&MS.length&&SQUAD.length)S.tab='home';
+    }
+  }catch(e){SERVER.ok=false;SERVER.msg='Serveur injoignable.'}
+  sync();if(manual&&SERVER.ok)toast('Données à jour')
 }
-async function srvRefresh(){try{await fetch('api/refresh',{method:'POST',headers:srvToken()?{Authorization:'Bearer '+srvToken()}:{}});await loadServer(true)}catch(e){toast('Serveur injoignable')}}
-function srvSaveToken(){const v=($('#srvtok')||{}).value||'';try{localStorage.setItem('lb-token',v.trim())}catch(e){}loadServer(true)}
+async function srvRefresh(){try{await fetch(apiBase()+'/api/refresh',{method:'POST',headers:srvHeaders()})}catch(e){}await loadServer(true)}
+function srvSave(){lsSet('lb-api',($('#srvurl')||{}).value||'');lsSet('lb-token',(($('#srvtok')||{}).value||'').trim());loadServer(true)}
 function serverCard(){
-  if(SERVER.ok===null)return '';
-  if(SERVER.ok===false)return `<div class="card mt"><h3>Serveur</h3><div class="sub">${SERVER.msg}. Ce mot de passe est celui défini à l'installation du serveur.</div><div class="filt" style="padding:0"><input id="srvtok" class="rvq" type="password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')srvSaveToken()"><button class="btn" onclick="srvSaveToken()">Se connecter</button></div></div>`;
   const when=SERVER.updated?new Date(SERVER.updated).toLocaleString('fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'–';
+  const embedded=SERVER.ok===null&&(MS.length||TEAMS.length);
+  const head=SERVER.ok?`<div class="st ok"><div class="dot">✓</div><div><b>Connecté au serveur</b><span>Dernière mise à jour : ${when}${SERVER.every?` · actualisation automatique toutes les ${SERVER.every} min`:''}</span></div></div>`
+   :SERVER.ok===false?`<div class="st bad"><div class="dot">!</div><div><b>Serveur non connecté</b><span>${SERVER.msg}</span></div></div>`
+   :`<div class="st ${embedded?'ok':'bad'}"><div class="dot">${embedded?'✓':'–'}</div><div><b>${embedded?'Données intégrées à cette page':'Hors serveur'}</b><span>${embedded?'Cette version ne se met pas à jour toute seule.':'Ouvrez le site depuis le serveur, ou indiquez son adresse ci-dessous.'}</span></div></div>`;
   const bad=Object.entries(SERVER.status||{}).filter(([,v])=>!v.ok);
-  return `<div class="card mt"><h3>Serveur</h3><div class="sub">Les données viennent du serveur. Dernière mise à jour : ${when}.</div>${bad.map(([k,v])=>`<div class="rvi bad"><div><b>Source « ${k} » indisponible</b><small>${v.error||''}</small></div></div>`).join('')}<div style="margin-top:12px"><button class="btn" onclick="srvRefresh()">Actualiser maintenant</button></div></div>`;
+  return `<div class="card"><h3>Connexion au serveur</h3><div class="sub">Le serveur récupère les données et les met à disposition du site. Rien n'est à déposer à la main.</div>${head}
+    ${bad.map(([k,v])=>`<div class="rvi bad"><div><b>Source « ${k} » indisponible</b><small>${v.error||''}</small></div></div>`).join('')}
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">${SERVER.ok?'<button class="btn" onclick="srvRefresh()">Actualiser maintenant</button>':''}${MS.length&&SQUAD.length?'<button class="btn ghost" onclick="S.tab=\'home\';sync()">Voir le tableau de bord</button>':''}</div>
+    <details class="srvset" ${SERVER.ok===false?'open':''}><summary>Paramètres de connexion</summary>
+      <div class="srvrow"><label>Adresse du serveur<input id="srvurl" class="rvq" value="${apiBase().replace(/"/g,'&quot;')}" placeholder="Laisser vide si le site est servi par le serveur"></label>
+      <label>Mot de passe<input id="srvtok" class="rvq" type="password" value="${lsGet('lb-token').replace(/"/g,'&quot;')}" autocomplete="current-password" onkeydown="if(event.key==='Enter')srvSave()"></label>
+      <button class="btn" onclick="srvSave()">Se connecter</button></div></details></div>`;
+}
+function renderAdmin(){
+  $('#v-data').innerHTML=`
+  <div class="hello"><div><h2>Admin</h2><h1>Données et sources</h1><p>Les données arrivent automatiquement du serveur. Il n'y a plus de fichiers à déposer.</p></div></div>
+  ${serverCard()}
+  <div class="card mt"><h3>Sources de données</h3><div class="sub">Ce que le serveur a récupéré, et d'où.</div>${sourcesCard()}</div>
+  ${mergeReport()}
+  <div class="card mt"><h3>Postes des joueurs</h3><div class="sub">Gardien, défenseur, milieu ou attaquant. Les nouveaux joueurs reçoivent un poste estimé d'après leurs statistiques : corrigez-le si besoin.</div>
+    <div class="pos-grid">${[...SQUAD].sort((a,b)=>a.Player.localeCompare(b.Player)).map(p=>`<label><span>${p.Player}</span><select onchange="setPos(this.dataset.n,this.value)" data-n="${p.Player.replace(/"/g,'&quot;')}">${Object.keys(POSN).map(k=>`<option value="${k}" ${p.Pos===k?'selected':''}>${POSN[k]}</option>`).join('')}</select></label>`).join('')}</div></div>`;
 }
 initOpta();
 const hasData=tab=>tab==='rivals'?TEAMS.length>0:(MS.length>0&&SQUAD.length>0);
