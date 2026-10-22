@@ -605,6 +605,14 @@ header .xp{margin-left:0}
 .rvw .rb{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.rvw .rb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#d5a450,#ffd98a)}
 .rvw b{text-align:right;font-size:12.5px}
 .rvw{grid-template-columns:1.2fr 1fr 66px}.rvw b{white-space:nowrap}
+.lblx{font-size:12px;color:var(--mu);align-self:center;margin-right:4px;font-weight:600}
+.pdot{display:inline-block;width:14px;height:14px;border-radius:50%;margin-left:9px;vertical-align:middle}
+.tmt.sbt td.pc{text-align:right;white-space:nowrap}
+.tmt.sbt th{text-align:center!important}.tmt.sbt th:first-child{text-align:left!important}
+.tmt.sbt tr.sub2 th{font-size:10px;font-weight:600;padding:4px 10px;border-bottom:1px solid var(--line2);color:var(--mu2)}
+.tmt.sbt thead tr:first-child th{border-bottom:0}
+.pleg{display:flex;align-items:center;gap:6px;margin-top:12px;font-size:11px;color:var(--mu)}.pleg span{margin-right:6px;font-weight:600}.pleg i{width:14px;height:14px;border-radius:50%}.pleg em{font-style:normal;margin-right:6px}
+.b12.chips{grid-column:1/-1}.b12.grid{grid-column:1/-1}
 
 </style>
 </head>
@@ -742,10 +750,10 @@ function donut(pct,label,color='#4d6bff',size=130){
   <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c*pct/100} ${c}" transform="rotate(-90 ${size/2} ${size/2})"/>
   <text x="50%" y="49%" text-anchor="middle" fill="#fff" font-size="24" font-weight="800">${pct.toFixed(0)}%</text><text x="50%" y="63%" text-anchor="middle" fill="#a9b5ec" font-size="10.5">${label}</text></svg>`;
 }
-function radar(axes,series,size=380,tipFn){
+function radar(axes,series,size=380,tipFn,pad=95){
   const c=size/2,R=size/2-62,n=axes.length;const ang=i=>-Math.PI/2+i*2*Math.PI/n;
   const pt=(i,v)=>[c+Math.cos(ang(i))*R*v/100,c+Math.sin(ang(i))*R*v/100];
-  let s=`<svg viewBox="-95 0 ${size+190} ${size}" width="100%" style="max-width:${size+190}px">`;
+  let s=`<svg viewBox="-${pad} 0 ${size+2*pad} ${size}" width="100%" style="max-width:${size+2*pad}px">`;
   [25,50,75,100].forEach(l=>{s+=`<polygon points="${axes.map((_,i)=>pt(i,l).join(',')).join(' ')}" fill="${l==100?'rgba(255,255,255,.02)':'none'}" stroke="rgba(255,255,255,${l==50?.14:.07})"/>`});
   axes.forEach((a,i)=>{const [x,y]=pt(i,100),[lx,ly]=pt(i,122);s+=`<line x1="${c}" y1="${c}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.07)"/><text x="${lx}" y="${ly+4}" text-anchor="${Math.abs(lx-c)<8?'middle':lx>c?'start':'end'}" fill="#c3ccf5" font-size="11.5" font-weight="600">${a}</text>`});
   series.forEach(se=>{const pts=se.vals.map((v,i)=>pt(i,v).join(',')).join(' ');
@@ -779,6 +787,7 @@ function renderHome(){
     <div class="kpi b2" style="--c:var(--gold)"><div class="l">Pressions</div><div class="v mono">${tot('Pressures')}</div><div class="dl">${(100*tot('Pressures in Attacking Half')/tot('Pressures')).toFixed(0)}% en camp adverse</div></div>
     <div class="kpi b2" style="--c:var(--white)"><div class="l">Récupérations</div><div class="v mono">${tot('Ball Recoveries')}</div><div class="dl">${a('Ball Recoveries').toFixed(0)} par match</div></div>
     <div class="kpi b2" style="--c:#7f95ff"><div class="l">Touches dans la surface</div><div class="v mono">${a('Touches Inside Box').toFixed(0)}</div><div class="dl">par match · ${tot('Touches Inside Box')} au total</div></div>
+    ${homeTeam()}
     ${homeWidgets()}
     <div class="b12 sect2"><h2>Les quatre piliers du jeu</h2><span>Chiffre en grand : moyenne par match. Dessous : valeur du 1er match → du dernier match, puis l'écart entre les deux. Cliquez sur un bloc pour le détail.</span></div>
     ${pillars.map((g,pi)=>`<div class="card pill b3 clk" tabindex="0" role="button" aria-label="Détail ${g.t}" onclick="openPillar(${pi},this)" onkeydown="if(event.key==='Enter')openPillar(${pi},this)" style="--c:${g.c}"><div class="ph"><i></i><h3>${g.t}</h3><span class="more">Détail ›</span></div>
@@ -1880,6 +1889,7 @@ function renderRivals(){
   <div class="grid g2">
     <div class="card"><h3>Ses points forts</h3><div class="sub">Indicateurs où elle est première, du plus marqué au moins marqué</div>${posList(P.strong,'good')}</div>
     <div class="card"><h3>Ses points à travailler</h3><div class="sub">Indicateurs où elle est dernière, du plus marqué au moins marqué</div>${posList(P.weak,'bad')}</div></div>
+  ${sbSection()}
   <div class="sect"><h1>Profil de jeu</h1><span>100 = la meilleure équipe de la comparaison, 0 = la moins bonne</span></div>
   <div class="chips" style="margin-bottom:14px">${['att','con','def'].map(g=>`<button class="chip ${st.rg===g?'on':''}" onclick="rvGroup('${g}')">${GLAB[g]}</button>`).join('')}</div>
   <div class="card profmap"><h3>${GLAB[st.rg]} : profil comparé</h3><div class="sub">${rd.axes.length>=3?'Plus la zone est grande, meilleur est le profil. Survolez un point pour voir la valeur.':'Pas assez de données pour tracer ce profil.'}</div>
@@ -1912,6 +1922,13 @@ function copyFlags(){const t='Points à vérifier :\n'+TREP.flags.map(x=>'- '+x.
 /* ---- exports ---- */
 const OFOCUS=()=>focusTeam();
 function rivalRows(g,list){return TM.filter(m=>m.g===g&&list.some(t=>t.v[m.k]!=null)).map(m=>[m.l,...list.map(t=>{const rk=rankIn(m,t,list);return vfmt(m,t.v[m.k])+(rk&&t.v[m.k]!=null?' ('+rankLab(rk.r)+')':'')})])}
+function sbRep(){
+  const d=sbpData(),fr=sbpFocus(d);if(!fr)return '';const rivs=sbpRivals();if(!rivs.length)return '';
+  return `<h2>Profils d'équipe</h2>`+['Attacking','Defending'].map(pf=>{
+    const F=(d[fr]||{})[pf];if(!F)return '';
+    const rows=F.map(b=>[b.l,...[fr,...rivs].map(t=>{const x=((d[t]||{})[pf]||[]).find(y=>y.m===b.m);return x?`${sbDec(x,x.v)} (${x.p==null?'–':Math.round(x.p)})`:'–'})]);
+    return `<h2>${SBP_LAB[pf]}</h2><div class="g2">${rivs.map(rv=>card(`${fr} face à ${rv}`,'Percentiles : plus la zone est grande, meilleur est le profil',light(sbRadar(pf,fr,rv,360))+`<div class="lg"><span><i style="background:#ed1e24"></i>${fr}</span><span><i style="background:#4d6bff"></i>${rv}</span></div>`)).join('')}</div>${rTable(['Indicateur (valeur et percentile)',...[fr,...rivs]],rows)}`}).join('');
+}
 function repRivals(){
   const sel=teamSel(),f=focusTeam(),P=positions(sel),nm=f.name==='France'?'La France':f.name;
   const top=(arr)=>arr.slice(0,6).map(x=>[x.m.l,vfmt(x.m,x.v),rankLab(x.rk.r)+' sur '+x.rk.n,vfmt(x.m,x.ref)]);
@@ -1922,6 +1939,7 @@ function repRivals(){
   <h2>Chiffres clés</h2>${rKpi(kp)}
   <h2>Où se situe ${nm.toLowerCase()==='la france'?'la France':nm}</h2><div class="g2">${card('Points forts','Première de la comparaison',rTable(['Indicateur',f.name,'Rang','Meilleur rival'],top(P.strong)))}${card('Points à travailler','Dernière de la comparaison',rTable(['Indicateur',f.name,'Rang','Meilleur rival'],top(P.weak)))}</div>
   <h2>Profils de jeu</h2><div class="g2">${rad('att')}${rad('def')}</div><div class="g2">${rad('con')}</div>
+  ${sbRep()}
   ${['att','con','def','res'].map(tab).join('')}`};
 }
 REP.rivals=repRivals;SEC_NAME.rivals='Rivaux';REPORT_TITLE.rivals='Comparaison avec les rivaux';
@@ -1930,6 +1948,11 @@ function rivalsPptx(sl,tbl,tableSlides,pptx,PD){
   const sel=teamSel(),f=focusTeam(),P=positions(sel),nm=f.name==='France'?'La France':f.name;
   const top=arr=>arr.slice(0,7).map(x=>[x.m.l,vfmt(x.m,x.v),rankLab(x.rk.r)+' / '+x.rk.n]);
   sl('Positionnement',nm+' face aux rivaux','Classement parmi '+sel.length+' équipes · valeurs par 90 minutes',s=>{tbl(s,['Points forts',f.name,'Rang'],top(P.strong),{w:6,first:3.4,rowH:0.5,fs:12});tbl(s,['À travailler',f.name,'Rang'],top(P.weak),{x:6.8,w:6,first:3.4,rowH:0.5,fs:12})});
+  const d=sbpData(),sfr=sbpFocus(d);
+  if(sfr)sbpRivals().forEach(rv=>['Attacking','Defending'].forEach(pf=>{const F=(d[sfr]||{})[pf],R=(d[rv]||{})[pf];if(!F||!R)return;const rm=Object.fromEntries(R.map(x=>[x.m,x]));
+    sl("Profils d'équipe",`${SBP_LAB[pf]} : ${sfr} face à ${rv}`,'Percentiles : plus la zone est grande, meilleur est le profil',s=>{
+      s.addChart(pptx.charts.RADAR,[{name:sfr,labels:F.map(x=>x.s),values:F.map(x=>Math.round(x.p||0))},{name:rv,labels:F.map(x=>x.s),values:F.map(x=>Math.round((rm[x.m]||{}).p||0))}],{x:0.2,y:1.5,w:6.3,h:5.3,radarStyle:'standard',chartColors:['ED1E24','4D6BFF'],showLegend:true,legendPos:'b',legendFontSize:11,legendColor:PD.tx,catAxisLabelFontSize:10,catAxisLabelColor:PD.tx,valAxisMaxVal:100,valAxisMinVal:0,valAxisMajorUnit:25,valAxisLabelFontSize:8,valAxisLabelColor:PD.mu2,valGridLine:{color:PD.line,size:0.5}});
+      tbl(s,['Indicateur',sfr,rv],F.map(x=>[x.l,`${sbDec(x,x.v)} (${Math.round(x.p||0)})`,`${sbDec(x,(rm[x.m]||{}).v)} (${Math.round((rm[x.m]||{}).p||0)})`]),{x:6.7,w:6.2,first:3.2,rowH:0.45,fs:11})})}));
   ['att','con','def'].forEach(g=>{const R=radarData(g,sel);if(R.axes.length<3)return;
     sl('Profils de jeu',GLAB[g]+' : profil comparé','100 = meilleure équipe de la comparaison',s=>s.addChart(pptx.charts.RADAR,R.series.map(se=>({name:se.name,labels:R.axes,values:se.vals.map(v=>Math.round(v))})),{x:2.4,y:1.5,w:8.5,h:5.3,radarStyle:'standard',chartColors:R.series.map(se=>se.color.replace('#','').toUpperCase()),showLegend:true,legendPos:'b',legendFontSize:12,legendColor:PD.tx,catAxisLabelFontSize:12,catAxisLabelColor:PD.tx,valAxisMaxVal:100,valAxisMinVal:0,valAxisMajorUnit:25,valAxisLabelFontSize:9,valAxisLabelColor:PD.mu2,valGridLine:{color:PD.line,size:0.5}}))});
   ['att','con','def','res'].forEach(g=>{const rows=rivalRows(g,sel);if(rows.length)tableSlides(GLAB[g],GLAB[g]+' : comparaison','Valeur et rang dans la comparaison',['Indicateur',...sel.map(t=>t.name)],rows,{first:4.4,rowH:0.36,fs:11})});
@@ -2200,6 +2223,70 @@ function homeWidgets(){
   const bad=analyze().filter(f=>f.tone==='bad'),flags=TREP.flags.length;
   const att=`<div class="card b4"><h3>Points d'attention</h3><div class="sub">À regarder en priorité</div>${bad.slice(0,3).map(f=>`<div class="rvi bad"><div><b>${esc(f.concl||f.text.slice(0,80))}</b><small>${esc(f.tag||'')}</small></div></div>`).join('')||'<div class="rvi good"><div><b>Aucun point faible détecté</b></div></div>'}${flags&&isAdmin()?`<div class="rvi neutral"><div><b>${flags} point${flags>1?'s':''} à vérifier dans les données</b></div><button class="btn ghost sm" onclick="S.tab='data';ADM.tab='data';sync()">Voir</button></div>`:''}<div style="margin-top:12px"><button class="btn ghost sm" onclick="S.tab='bilan';sync()">Ouvrir le bilan</button></div></div>`;
   return matches+riv+att;
+}
+
+/* ============ PROFILS D'ÉQUIPE (radars du staff : attaque et défense, avec percentiles) + bilan sportif ============ */
+const SBM={
+ 'Non Penalty Cumulative xG':['xG créé (hors penalties)','xG hors pen.'],'xG/Shot':['xG par tir','xG par tir'],'Non Penalty Shots':['Tirs (hors penalties)','Tirs'],'Counter Attack Shots':['Tirs en contre-attaque','Contre-attaques'],
+ 'Set Piece xG':['xG sur coups de pied arrêtés','xG c.p. arrêtés'],'Clear Shots':['Tirs avec le but dégagé','But dégagé'],'GK Pass Length':['Longueur des passes du gardien','Relance gardien'],'Open Play Box Cross%':['Centres dans la surface (jeu ouvert, %)','Centres surface'],
+ 'Opposition xG':['xG concédé','xG concédé'],'Opposition xG/Shot':['xG concédé par tir','xG/tir concédé'],'Non Penalty Shots Faced':['Tirs concédés (hors penalties)','Tirs concédés'],'Counter Attack Shots Faced':['Tirs de contre-attaque concédés','Contre-att. subies'],
+ 'Clear Shots Faced':['Tirs avec le but dégagé concédés','But dégagé subi'],'Opposition Set Piece xG':['xG concédé sur coups de pied arrêtés','xG c.p.a. concédé'],'Opposition Passing%':['Passes adverses réussies (%)','Passes adv. réussies'],'Aggression':['Agressivité','Agressivité'],'Def Action Dist':['Hauteur des actions défensives','Hauteur déf.']};
+const SBP_LAB={Attacking:'Attaque',Defending:'Défense'};
+const SB_COL=[[0,[75,0,85]],[25,[64,64,122]],[50,[44,125,140]],[75,[50,181,125]],[100,[104,211,92]]];
+function pcol(p,a=1){p=Math.max(0,Math.min(100,p));let i=0;while(i<SB_COL.length-2&&p>SB_COL[i+1][0])i++;const [p0,c0]=SB_COL[i],[p1,c1]=SB_COL[i+1],k=(p-p0)/(p1-p0),c=c0.map((x,j)=>Math.round(x+(c1[j]-x)*k));return `rgba(${c[0]},${c[1]},${c[2]},${a})`}
+function sbpData(){
+  const recs=(OPTA_RAW.sbr||{}).recs||[],by={};
+  recs.forEach(r=>{if(!r.Team||!r.Profile)return;const m=SBM[r.Metric]||[r.Metric,r.Metric];((by[r.Team]??={})[r.Profile]??=[]).push({m:r.Metric,l:m[0],s:m[1],v:numOf(r.Value),p:numOf(r.Percentile),min:numOf(r.Minutes)})});
+  return by;
+}
+const sbpRivals=()=>{const d=sbpData(),f=focusTeam();return Object.keys(d).filter(t=>!f||t.toLowerCase()!==f.name.toLowerCase())};
+const sbpSelRival=()=>{const r=sbpRivals();if(!S.hp||!r.includes(S.hp))S.hp=r[0];return S.hp};
+const sbpFocus=d=>{const f=focusTeam();return f&&d[f.name]?f.name:Object.keys(d).find(t=>t.toLowerCase()===String(TEAM).toLowerCase())||Object.keys(d)[0]};
+const sbDec=(m,v)=>v==null?'–':Number.isInteger(v)?String(v):v.toFixed(Math.abs(v)<.2?3:Math.abs(v)<1?2:1);
+function sbRadar(prof,fr,rv,size=400){
+  const d=sbpData(),F=(d[fr]||{})[prof],R=(d[rv]||{})[prof];if(!F||!R)return '';
+  const axes=F.map(x=>x.s),rm=Object.fromEntries(R.map(x=>[x.m,x]));
+  const ser=[{name:fr,color:'#ed1e24',vals:F.map(x=>x.p??0),raw:F.map(x=>sbDec(x,x.v))},{name:rv,color:'#4d6bff',vals:F.map(x=>(rm[x.m]||{}).p??0),raw:F.map(x=>sbDec(x,(rm[x.m]||{}).v))}];
+  return radar(axes,ser,size,(n,ax,v,raw)=>`<b>${n}</b>${ax} : ${raw}<br>Percentile ${Math.round(v)}`,125);
+}
+function sbTable(prof,teams){
+  const d=sbpData(),base=(d[teams[0]]||{})[prof];if(!base)return '';
+  const head=`<thead><tr><th>Indicateur</th>${teams.map((t,i)=>`<th colspan="2" class="${i?'':'fr'}"><i style="background:${i?'#4d6bff':'#ed1e24'}"></i>${t}</th>`).join('')}</tr><tr class="sub2"><th></th>${teams.map(()=>'<th>Valeur</th><th>Percentile</th>').join('')}</tr></thead>`;
+  const body=base.map(b=>`<tr><td class="ml" data-tip="<b>${esc(b.l)}</b>${esc(b.m)}">${b.l}</td>${teams.map((t,i)=>{const x=((d[t]||{})[prof]||[]).find(y=>y.m===b.m);return x?`<td class="${i?'':'fr'}"><span class="mono">${sbDec(x,x.v)}</span></td><td class="pc" style="background:${pcol(x.p??0,.28)}"><span class="mono">${x.p==null?'–':Math.round(x.p)}</span><i class="pdot" style="background:${pcol(x.p??0)}"></i></td>`:'<td>–</td><td>–</td>'}).join('')}</tr>`).join('');
+  const mins=teams.map(t=>(((d[t]||{})[prof]||[])[0]||{}).min).filter(x=>x);
+  return `<div class="tw"><table class="tmt sbt">${head}<tbody>${body}</tbody></table></div>${mins.length?`<div class="sub" style="margin-top:8px">Temps de jeu : ${teams.map((t,i)=>t+' '+(((d[t]||{})[prof]||[])[0]||{}).min+' min').join(' · ')}</div>`:''}`;
+}
+const PCLEG=`<div class="pleg"><span>Percentile</span>${[0,20,40,60,80,100].map(p=>`<i style="background:${pcol(p)}"></i><em>${p}</em>`).join('')}</div>`;
+/* un profil : radar + tableau, France face à un rival */
+function sbBlock(rv,withTables){
+  const d=sbpData(),fr=sbpFocus(d);if(!fr||!d[rv])return '';
+  return ['Attacking','Defending'].map(p=>`<div class="card"><h3>${SBP_LAB[p]} : ${fr} face à ${rv}</h3><div class="sub">Percentile de chaque indicateur : plus la zone est grande, meilleur est le profil. Survolez un point pour voir la valeur.</div>
+    <div style="display:flex;justify-content:center">${sbRadar(p,fr,rv)}</div><div class="rvleg"><span><i style="background:#ed1e24"></i>${fr}</span><span><i style="background:#4d6bff"></i>${rv}</span></div>${withTables?sbTable(p,[fr,rv])+PCLEG:''}</div>`).join('');
+}
+function sbPicker(fn){return sbpRivals().map(t=>`<button class="chip ${sbpSelRival()===t?'on':''}" onclick="${fn}('${t.replace(/'/g,"\\'")}')">${t}</button>`).join('')}
+function sbSection(){
+  if(!sbpRivals().length)return '';
+  const rv=sbpSelRival();
+  return `<div class="sect"><h1>Profils d'équipe</h1><span>Attaque et défense, en percentiles</span></div>
+  <div class="chips" style="margin-bottom:14px"><span class="lblx">Comparer la France à</span>${sbPicker('rvPick')}</div>
+  <div class="grid g2" id="sbBody">${sbBlock(rv,true)}</div>`;
+}
+function rvPick(t){S.hp=t;renderRivals()}
+/* accueil : même radars, sans tableaux */
+function hpPick(t){S.hp=t;const b=$('#hpBody');if(b){b.innerHTML=sbBlock(t,false);enableZoom(b)}$$('#hpChips .chip').forEach(c=>c.classList.toggle('on',c.textContent===t))}
+function homeTeam(){
+  const f=focusTeam();let out='';
+  if(f){
+    const list=TEAMS,ks=['win','goals','ga','gd','poss','ppda'].map(k=>TMI[k]).filter(m=>f.v[m.k]!=null),cols=['var(--gold)','var(--red)','var(--blue)','var(--white)','#9db0ff','#7f95ff'];
+    const lab={win:'Victoires (%)',goals:'Buts marqués /90',ga:'Buts encaissés /90',gd:'Différence de buts /90',poss:'Possession (%)',ppda:'PPDA (pressing)'};
+    out+=ks.map((m,i)=>{const rk=rankIn(m,f,list);return `<div class="kpi b2" style="--c:${cols[i]}"><div class="l">${lab[m.k]}</div><div class="v mono">${m.k==='gd'?sgn(f.v[m.k],2):f.v[m.k].toFixed(m.d)}</div><div class="dl">${rk?rankLab(rk.r)+' sur '+rk.n+' équipes':'style de jeu'}</div></div>`}).join('');
+  }
+  if(sbpRivals().length){const rv=sbpSelRival();
+    out+=`<div class="b12 sect2"><h2>Profil d'équipe</h2><span>Attaque et défense en percentiles, comme sur les radars du staff</span></div>
+    <div class="b12 chips" id="hpChips" style="margin-bottom:2px"><span class="lblx">Comparer la France à</span>${sbPicker('hpPick')}</div>
+    <div class="b12 grid g2" id="hpBody">${sbBlock(rv,false)}</div>`;
+  }
+  return out;
 }
 
 const EXTRA={};
